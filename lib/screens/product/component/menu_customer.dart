@@ -81,33 +81,31 @@ class _MenuCustomerState extends State<MenuCustomer> {
             child: Stack(
               children: [
                 Positioned.fill(
-                    child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(height: 15.h),
-                      buildChip(),
-                      if (MyVariable.menuType == 'อาหาร') ...[
-                        buildProductList(pprovider.productsFood,
-                            pprovider.productsFoodLength),
-                      ] else if (MyVariable.menuType == 'ออร์เดิฟ') ...[
-                        buildProductList(pprovider.productsSnack,
-                            pprovider.productsSnackLength),
-                      ] else if (MyVariable.menuType == 'เครื่องดื่ม') ...[
-                        buildProductList(pprovider.productsDrink,
-                            pprovider.productsDrinkLength),
-                      ] else if (MyVariable.menuType == 'ของหวาน') ...[
-                        buildProductList(pprovider.productsSweet,
-                            pprovider.productsSweetLength),
-                      ] else if (MyVariable.login) ...[
-                        if (favorites.isNotEmpty) ...[
-                          buildFavoriteList(favorites),
-                        ] else ...[
-                          buildFavoriteEmpty(),
+                    child: Column(
+                      children: [
+                        SizedBox(height: 15.h),
+                        buildChip(),
+                        if (MyVariable.menuType == 'อาหาร') ...[
+                          buildProductList(pprovider.productsFood,
+                              pprovider.productsFoodLength),
+                        ] else if (MyVariable.menuType == 'ออร์เดิฟ') ...[
+                          buildProductList(pprovider.productsSnack,
+                              pprovider.productsSnackLength),
+                        ] else if (MyVariable.menuType == 'เครื่องดื่ม') ...[
+                          buildProductList(pprovider.productsDrink,
+                              pprovider.productsDrinkLength),
+                        ] else if (MyVariable.menuType == 'ของหวาน') ...[
+                          buildProductList(pprovider.productsSweet,
+                              pprovider.productsSweetLength),
+                        ] else if (MyVariable.login) ...[
+                          if (favorites.isNotEmpty) ...[
+                            buildFavoriteList(favorites),
+                          ] else ...[
+                            buildFavoriteEmpty(),
+                          ],
                         ],
                       ],
-                    ],
-                  ),
-                )),
+                    )),
                 MyWidget().backgroundTitleSearch(),
                 MyWidget().title('รายการเมนูอาหาร'),
                 buildSearch(context),
@@ -300,16 +298,9 @@ class _MenuCustomerState extends State<MenuCustomer> {
   }
 
   Widget buildProductList(List<ProductModel> products, int length) {
-    return SizedBox(
-      width: 100.w,
-      height: MyVariable.login
-          ? MyVariable.largeDevice
-              ? 76.h
-              : 66.h
-          : MyVariable.largeDevice
-              ? 76.h
-              : 73.h,
+    return Flexible(
       child: GridView.builder(
+        shrinkWrap: true,
         controller: scrollController,
         padding: MyVariable.largeDevice
             ? const EdgeInsets.only(top: 10)
@@ -444,10 +435,9 @@ class _MenuCustomerState extends State<MenuCustomer> {
   }
 
   Widget buildFavoriteList(List<ProductModel> products) {
-    return SizedBox(
-      width: 100.w,
-      height: MyVariable.largeDevice ? 78.h : 66.h,
+    return Flexible(
       child: GridView.builder(
+        shrinkWrap: true,
         controller: scrollController,
         padding: MyVariable.largeDevice
             ? const EdgeInsets.only(top: 10)
@@ -633,17 +623,9 @@ class _MenuCustomerState extends State<MenuCustomer> {
                   style: MyStyle().normalBlack16(),
                 ),
               ),
+              SizedBox(height: 3.h),
             ],
           ),
-          children: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(
-                'ตกลง',
-                style: MyStyle().boldBlue18(),
-              ),
-            ),
-          ],
         ),
       ),
     );

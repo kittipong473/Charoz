@@ -66,7 +66,7 @@ class _NotiCustomerState extends State<NotiCustomer> {
         children: [
           chip('โปรโมชั่น', 0, nprovider.notiPromosLength),
           chip('ข่าวสาร', 1, nprovider.notiNewsLength),
-          chip('อื่นๆ', 2, 0),
+          chip('อื่นๆ', 2, 1),
         ],
       ),
     );

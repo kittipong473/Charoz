@@ -49,6 +49,8 @@ class _LoginState extends State<Login> {
                           SizedBox(height: 10.h),
                           buildImage(),
                           SizedBox(height: 5.h),
+                          buildComment(),
+                          SizedBox(height: 5.h),
                           MyWidget().buildTitle(title: 'เข้าสู่ระบบ'),
                           SizedBox(height: 3.h),
                           buildPhone(),
@@ -57,11 +59,9 @@ class _LoginState extends State<Login> {
                           SizedBox(height: 5.h),
                           // buildDetail(),
                           buildButton(context),
-                          SizedBox(height: 3.h),
-                          buildRegister(),
-                          SizedBox(height: 1.h),
-                          buildAbout(),
                           SizedBox(height: 2.h),
+                          // buildRegister(),
+                          // SizedBox(height: 1.h),
                         ],
                       ),
                     ),
@@ -70,6 +70,7 @@ class _LoginState extends State<Login> {
               ),
               MyWidget().backgroundTitle(),
               MyWidget().title('บัญชีผู้ใช้งาน'),
+              MyWidget().backPage(context),
             ],
           ),
         ),
@@ -82,6 +83,22 @@ class _LoginState extends State<Login> {
       MyImage.logo3,
       width: 40.w,
       height: 40.w,
+    );
+  }
+
+  Column buildComment() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'สำหรับเจ้าหน้าที่เท่านั้น',
+          style: MyStyle().normalBlue16(),
+        ),
+        Text(
+          'ยังไม่เปิดบริการสำหรับลูกค้า',
+          style: MyStyle().normalBlue16(),
+        )
+      ],
     );
   }
 
@@ -295,23 +312,6 @@ class _LoginState extends State<Login> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget buildAbout() {
-    return InkWell(
-      onTap: () => Navigator.pushNamed(context, RoutePage.routeAbout),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Lottie.asset(MyImage.gifTap, width: 50, height: 50),
-          Text(
-            'คำถามที่เกี่ยวข้อง ?',
-            style: MyStyle().boldPrimary18(),
-          ),
-          Lottie.asset(MyImage.gifTap, width: 50, height: 50),
-        ],
-      ),
     );
   }
 

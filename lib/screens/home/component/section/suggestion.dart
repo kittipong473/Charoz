@@ -1,10 +1,12 @@
 import 'package:charoz/screens/home/component/section/assessment.dart';
+import 'package:charoz/services/route/route_page.dart';
 import 'package:charoz/utils/constant/my_dialog.dart';
 import 'package:charoz/utils/constant/my_image.dart';
 import 'package:charoz/utils/constant/my_style.dart';
 import 'package:charoz/utils/constant/my_variable.dart';
 import 'package:charoz/utils/constant/my_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class Suggestion extends StatefulWidget {
@@ -60,6 +62,7 @@ class _SuggestionState extends State<Suggestion> {
               ),
               MyWidget().backgroundTitle(),
               MyWidget().title('คำแนะนำจากลูกค้า'),
+              MyWidget().loginIcon(context),
             ],
           ),
         ),
@@ -181,7 +184,8 @@ class _SuggestionState extends State<Suggestion> {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(primary: MyStyle.blue),
             onPressed: () {
-              if (formKey.currentState!.validate() && MyVariable.chooseJob != '--เลือกอาชีพ--') {
+              if (formKey.currentState!.validate() &&
+                  MyVariable.chooseJob != '--เลือกอาชีพ--') {
                 Navigator.push(
                   context,
                   MaterialPageRoute(

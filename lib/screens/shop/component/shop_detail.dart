@@ -122,7 +122,7 @@ class _ShopDetailState extends State<ShopDetail> {
       children: [
         Text(
           name,
-          style: MyStyle().normalPrimary18(),
+          style: MyStyle().normalBlue18(),
         ),
       ],
     );
@@ -136,7 +136,7 @@ class _ShopDetailState extends State<ShopDetail> {
           width: 80.w,
           child: Text(
             detail,
-            style: MyStyle().normalPrimary18(),
+            style: MyStyle().normalBlue18(),
           ),
         ),
       ],
@@ -150,7 +150,7 @@ class _ShopDetailState extends State<ShopDetail> {
         SizedBox(
           child: Text(
             '$open น. - $close น.',
-            style: MyStyle().normalPrimary18(),
+            style: MyStyle().normalBlue18(),
           ),
         ),
       ],
@@ -164,7 +164,7 @@ class _ShopDetailState extends State<ShopDetail> {
         SizedBox(
           child: Text(
             '$open น. - $close น.',
-            style: MyStyle().normalPrimary18(),
+            style: MyStyle().normalBlue18(),
           ),
         ),
       ],
@@ -179,7 +179,7 @@ class _ShopDetailState extends State<ShopDetail> {
           width: 70.w,
           child: Text(
             address,
-            style: MyStyle().normalPrimary18(),
+            style: MyStyle().normalBlue18(),
           ),
         ),
       ],

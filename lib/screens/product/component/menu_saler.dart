@@ -82,28 +82,26 @@ class _MenuSalerState extends State<MenuSaler> {
                   child: Stack(
                     children: [
                       Positioned.fill(
-                          child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            SizedBox(height: 15.h),
-                            buildChip(),
-                            if (MyVariable.menuType == 'อาหาร') ...[
-                              buildProductList(
-                                  productFoods, productFoods.length),
-                            ] else if (MyVariable.menuType == 'ออร์เดิฟ') ...[
-                              buildProductList(
-                                  productSnacks, productSnacks.length),
-                            ] else if (MyVariable.menuType ==
-                                'เครื่องดื่ม') ...[
-                              buildProductList(
-                                  productDrinks, productDrinks.length),
-                            ] else if (MyVariable.menuType == 'ของหวาน') ...[
-                              buildProductList(
-                                  productSweets, productSweets.length),
+                          child: Column(
+                            children: [
+                              SizedBox(height: 15.h),
+                              buildChip(),
+                              if (MyVariable.menuType == 'อาหาร') ...[
+                                buildProductList(
+                                    productFoods, productFoods.length),
+                              ] else if (MyVariable.menuType == 'ออร์เดิฟ') ...[
+                                buildProductList(
+                                    productSnacks, productSnacks.length),
+                              ] else if (MyVariable.menuType ==
+                                  'เครื่องดื่ม') ...[
+                                buildProductList(
+                                    productDrinks, productDrinks.length),
+                              ] else if (MyVariable.menuType == 'ของหวาน') ...[
+                                buildProductList(
+                                    productSweets, productSweets.length),
+                              ],
                             ],
-                          ],
-                        ),
-                      )),
+                          )),
                       MyWidget().backgroundTitleSearch(),
                       MyWidget().title('รายการเมนูอาหาร'),
                       buildSearch(context),
@@ -287,10 +285,9 @@ class _MenuSalerState extends State<MenuSaler> {
   }
 
   Widget buildProductList(List<ProductModel> products, int length) {
-    return SizedBox(
-      width: 100.w,
-      height: MyVariable.largeDevice ? 78.h : 66.h,
+    return Flexible(
       child: GridView.builder(
+        shrinkWrap: true,
         controller: scrollController,
         padding: MyVariable.largeDevice
             ? const EdgeInsets.only(top: 10)
@@ -359,15 +356,15 @@ class _MenuSalerState extends State<MenuSaler> {
             ),
             Text(
               MyFunction().cutWord10(product.productName),
-              style: MyStyle().boldPrimary14(),
+              style: MyStyle().boldPrimary16(),
             ),
             Text(
               '${product.productPrice}.-',
-              style: MyStyle().boldBlue14(),
+              style: MyStyle().boldBlue16(),
             ),
             Text(
               'สถานะ : ${product.productStatus}',
-              style: MyStyle().boldBlack14(),
+              style: MyStyle().boldBlack16(),
             ),
           ],
         ),

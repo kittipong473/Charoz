@@ -187,25 +187,16 @@ class MyWidget {
 
   Positioned loginIcon(BuildContext context) {
     return Positioned(
-      top: MyVariable.largeDevice ? 10 : 20,
-      right: MyVariable.largeDevice ? 40 : 10,
+      top: MyVariable.largeDevice ? 60 : 20,
+      right: MyVariable.largeDevice ? 30 : 10,
       child: IconButton(
         onPressed: () {
-          if (MyVariable.login) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const UserDetail(),
-              ),
-            );
-          } else {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const Login(),
-              ),
-            );
-          }
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const Login(),
+            ),
+          );
         },
         icon: Icon(
           Icons.login_rounded,

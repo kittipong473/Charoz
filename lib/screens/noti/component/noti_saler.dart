@@ -36,21 +36,16 @@ class _NotiSalerState extends State<NotiSaler> {
                   children: [
                     Positioned.fill(
                       top: 6.h,
-                      child: SingleChildScrollView(
-                        child: Container(
-                          width: 100.w,
-                          height: 86.h,
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: ListView.separated(
-                            separatorBuilder: (context, index) =>
-                                const Divider(color: Colors.black),
-                            // itemCount: 50,
-                            itemCount: sprovider.suggestsLength,
-                            itemBuilder: (context, index) => buildSuggestItem(
-                                sprovider.suggests[index], index),
-                            // buildTesttItem(index),
-                          ),
-                        ),
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        separatorBuilder: (context, index) =>
+                            const Divider(color: Colors.black),
+                        itemCount: sprovider.suggestsLength,
+                        itemBuilder: (context, index) => buildSuggestItem(
+                            sprovider.suggests[index], index),
+                        // itemCount: 30,
+                        // itemBuilder: (context, index) =>
+                        // buildTesttItem(index),
                       ),
                     ),
                     MyWidget().backgroundTitle(),

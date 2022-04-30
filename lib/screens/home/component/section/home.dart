@@ -16,7 +16,6 @@ import 'package:charoz/utils/constant/my_widget.dart';
 import 'package:charoz/utils/show_progress.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -384,7 +383,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 Lottie.asset(MyImage.gifScoreRate, width: 30.sp, height: 30.sp),
                 Text(
                   'ความอร่อย : ${product.productScore}',
-                  style: MyStyle().boldPrimary16(),
+                  style: MyStyle().boldGreen16(),
                 ),
                 Lottie.asset(MyImage.gifScoreRate, width: 30.sp, height: 30.sp),
               ],
@@ -424,17 +423,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 style: MyStyle().normalBlack16(),
               ),
             ),
+            SizedBox(height: 3.h),
           ],
         ),
-        children: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'ตกลง',
-              style: MyStyle().boldBlue18(),
-            ),
-          ),
-        ],
       ),
     );
   }

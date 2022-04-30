@@ -93,14 +93,16 @@ class HomeProvider with ChangeNotifier {
       _screens = [
         const Home(),
         const MenuCustomer(),
+        const NotiCustomer(),
         const Suggestion(),
-        const Login(),
+        // const Login(),
       ];
       _icons = [
         Icon(Icons.home_rounded, size: 20.sp),
         Icon(Icons.restaurant_rounded, size: 20.sp),
+        Icon(Icons.notifications_active_rounded, size: 20.sp),
         Icon(Icons.insert_comment_rounded, size: 20.sp),
-        Icon(Icons.menu_rounded, size: 20.sp),
+        // Icon(Icons.menu_rounded, size: 20.sp),
       ];
     }
     return role;
