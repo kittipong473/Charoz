@@ -606,7 +606,7 @@ class _MenuCustomerState extends State<MenuCustomer> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: CachedNetworkImage(
-                    fit: BoxFit.fill,
+                    fit: BoxFit.cover,
                     imageUrl:
                         '${RouteApi.domainProduct}${product.productImage}',
                     placeholder: (context, url) => const ShowProgress(),

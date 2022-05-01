@@ -101,7 +101,7 @@ class _AboutState extends State<About> {
                 style: MyStyle().boldBlack16(),
               ),
               Text(
-                'ชาญณรงค์ 083-7857555',
+                'ณัฐพงษ์ 097-1649261',
                 style: MyStyle().normalPrimary16(),
               ),
             ],

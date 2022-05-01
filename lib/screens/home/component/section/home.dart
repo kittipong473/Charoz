@@ -186,47 +186,46 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         reverseTransitionDuration: Duration(milliseconds: 500),
       ),
       context: context,
-      builder: (context) => SimpleDialog(
-        title: Column(
-          children: [
-            SizedBox(
-              height: 25.h,
-              child: InteractiveViewer(
-                transformationController: transformationController,
-                clipBehavior: Clip.none,
-                panEnabled: false,
-                minScale: 1,
-                maxScale: 4,
-                // onInteractionEnd: (details) => resetAnimation(),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: CachedNetworkImage(
-                    fit: BoxFit.fitWidth,
-                    imageUrl: '${RouteApi.domainBanner}${banner.bannerUrl}',
-                    placeholder: (context, url) => const ShowProgress(),
-                    errorWidget: (context, url, error) =>
-                        Image.asset(MyImage.error),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => SimpleDialog(
+          title: Column(
+            children: [
+              SizedBox(
+                height: 25.h,
+                child: InteractiveViewer(
+                  transformationController: transformationController,
+                  clipBehavior: Clip.none,
+                  panEnabled: false,
+                  minScale: 1,
+                  maxScale: 4,
+                  // onInteractionEnd: (details) => resetAnimation(),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.network(
+                      '${RouteApi.domainBanner}${banner.bannerUrl}',
+                      fit: BoxFit.fill,
+                    ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 1.h),
-            Text(
-              'เลื่อนนิ้วเพื่อ zoom เข้า zoom ออก',
-              style: MyStyle().normalBlack16(),
-            ),
-            SizedBox(height: 3.h),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: MyStyle.colorBackGround,
+              SizedBox(height: 1.h),
+              Text(
+                'เลื่อนนิ้วเพื่อ zoom เข้า zoom ออก',
+                style: MyStyle().normalBlack16(),
               ),
-              width: 20.w,
-              height: 20.w,
-              child: Lottie.asset(MyImage.gifZoom),
-            ),
-            SizedBox(height: 3.h),
-          ],
+              SizedBox(height: 3.h),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: MyStyle.colorBackGround,
+                ),
+                width: 20.w,
+                height: 20.w,
+                child: Lottie.asset(MyImage.gifZoom),
+              ),
+              SizedBox(height: 3.h),
+            ],
+          ),
         ),
       ),
     );
@@ -350,81 +349,86 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         reverseTransitionDuration: Duration(milliseconds: 500),
       ),
       context: context,
-      builder: (context) => SimpleDialog(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (product.productType == 'อาหาร') ...[
-                  Lottie.asset(MyImage.gifName, width: 25.sp, height: 25.sp),
-                ] else if (product.productType == 'ของหวาน') ...[
-                  Lottie.asset(MyImage.gifSweet, width: 25.sp, height: 25.sp),
-                ] else if (product.productType == 'เครื่องดื่ม') ...[
-                  Lottie.asset(MyImage.gifDrink, width: 25.sp, height: 25.sp),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => SimpleDialog(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (product.productType == 'อาหาร') ...[
+                    Lottie.asset(MyImage.gifName, width: 25.sp, height: 25.sp),
+                  ] else if (product.productType == 'ของหวาน') ...[
+                    Lottie.asset(MyImage.gifSweet, width: 25.sp, height: 25.sp),
+                  ] else if (product.productType == 'เครื่องดื่ม') ...[
+                    Lottie.asset(MyImage.gifDrink, width: 25.sp, height: 25.sp),
+                  ],
+                  Text(
+                    product.productName,
+                    style: MyStyle().boldPrimary16(),
+                  ),
+                  if (product.productType == 'อาหาร') ...[
+                    Lottie.asset(MyImage.gifName, width: 25.sp, height: 25.sp),
+                  ] else if (product.productType == 'ของหวาน') ...[
+                    Lottie.asset(MyImage.gifSweet, width: 25.sp, height: 25.sp),
+                  ] else if (product.productType == 'เครื่องดื่ม') ...[
+                    Lottie.asset(MyImage.gifDrink, width: 25.sp, height: 25.sp),
+                  ],
                 ],
-                Text(
-                  product.productName,
-                  style: MyStyle().boldPrimary16(),
-                ),
-                if (product.productType == 'อาหาร') ...[
-                  Lottie.asset(MyImage.gifName, width: 25.sp, height: 25.sp),
-                ] else if (product.productType == 'ของหวาน') ...[
-                  Lottie.asset(MyImage.gifSweet, width: 25.sp, height: 25.sp),
-                ] else if (product.productType == 'เครื่องดื่ม') ...[
-                  Lottie.asset(MyImage.gifDrink, width: 25.sp, height: 25.sp),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Lottie.asset(MyImage.gifScoreRate,
+                      width: 30.sp, height: 30.sp),
+                  Text(
+                    'ความอร่อย : ${product.productScore}',
+                    style: MyStyle().boldGreen16(),
+                  ),
+                  Lottie.asset(MyImage.gifScoreRate,
+                      width: 30.sp, height: 30.sp),
                 ],
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Lottie.asset(MyImage.gifScoreRate, width: 30.sp, height: 30.sp),
-                Text(
-                  'ความอร่อย : ${product.productScore}',
-                  style: MyStyle().boldGreen16(),
-                ),
-                Lottie.asset(MyImage.gifScoreRate, width: 30.sp, height: 30.sp),
-              ],
-            ),
-            Text(
-              'ราคา : ${product.productPrice} บาท',
-              style: MyStyle().boldBlue18(),
-            ),
-            Text(
-              'ประเภท : ${product.productType}',
-              style: MyStyle().boldPrimary18(),
-            ),
-            Text(
-              'สถานะ : ${product.productStatus}',
-              style: MyStyle().boldBlue18(),
-            ),
-            SizedBox(height: 3.h),
-            SizedBox(
-              width: 60.w,
-              height: 60.w,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: CachedNetworkImage(
-                  fit: BoxFit.fill,
-                  imageUrl: '${RouteApi.domainProduct}${product.productImage}',
-                  placeholder: (context, url) => const ShowProgress(),
-                  errorWidget: (context, url, error) =>
-                      Image.asset(MyImage.error),
+              ),
+              Text(
+                'ราคา : ${product.productPrice} บาท',
+                style: MyStyle().boldBlue18(),
+              ),
+              Text(
+                'ประเภท : ${product.productType}',
+                style: MyStyle().boldPrimary18(),
+              ),
+              Text(
+                'สถานะ : ${product.productStatus}',
+                style: MyStyle().boldBlue18(),
+              ),
+              SizedBox(height: 3.h),
+              SizedBox(
+                width: 60.w,
+                height: 60.w,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: CachedNetworkImage(
+                    fit: BoxFit.fill,
+                    imageUrl:
+                        '${RouteApi.domainProduct}${product.productImage}',
+                    placeholder: (context, url) => const ShowProgress(),
+                    errorWidget: (context, url, error) =>
+                        Image.asset(MyImage.error),
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 3.h),
-            SizedBox(
-              width: 60.w,
-              child: Text(
-                product.productDetail,
-                style: MyStyle().normalBlack16(),
+              SizedBox(height: 3.h),
+              SizedBox(
+                width: 60.w,
+                child: Text(
+                  product.productDetail,
+                  style: MyStyle().normalBlack16(),
+                ),
               ),
-            ),
-            SizedBox(height: 3.h),
-          ],
+              SizedBox(height: 3.h),
+            ],
+          ),
         ),
       ),
     );

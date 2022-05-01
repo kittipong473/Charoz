@@ -83,25 +83,23 @@ class _MenuSalerState extends State<MenuSaler> {
                     children: [
                       Positioned.fill(
                           child: Column(
-                            children: [
-                              SizedBox(height: 15.h),
-                              buildChip(),
-                              if (MyVariable.menuType == 'อาหาร') ...[
-                                buildProductList(
-                                    productFoods, productFoods.length),
-                              ] else if (MyVariable.menuType == 'ออร์เดิฟ') ...[
-                                buildProductList(
-                                    productSnacks, productSnacks.length),
-                              ] else if (MyVariable.menuType ==
-                                  'เครื่องดื่ม') ...[
-                                buildProductList(
-                                    productDrinks, productDrinks.length),
-                              ] else if (MyVariable.menuType == 'ของหวาน') ...[
-                                buildProductList(
-                                    productSweets, productSweets.length),
-                              ],
-                            ],
-                          )),
+                        children: [
+                          SizedBox(height: 15.h),
+                          buildChip(),
+                          if (MyVariable.menuType == 'อาหาร') ...[
+                            buildProductList(productFoods, productFoods.length),
+                          ] else if (MyVariable.menuType == 'ออร์เดิฟ') ...[
+                            buildProductList(
+                                productSnacks, productSnacks.length),
+                          ] else if (MyVariable.menuType == 'เครื่องดื่ม') ...[
+                            buildProductList(
+                                productDrinks, productDrinks.length),
+                          ] else if (MyVariable.menuType == 'ของหวาน') ...[
+                            buildProductList(
+                                productSweets, productSweets.length),
+                          ],
+                        ],
+                      )),
                       MyWidget().backgroundTitleSearch(),
                       MyWidget().title('รายการเมนูอาหาร'),
                       buildSearch(context),
@@ -385,131 +383,137 @@ class _MenuSalerState extends State<MenuSaler> {
         reverseTransitionDuration: Duration(milliseconds: 500),
       ),
       context: context,
-      builder: (context) => SimpleDialog(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  product.productName,
-                  style: MyStyle().boldPrimary18(),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Lottie.asset(MyImage.gifScoreRate, width: 30.sp, height: 30.sp),
-                Text(
-                  'ความอร่อย : ${product.productScore}',
-                  style: MyStyle().boldGreen18(),
-                ),
-                Lottie.asset(MyImage.gifScoreRate, width: 30.sp, height: 30.sp),
-              ],
-            ),
-            Text(
-              'ราคา : ${product.productPrice} บาท',
-              style: MyStyle().boldBlue18(),
-            ),
-            Text(
-              'ประเภท : ${product.productType}',
-              style: MyStyle().boldPrimary18(),
-            ),
-            Text(
-              'สถานะ : ${product.productStatus}',
-              style: MyStyle().boldBlue18(),
-            ),
-            SizedBox(height: 3.h),
-            SizedBox(
-              width: 60.w,
-              height: 60.w,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: CachedNetworkImage(
-                  fit: BoxFit.fill,
-                  imageUrl: '${RouteApi.domainProduct}${product.productImage}',
-                  placeholder: (context, url) => const ShowProgress(),
-                  errorWidget: (context, url, error) =>
-                      Image.asset(MyImage.error),
-                ),
-              ),
-            ),
-            SizedBox(height: 3.h),
-            SizedBox(
-              width: 60.w,
-              child: Text(
-                product.productDetail,
-                style: MyStyle().normalBlack16(),
-              ),
-            ),
-          ],
-        ),
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => SimpleDialog(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              TextButton(
-                onPressed: () {
-                  ProductProvider()
-                      .changeStatus(
-                        status!,
-                        product.productType,
-                        product.productId,
-                      )
-                      .then((value) => getData());
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  'เปลี่ยนสถานะ',
-                  style: MyStyle().boldBlue16(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    product.productName,
+                    style: MyStyle().boldPrimary18(),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Lottie.asset(MyImage.gifScoreRate,
+                      width: 30.sp, height: 30.sp),
+                  Text(
+                    'ความอร่อย : ${product.productScore}',
+                    style: MyStyle().boldGreen18(),
+                  ),
+                  Lottie.asset(MyImage.gifScoreRate,
+                      width: 30.sp, height: 30.sp),
+                ],
+              ),
+              Text(
+                'ราคา : ${product.productPrice} บาท',
+                style: MyStyle().boldBlue18(),
+              ),
+              Text(
+                'ประเภท : ${product.productType}',
+                style: MyStyle().boldPrimary18(),
+              ),
+              Text(
+                'สถานะ : ${product.productStatus}',
+                style: MyStyle().boldBlue18(),
+              ),
+              SizedBox(height: 3.h),
+              SizedBox(
+                width: 60.w,
+                height: 60.w,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: CachedNetworkImage(
+                    fit: BoxFit.fill,
+                    imageUrl:
+                        '${RouteApi.domainProduct}${product.productImage}',
+                    placeholder: (context, url) => const ShowProgress(),
+                    errorWidget: (context, url, error) =>
+                        Image.asset(MyImage.error),
+                  ),
                 ),
               ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditProduct(
-                        productId: product.productId,
-                        productType: product.productType,
-                        productName: product.productName,
-                        productPrice: product.productPrice,
-                        productDetail: product.productDetail,
-                        productImage: product.productImage,
-                        productSuggest: int.parse(product.productSuggest),
-                      ),
-                    ),
-                  ).then((value) => getData());
-                },
+              SizedBox(height: 3.h),
+              SizedBox(
+                width: 60.w,
                 child: Text(
-                  'แก้ไข',
-                  style: MyStyle().boldGreen16(),
-                ),
-              ),
-              TextButton(
-                onPressed: () async {
-                  bool result = await ProductApi()
-                      .deleteProductWhereId(id: product.productId);
-                  if (result) {
-                    MyWidget().toast('ลบรายการ ${product.productName} สำเร็จ');
-                    getData();
-                  } else {
-                    MyWidget().toast(
-                        'ลบรายการ ${product.productName} ล้มเหลว ลองใหม่อีกครั้ง');
-                  }
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  'ลบ',
-                  style: MyStyle().boldRed16(),
+                  product.productDetail,
+                  style: MyStyle().normalBlack16(),
                 ),
               ),
             ],
           ),
-        ],
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    ProductProvider()
+                        .changeStatus(
+                          status!,
+                          product.productType,
+                          product.productId,
+                        )
+                        .then((value) => getData());
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'เปลี่ยนสถานะ',
+                    style: MyStyle().boldBlue16(),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditProduct(
+                          productId: product.productId,
+                          productType: product.productType,
+                          productName: product.productName,
+                          productPrice: product.productPrice,
+                          productDetail: product.productDetail,
+                          productImage: product.productImage,
+                          productSuggest: int.parse(product.productSuggest),
+                        ),
+                      ),
+                    ).then((value) => getData());
+                  },
+                  child: Text(
+                    'แก้ไข',
+                    style: MyStyle().boldGreen16(),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    bool result = await ProductApi()
+                        .deleteProductWhereId(id: product.productId);
+                    if (result) {
+                      MyWidget()
+                          .toast('ลบรายการ ${product.productName} สำเร็จ');
+                      getData();
+                    } else {
+                      MyWidget().toast(
+                          'ลบรายการ ${product.productName} ล้มเหลว ลองใหม่อีกครั้ง');
+                    }
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'ลบ',
+                    style: MyStyle().boldRed16(),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
