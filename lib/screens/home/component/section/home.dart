@@ -91,7 +91,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          SizedBox(height: 7.h),
+                          SizedBox(height: 8.h),
                           buildStatus(sprovider.currentStatus),
                           SizedBox(height: 1.h),
                           buildCarousel(hprovider),
@@ -131,13 +131,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (status == 'เปิดบริการ') ...[
-          Lottie.asset(MyImage.gifOpen, width: 35.sp, height: 35.sp),
+          Lottie.asset(MyImage.gifOpen, width: 30.sp, height: 30.sp),
           Text('สถานะร้านค้า : $status', style: MyStyle().boldGreen18()),
-          Lottie.asset(MyImage.gifOpen, width: 35.sp, height: 35.sp),
+          Lottie.asset(MyImage.gifOpen, width: 30.sp, height: 30.sp),
         ] else ...[
-          Lottie.asset(MyImage.gifClosed, width: 35.sp, height: 35.sp),
+          Lottie.asset(MyImage.gifClosed, width: 30.sp, height: 30.sp),
           Text('สถานะร้านค้า : $status', style: MyStyle().boldRed18()),
-          Lottie.asset(MyImage.gifClosed, width: 35.sp, height: 35.sp),
+          Lottie.asset(MyImage.gifClosed, width: 30.sp, height: 30.sp),
         ]
       ],
     );
@@ -170,9 +170,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
-          child: Image.network(
-            '${RouteApi.domainBanner}${banner.bannerUrl}',
-            fit: BoxFit.fill,
+          child: CachedNetworkImage(
+            fit: BoxFit.cover,
+            imageUrl: '${RouteApi.domainBanner}${banner.bannerUrl}',
+            placeholder: (context, url) => const ShowProgress(),
+            errorWidget: (context, url, error) => Image.asset(MyImage.error),
           ),
         ),
       ),
@@ -542,8 +544,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               child: Lottie.asset(MyImage.gifButton),
             ),
             Positioned(
-              top: MyVariable.largeDevice ? 45 : 28,
-              left: MyVariable.largeDevice ? 60 : 30,
+              top: MyVariable.largeDevice ? 45 : 4.h,
+              left: MyVariable.largeDevice ? 60 : 8.w,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

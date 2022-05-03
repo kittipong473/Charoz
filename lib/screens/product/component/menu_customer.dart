@@ -417,15 +417,15 @@ class _MenuCustomerState extends State<MenuCustomer> {
               ),
               Text(
                 MyFunction().cutWord10(product.productName),
-                style: MyStyle().boldPrimary16(),
+                style: MyStyle().boldPrimary14(),
               ),
               Text(
                 '${product.productPrice}.-',
-                style: MyStyle().boldBlue16(),
+                style: MyStyle().boldBlue14(),
               ),
               Text(
                 'สถานะ : ${product.productStatus}',
-                style: MyStyle().boldBlack16(),
+                style: MyStyle().boldBlack14(),
               ),
             ],
           ),

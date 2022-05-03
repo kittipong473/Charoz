@@ -145,6 +145,7 @@ class _SuggestionState extends State<Suggestion> {
             border: Border.all(color: MyStyle.dark),
           ),
           child: DropdownButton(
+            style: MyStyle().normalBlue14(),
             iconSize: 36,
             icon: const Icon(
               Icons.arrow_drop_down_outlined,
