@@ -15,14 +15,12 @@ class EditUser extends StatefulWidget {
   final String firstname;
   final String lastname;
   final String birth;
-  final String email;
   const EditUser({
     Key? key,
     required this.id,
     required this.firstname,
     required this.lastname,
     required this.birth,
-    required this.email,
   }) : super(key: key);
 
   @override
@@ -43,7 +41,6 @@ class _EditUserState extends State<EditUser> {
     firstnameController.text = widget.firstname;
     lastnameController.text = widget.lastname;
     birthController.text = widget.birth;
-    emailController.text = widget.email;
   }
 
   @override
@@ -330,8 +327,7 @@ class _EditUserState extends State<EditUser> {
     );
 
     if (status) {
-      Provider.of<UserProvider>(context, listen: false)
-          .getUserWhereIdPreference();
+      Provider.of<UserProvider>(context, listen: false).getUserWhereToken();
       MyWidget().toast('แก้ไขข้อมูลเรียบร้อยแล้ว');
       Navigator.pop(context);
     } else {

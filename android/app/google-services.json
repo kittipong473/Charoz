@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "739600533035",
+    "project_id": "charoz",
+    "storage_bucket": "charoz.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:739600533035:android:323c578b17c48da00b8c6e",
+        "android_client_info": {
+          "package_name": "com.kittipongkdev.charoz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "739600533035-a29dj33nnk9oat7f6fbvsdmv141hng45.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCt-k1Ny_0OZv78luW3oXbzIKw9SPjPwho"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "739600533035-a29dj33nnk9oat7f6fbvsdmv141hng45.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

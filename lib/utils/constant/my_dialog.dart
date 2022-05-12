@@ -104,6 +104,38 @@ class MyDialog {
     );
   }
 
+  Future failedDialog(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: ListTile(
+          leading: const Icon(
+            Icons.dangerous_outlined,
+            color: Colors.red,
+            size: 50,
+          ),
+          title: Text(
+            'ระบบเกิดข้อผิดพลาด',
+            style: MyStyle().boldRed14(),
+          ),
+          subtitle: Text(
+            'กรุณาลองใหม่อีกครั้งในภายหลัง',
+            style: MyStyle().normalRed14(),
+          ),
+        ),
+        children: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'OK',
+              style: MyStyle().boldBlue14(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future singleDialog(BuildContext context, String title) async {
     showDialog(
       context: context,

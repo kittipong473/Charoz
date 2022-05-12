@@ -58,8 +58,8 @@ class _MenuCustomerState extends State<MenuCustomer> {
   }
 
   Future getData() async {
-    String string = await Provider.of<UserProvider>(context, listen: false)
-        .convertFavorite();
+    String string = "";
+    // await Provider.of<UserProvider>(context, listen: false).convertFavorite();
     if (string != 'null') {
       favorites = await Provider.of<ProductProvider>(context, listen: false)
           .getProductWhereFavorite(string);

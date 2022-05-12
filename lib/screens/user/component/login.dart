@@ -1,12 +1,13 @@
 import 'package:charoz/screens/user/provider/user_provider.dart';
+import 'package:charoz/services/api/user_api.dart';
 import 'package:charoz/services/route/route_page.dart';
 import 'package:charoz/utils/constant/my_dialog.dart';
+import 'package:charoz/utils/constant/my_function.dart';
 import 'package:charoz/utils/constant/my_image.dart';
 import 'package:charoz/utils/constant/my_style.dart';
 import 'package:charoz/utils/constant/my_variable.dart';
 import 'package:charoz/utils/constant/my_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -49,19 +50,19 @@ class _LoginState extends State<Login> {
                           SizedBox(height: 10.h),
                           buildImage(),
                           SizedBox(height: 5.h),
-                          buildComment(),
-                          SizedBox(height: 5.h),
                           MyWidget().buildTitle(title: 'เข้าสู่ระบบ'),
                           SizedBox(height: 3.h),
-                          buildPhone(),
+                          buildUser(),
                           SizedBox(height: 3.h),
                           buildPassword(),
-                          SizedBox(height: 5.h),
-                          // buildDetail(),
+                          SizedBox(height: 3.h),
                           buildButton(context),
+                          SizedBox(height: 5.h),
+                          MyWidget().buildTitle(
+                              title: 'เข้าสู่ระบบ หรือ สมัครสมาชิก'),
                           SizedBox(height: 2.h),
-                          // buildRegister(),
-                          // SizedBox(height: 1.h),
+                          buildPhone(context),
+                          SizedBox(height: 1.h),
                         ],
                       ),
                     ),
@@ -70,7 +71,6 @@ class _LoginState extends State<Login> {
               ),
               MyWidget().backgroundTitle(),
               MyWidget().title('บัญชีผู้ใช้งาน'),
-              MyWidget().backPage(context),
             ],
           ),
         ),
@@ -86,23 +86,7 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Column buildComment() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          'สำหรับเจ้าหน้าที่เท่านั้น',
-          style: MyStyle().normalBlue16(),
-        ),
-        Text(
-          'ยังไม่เปิดบริการสำหรับลูกค้า',
-          style: MyStyle().normalBlue16(),
-        )
-      ],
-    );
-  }
-
-  Row buildPhone() {
+  Row buildUser() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -111,23 +95,23 @@ class _LoginState extends State<Login> {
           width: 85.w,
           child: TextFormField(
             style: MyStyle().normalBlack16(),
-            keyboardType: TextInputType.phone,
+            keyboardType: TextInputType.number,
             controller: phoneController,
             validator: (value) {
               if (value!.isEmpty) {
-                return 'กรุณากรอก Phone Number';
+                return 'กรุณากรอก เบอร์โทรศัพท์';
               } else if (value.length != 10) {
-                return 'กรุณากรอกหมายเลขโทรศัพท์ให้ถูกต้อง';
+                return 'กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง';
               } else {
                 return null;
               }
             },
             decoration: InputDecoration(
               labelStyle: MyStyle().normalBlack16(),
-              labelText: 'หมายเลขโทรศัพท์ :',
+              labelText: 'เบอร์โทรศัพท์ :',
               errorStyle: MyStyle().normalRed14(),
               prefixIcon: const Icon(
-                Icons.phone,
+                Icons.phone_rounded,
                 color: MyStyle.dark,
               ),
               enabledBorder: OutlineInputBorder(
@@ -163,8 +147,8 @@ class _LoginState extends State<Login> {
             validator: (value) {
               if (value!.isEmpty) {
                 return 'กรุณากรอก Password';
-              } else if (value.length < 5 || value.length > 20) {
-                return 'Password ต้องมีตัวอักษร 5-20 ตัว';
+              } else if (value.length < 6 || value.length > 20) {
+                return 'Password ต้องมีตัวอักษร 6-20 ตัว';
               } else {
                 return null;
               }
@@ -210,67 +194,35 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Row buildDetail() {
-    return Row(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Checkbox(
-              value: rememberPassword,
-              activeColor: MyStyle.primary,
-              onChanged: (check) {
-                setState(() {
-                  rememberPassword = check!;
-                });
-              },
-            ),
-            Row(
-              children: [
-                Text(
-                  'จำรหัสผ่าน',
-                  style: MyStyle().normalBlack16(),
-                ),
-              ],
-            ),
-          ],
-        ),
-        const Spacer(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            TextButton(
-              onPressed: () {
-                //Navigator.pushNamed(context, RoutePage.routeForgetPassword);
-              },
-              child: Text(
-                'ลืมรหัสผ่าน',
-                style: MyStyle().boldPrimary16(),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Row buildRegister() {
+  Row buildPhone(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          'ยังไม่เป็นสมาชิก ? ',
-          style: MyStyle().normalBlack16(),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.pushNamed(context, RoutePage.routeRegister);
-          },
-          child: Text(
-            'สมัครสมาชิก',
-            style: MyStyle().boldPrimary16(),
+        SizedBox(
+          width: 80.w,
+          height: 5.h,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(primary: MyStyle.blue),
+            onPressed: () {
+              Navigator.pushNamed(context, RoutePage.routePhoneLogin);
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.phone_rounded,
+                  size: 18.sp,
+                  color: Colors.white,
+                ),
+                SizedBox(width: 2.w),
+                Text(
+                  'จัดการด้วยเบอร์โทรศัพท์',
+                  style: MyStyle().boldWhite16(),
+                ),
+              ],
+            ),
           ),
-        )
+        ),
       ],
     );
   }
@@ -288,7 +240,7 @@ class _LoginState extends State<Login> {
               if (load) return;
               setState(() => load = true);
               if (formKey.currentState!.validate()) {
-                processLogin();
+                checkPhonetoEmail();
               } else {
                 setState(() => load = false);
               }
@@ -298,7 +250,7 @@ class _LoginState extends State<Login> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const CircularProgressIndicator(color: Colors.white),
-                      const SizedBox(width: 20),
+                      SizedBox(width: 3.w),
                       Text(
                         'Please Wait...',
                         style: MyStyle().normalWhite18(),
@@ -315,33 +267,37 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Future processLogin() async {
-    String phone = phoneController.text;
-    String password = Provider.of<UserProvider>(context, listen: false)
-        .encryption(text: passwordController.text);
-    bool status1 = await Provider.of<UserProvider>(context, listen: false)
-        .loginUser(phone: phone, password: password);
-    if (status1) {
-      bool status2 =
-          await Provider.of<UserProvider>(context, listen: false).checkStatus();
-      if (status2) {
-        Provider.of<UserProvider>(context, listen: false)
-            .getUserWhereIdPreference();
-        MyVariable.login = true;
-        MyVariable.indexPage = 0;
-        MyWidget().toast('ยินดีต้อนรับสู่ Application');
-        load = false;
-        Navigator.pushNamedAndRemoveUntil(
-            context, RoutePage.routeHomeService, (route) => false);
-      } else {
-        MyDialog().doubleDialog(context, 'บัญชีนี้ถูกระงับการใช้งาน',
-            'โปรดติดต่อ Admin เพื่อสอบถามเพิ่มเติม');
-        setState(() => load = false);
-      }
+  Future checkPhonetoEmail() async {
+    String email = "";
+    bool status =
+        await UserApi().checkUserWherePhone(phone: phoneController.text);
+    if (!status) {
+      email = await Provider.of<UserProvider>(context, listen: false)
+          .getUserEmailWherePhone(phone: phoneController.text);
+      authenFirebase(email);
     } else {
-      MyDialog().doubleDialog(context, 'เบอร์โทรศัพท์หรือรหัสผ่านไม่ถูกต้อง',
-          'กรุณาลองใหม่อีกครั้ง');
       setState(() => load = false);
+      MyDialog().doubleDialog(context, 'ไม่พบเบอร์โทรศัพท์ในระบบ',
+          'เบอร์โทรศัพท์ไม่ถูกต้องหรือท่านยังไม่ได้สมัครสมาชิก');
     }
+  }
+
+  Future authenFirebase(String email) async {
+    String password = passwordController.text;
+    await MyVariable.auth
+        .signInWithEmailAndPassword(email: email, password: password)
+        .then((value) async {
+      MyVariable.login = true;
+      MyVariable.indexPage = 0;
+      MyVariable.role = await Provider.of<UserProvider>(context, listen: false)
+          .getUserRoleWherePhone(phone: phoneController.text);
+      MyWidget().toast('ยินดีต้อนรับสู่ Application');
+      load = false;
+      Navigator.pushNamedAndRemoveUntil(
+          context, RoutePage.routeHomeService, (route) => false);
+    }).catchError((e) {
+      setState(() => load = false);
+      MyDialog().singleDialog(context, MyFunction().authenAlert(e.code));
+    });
   }
 }

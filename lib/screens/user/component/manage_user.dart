@@ -77,8 +77,7 @@ class _ManageUserState extends State<ManageUser> {
 
   Widget buildUserItem(UserModel user, int index) {
     return Card(
-      color:
-          user.userStatus != 'avaliable' ? Colors.grey.shade400 : Colors.white,
+      color:Colors.white,
       elevation: 5,
       margin: const EdgeInsets.all(10),
       child: InkWell(
@@ -161,19 +160,6 @@ class _ManageUserState extends State<ManageUser> {
               style: MyStyle().boldBlack16(),
             ),
             const SizedBox(height: 10),
-            Text(
-              'สถานะ : ${user.userStatus}',
-              style: MyStyle().boldBlack16(),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'วันที่สร้าง : ${user.created}',
-              style: MyStyle().boldBlack16(),
-            ),
-            Text(
-              'วันที่อัพเดท : ${user.updated}',
-              style: MyStyle().boldBlack16(),
-            ),
           ],
         ),
         children: [

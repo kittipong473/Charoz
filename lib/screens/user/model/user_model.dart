@@ -7,15 +7,10 @@ class UserModel {
   final String userBirth;
   final String userEmail;
   final String userPhone;
-  final String userPassword;
-  final String userAddress;
-  final String userLat;
-  final String userLng;
   final String userRole;
-  final String userStatus;
-  final String userFavourite;
-  final String created;
-  final String updated;
+  final String userEmailToken;
+  final String userPhoneToken;
+  final String userGoogleToken;
   UserModel({
     required this.userId,
     required this.userFirstName,
@@ -23,15 +18,10 @@ class UserModel {
     required this.userBirth,
     required this.userEmail,
     required this.userPhone,
-    required this.userPassword,
-    required this.userAddress,
-    required this.userLat,
-    required this.userLng,
     required this.userRole,
-    required this.userStatus,
-    required this.userFavourite,
-    required this.created,
-    required this.updated,
+    required this.userEmailToken,
+    required this.userPhoneToken,
+    required this.userGoogleToken,
   });
 
   UserModel copyWith({
@@ -41,15 +31,10 @@ class UserModel {
     String? userBirth,
     String? userEmail,
     String? userPhone,
-    String? userPassword,
-    String? userAddress,
-    String? userLat,
-    String? userLng,
     String? userRole,
-    String? userStatus,
-    String? userFavourite,
-    String? created,
-    String? updated,
+    String? userEmailToken,
+    String? userPhoneToken,
+    String? userGoogleToken,
   }) {
     return UserModel(
       userId: userId ?? this.userId,
@@ -58,15 +43,10 @@ class UserModel {
       userBirth: userBirth ?? this.userBirth,
       userEmail: userEmail ?? this.userEmail,
       userPhone: userPhone ?? this.userPhone,
-      userPassword: userPassword ?? this.userPassword,
-      userAddress: userAddress ?? this.userAddress,
-      userLat: userLat ?? this.userLat,
-      userLng: userLng ?? this.userLng,
       userRole: userRole ?? this.userRole,
-      userStatus: userStatus ?? this.userStatus,
-      userFavourite: userFavourite ?? this.userFavourite,
-      created: created ?? this.created,
-      updated: updated ?? this.updated,
+      userEmailToken: userEmailToken ?? this.userEmailToken,
+      userPhoneToken: userPhoneToken ?? this.userPhoneToken,
+      userGoogleToken: userGoogleToken ?? this.userGoogleToken,
     );
   }
 
@@ -78,15 +58,10 @@ class UserModel {
       'userBirth': userBirth,
       'userEmail': userEmail,
       'userPhone': userPhone,
-      'userPassword': userPassword,
-      'userAddress': userAddress,
-      'userLat': userLat,
-      'userLng': userLng,
       'userRole': userRole,
-      'userStatus': userStatus,
-      'userFavourite': userFavourite,
-      'created': created,
-      'updated': updated,
+      'userEmailToken': userEmailToken,
+      'userPhoneToken': userPhoneToken,
+      'userGoogleToken': userGoogleToken,
     };
   }
 
@@ -98,15 +73,10 @@ class UserModel {
       userBirth: map['userBirth'] ?? '',
       userEmail: map['userEmail'] ?? '',
       userPhone: map['userPhone'] ?? '',
-      userPassword: map['userPassword'] ?? '',
-      userAddress: map['userAddress'] ?? '',
-      userLat: map['userLat'] ?? '',
-      userLng: map['userLng'] ?? '',
       userRole: map['userRole'] ?? '',
-      userStatus: map['userStatus'] ?? '',
-      userFavourite: map['userFavourite'] ?? '',
-      created: map['created'] ?? '',
-      updated: map['updated'] ?? '',
+      userEmailToken: map['userEmailToken'] ?? '',
+      userPhoneToken: map['userPhoneToken'] ?? '',
+      userGoogleToken: map['userGoogleToken'] ?? '',
     );
   }
 
@@ -116,7 +86,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(userId: $userId, userFirstName: $userFirstName, userLastName: $userLastName, userBirth: $userBirth, userEmail: $userEmail, userPhone: $userPhone, userPassword: $userPassword, userAddress: $userAddress, userLat: $userLat, userLng: $userLng, userRole: $userRole, userStatus: $userStatus, userFavourite: $userFavourite, created: $created, updated: $updated)';
+    return 'UserModel(userId: $userId, userFirstName: $userFirstName, userLastName: $userLastName, userBirth: $userBirth, userEmail: $userEmail, userPhone: $userPhone, userRole: $userRole, userEmailToken: $userEmailToken, userPhoneToken: $userPhoneToken, userGoogleToken: $userGoogleToken)';
   }
 
   @override
@@ -130,15 +100,10 @@ class UserModel {
       other.userBirth == userBirth &&
       other.userEmail == userEmail &&
       other.userPhone == userPhone &&
-      other.userPassword == userPassword &&
-      other.userAddress == userAddress &&
-      other.userLat == userLat &&
-      other.userLng == userLng &&
       other.userRole == userRole &&
-      other.userStatus == userStatus &&
-      other.userFavourite == userFavourite &&
-      other.created == created &&
-      other.updated == updated;
+      other.userEmailToken == userEmailToken &&
+      other.userPhoneToken == userPhoneToken &&
+      other.userGoogleToken == userGoogleToken;
   }
 
   @override
@@ -149,14 +114,9 @@ class UserModel {
       userBirth.hashCode ^
       userEmail.hashCode ^
       userPhone.hashCode ^
-      userPassword.hashCode ^
-      userAddress.hashCode ^
-      userLat.hashCode ^
-      userLng.hashCode ^
       userRole.hashCode ^
-      userStatus.hashCode ^
-      userFavourite.hashCode ^
-      created.hashCode ^
-      updated.hashCode;
+      userEmailToken.hashCode ^
+      userPhoneToken.hashCode ^
+      userGoogleToken.hashCode;
   }
 }

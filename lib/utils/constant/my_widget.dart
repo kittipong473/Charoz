@@ -3,7 +3,6 @@ import 'package:charoz/screens/shop/component/edit_shop.dart';
 import 'package:charoz/screens/shop/model/shop_model.dart';
 import 'package:charoz/screens/shop/model/time_model.dart';
 import 'package:charoz/screens/user/component/login.dart';
-import 'package:charoz/screens/user/component/user_detail.dart';
 import 'package:charoz/services/route/route_page.dart';
 import 'package:charoz/utils/constant/my_style.dart';
 import 'package:charoz/utils/constant/my_variable.dart';

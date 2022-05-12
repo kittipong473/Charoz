@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
 class MyVariable {
   // Constant Variable
 
@@ -14,6 +16,8 @@ class MyVariable {
   static bool login = false;
   // Role of user
   static String role = '';
+  // Create FirebaseAuth Variable
+  static FirebaseAuth auth = FirebaseAuth.instance;
 
   // Dynamic Variable
 
@@ -21,6 +25,8 @@ class MyVariable {
   static String mainTitle = 'charoz';
   // Maintenance Status
   static int maintainStatus = 0;
+  // Status Auto Login
+  static String accountUid = "";
   // Type of Product
   static List<String> producttypes = [
     'อาหาร',

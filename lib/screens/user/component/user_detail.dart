@@ -56,10 +56,10 @@ class _UserDetailState extends State<UserDetail> {
                           buildManage(sprovider.shop!.shopName),
                           SizedBox(height: 3.h),
                         ],
-                        buildCreateDate(uprovider.user!.created),
-                        SizedBox(height: 3.h),
-                        buildUpdateDate(uprovider.user!.updated),
-                        SizedBox(height: 3.h),
+                        // buildCreateDate(uprovider.user!.created),
+                        // SizedBox(height: 3.h),
+                        // buildUpdateDate(uprovider.user!.updated),
+                        // SizedBox(height: 3.h),
                         buildButton(context, uprovider.user),
                         SizedBox(height: 3.h),
                         // buildEditLocation(context),
@@ -256,7 +256,6 @@ class _UserDetailState extends State<UserDetail> {
                     firstname: user.userFirstName,
                     lastname: user.userLastName,
                     birth: user.userBirth,
-                    email: user.userEmail,
                   ),
                 ),
               );
@@ -272,7 +271,7 @@ class _UserDetailState extends State<UserDetail> {
           height: MyVariable.largeDevice ? 60 : 40,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(primary: Colors.red),
-            onPressed: () => UserProvider().signOut(context),
+            onPressed: () => UserProvider().signOutFirebase(context),
             child: Text(
               'ลงชื่อออก',
               style: MyStyle().boldWhite16(),

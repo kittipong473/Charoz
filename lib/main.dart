@@ -5,6 +5,7 @@ import 'package:charoz/services/route/route_provider.dart';
 import 'package:charoz/utils/constant/my_style.dart';
 import 'package:charoz/utils/constant/my_variable.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -12,8 +13,17 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 String initialRoute = RoutePage.routeSplashPage;
 
-void main() {
+Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp().then((value) async {
+    // await MyVariable.auth.signOut();
+    MyVariable.auth.authStateChanges().listen((event) {
+      if (event != null) {
+        MyVariable.accountUid = event.uid;
+      }
+      print(event!.uid);
+    });
+  });
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -35,7 +45,6 @@ void main() {
     //     debugShowCheckedModeBanner: false,
     //   ),
     // ),
-
   ));
 }
 
@@ -51,7 +60,7 @@ class MyApp extends StatelessWidget {
         } else {
           MyVariable.largeDevice = false;
         }
-        
+
         getMaintenanceStatus();
 
         MaterialColor materialColor =

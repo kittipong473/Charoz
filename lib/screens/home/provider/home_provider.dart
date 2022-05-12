@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:charoz/screens/home/component/section/suggestion.dart';
 import 'package:charoz/screens/home/model/device_model.dart';
 import 'package:charoz/screens/product/component/menu_saler.dart';
 import 'package:charoz/screens/shop/component/shop_manage.dart';
@@ -15,12 +14,12 @@ import 'package:charoz/screens/noti/component/noti_saler.dart';
 import 'package:charoz/screens/user/component/user_detail.dart';
 import 'package:charoz/services/api/home_api.dart';
 import 'package:charoz/utils/constant/my_dialog.dart';
+import 'package:charoz/utils/constant/my_variable.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeProvider with ChangeNotifier {
   MaintainModel? _maintain;
@@ -47,10 +46,8 @@ class HomeProvider with ChangeNotifier {
     return true;
   }
 
-  Future<String> getBottomNavigationBar() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    String role = preferences.getString('role') ?? '';
-    if (role == 'admin') {
+  Future getBottomNavigationBar() async {
+    if (MyVariable.role == 'admin') {
       _screens = [
         const NotiCustomer(),
         const ShopManage(),
@@ -63,7 +60,7 @@ class HomeProvider with ChangeNotifier {
         Icon(Icons.person_rounded, size: 20.sp),
         Icon(Icons.menu_rounded, size: 20.sp),
       ];
-    } else if (role == 'saler') {
+    } else if (MyVariable.role == 'manager') {
       _screens = [
         const NotiSaler(),
         const MenuSaler(),
@@ -76,7 +73,7 @@ class HomeProvider with ChangeNotifier {
         Icon(Icons.store_mall_directory_rounded, size: 20.sp),
         Icon(Icons.menu_rounded, size: 20.sp),
       ];
-    } else if (role == 'customer') {
+    } else if (MyVariable.role == 'customer') {
       _screens = [
         const Home(),
         const MenuCustomer(),
@@ -94,18 +91,15 @@ class HomeProvider with ChangeNotifier {
         const Home(),
         const MenuCustomer(),
         const NotiCustomer(),
-        const Suggestion(),
-        // const Login(),
+        const Login(),
       ];
       _icons = [
         Icon(Icons.home_rounded, size: 20.sp),
         Icon(Icons.restaurant_rounded, size: 20.sp),
         Icon(Icons.notifications_active_rounded, size: 20.sp),
-        Icon(Icons.insert_comment_rounded, size: 20.sp),
-        // Icon(Icons.menu_rounded, size: 20.sp),
+        Icon(Icons.menu_rounded, size: 20.sp),
       ];
     }
-    return role;
   }
 
   Future getMaintenance(String status) async {

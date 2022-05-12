@@ -12,6 +12,7 @@ class MyImage {
   static String showshop2 = 'assets/images/showshop2.jpg';
   static String showshop3 = 'assets/images/showshop3.jpg';
   static String showshop4 = 'assets/images/showshop4.jpg';
+  static String thai = 'assets/images/thai.png';
 
   static String gifLoading = 'assets/animates/loading.json';
   static String gifSplash = 'assets/animates/splash.json';

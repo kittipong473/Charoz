@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:charoz/screens/product/provider/product_provider.dart';
 import 'package:charoz/services/api/product_api.dart';
 import 'package:charoz/services/route/route_api.dart';
 import 'package:charoz/utils/constant/my_dialog.dart';
@@ -13,7 +12,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class AddProduct extends StatefulWidget {

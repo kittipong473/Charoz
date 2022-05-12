@@ -32,22 +32,21 @@ class _SplashPageState extends State<SplashPage> {
 
   Future getDataPreference() async {
     Provider.of<HomeProvider>(context, listen: false).getDeviceInfo();
-
     load1 =
         await Provider.of<SuggestProvider>(context, listen: false).initial();
     load2 = await Provider.of<HomeProvider>(context, listen: false).initial();
     load3 = await Provider.of<ShopProvider>(context, listen: false).initial();
     load4 =
         await Provider.of<ProductProvider>(context, listen: false).initial();
-
-    MyVariable.login =
-        await Provider.of<UserProvider>(context, listen: false).checkLogin();
     maintenance = await Provider.of<HomeProvider>(context, listen: false)
         .getMaintenance(MyVariable.maintainStatus.toString());
 
-    if (MyVariable.login == true) {
-      Provider.of<UserProvider>(context, listen: false)
-          .getUserWhereIdPreference();
+    if (MyVariable.accountUid != "") {
+      MyVariable.login = true;
+      await Provider.of<UserProvider>(context, listen: false)
+          .getUserWhereToken();
+    } else {
+      MyVariable.login = false;
     }
 
     if (maintenance == '0' || maintenance == '1') {

@@ -3,12 +3,26 @@ import 'dart:convert';
 import 'package:charoz/screens/user/model/user_model.dart';
 import 'package:charoz/services/route/route_api.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class UserApi {
+  Future getUserWhereToken({required String token}) async {
+    UserModel? result;
+    final url =
+        Uri.parse('${RouteApi.domainNewApi}getUserWhereToken.php?token=$token');
+    http.Response response = await http.get(url);
+    if (response.statusCode == 200) {
+      for (var item in json.decode(response.body)) {
+        result = UserModel.fromMap(item);
+      }
+      return result;
+    } else {
+      return null;
+    }
+  }
+
   Future<bool> checkUserWherePhone({required String phone}) async {
     final url =
-        Uri.parse('${RouteApi.domainApi}getUserWherePhone.php?phone=$phone');
+        Uri.parse('${RouteApi.domainNewApi}getUserWherePhone.php?phone=$phone');
     http.Response response = await http.get(url);
     if (response.statusCode == 200) {
       if (response.body.toString() == 'null') {
@@ -21,46 +35,25 @@ class UserApi {
     }
   }
 
-  Future<bool> registerUser({
-    required String firstname,
-    required String lastname,
-    required String birth,
-    required String email,
-    required String phone,
-    required String password,
-    required String create,
-    required String update,
-  }) async {
-    final url = Uri.parse(
-        '${RouteApi.domainApi}register.php?firstname=$firstname&lastname=$lastname&birth=$birth&email=$email&phone=$phone&password=$password&created=$create&updated=$update');
+  Future<bool> checkUserWhereEmail({required String email}) async {
+    final url =
+        Uri.parse('${RouteApi.domainNewApi}getUserWhereEmail.php?email=$email');
     http.Response response = await http.get(url);
-    if (response.statusCode == 200 && response.body.toString() == 'true') {
-      return true;
+    if (response.statusCode == 200) {
+      if (response.body.toString() == 'null') {
+        return true;
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
   }
 
-  Future loginUser({required String phone, required String password}) async {
+  Future getUserEmailWherePhone({required String phone}) async {
     UserModel? result;
-    final url = Uri.parse(
-        '${RouteApi.domainApi}login.php?phone=$phone&password=$password');
-    http.Response response = await http.get(url);
-    if (response.statusCode == 200 && response.body.toString() != 'null') {
-      for (var item in json.decode(response.body)) {
-        result = UserModel.fromMap(item);
-      }
-      return result;
-    } else {
-      return null;
-    }
-  }
-
-  Future getUserWhereIdPreference() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    String id = preferences.getString('id')!;
-    UserModel? result;
-    final url = Uri.parse('${RouteApi.domainApi}getUserWhereId.php?id=$id');
+    final url =
+        Uri.parse('${RouteApi.domainNewApi}getUserWherePhone.php?phone=$phone');
     http.Response response = await http.get(url);
     if (response.statusCode == 200) {
       for (var item in json.decode(response.body)) {
@@ -69,6 +62,26 @@ class UserApi {
       return result;
     } else {
       return null;
+    }
+  }
+
+  Future<bool> registerUser({
+    required String firstname,
+    required String lastname,
+    required String birth,
+    required String email,
+    required String phone,
+    required String role,
+    required String tokenE,
+    required String tokenP,
+  }) async {
+    final url = Uri.parse(
+        '${RouteApi.domainNewApi}registerUser.php?firstname=$firstname&lastname=$lastname&birth=$birth&email=$email&phone=$phone&role=$role&tokenE=$tokenE&tokenP=$tokenP');
+    http.Response response = await http.get(url);
+    if (response.statusCode == 200 && response.body.toString() == 'true') {
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -94,8 +107,7 @@ class UserApi {
     if (favorites == '[]') {
       favorites = 'null';
     }
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    String id = preferences.getString('id')!;
+    String id = "";
     final url = Uri.parse(
         '${RouteApi.domainApi}editFavoriteWhereUser.php?id=$id&favorites=$favorites');
     http.Response response = await http.get(url);
@@ -115,7 +127,6 @@ class UserApi {
         UserModel model = UserModel.fromMap(item);
         result.add(model);
       }
-      
     }
     return result;
   }

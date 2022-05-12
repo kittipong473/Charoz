@@ -98,6 +98,12 @@ class MyStyle {
           fontSize: 18.sp,
         ),
       );
+  TextStyle normalGrey18() => GoogleFonts.kanit(
+        textStyle: TextStyle(
+          color: Colors.black45,
+          fontSize: 18.sp,
+        ),
+      );
   TextStyle normalPrimary18() => GoogleFonts.kanit(
         textStyle: TextStyle(
           color: primary,
@@ -302,6 +308,13 @@ class MyStyle {
           fontWeight: FontWeight.bold,
           color: blue,
           fontSize: 20.sp,
+        ),
+      );
+  TextStyle boldBlack18OTP() => GoogleFonts.kanit(
+        textStyle: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 18.sp,
+          letterSpacing: 20,
         ),
       );
 }

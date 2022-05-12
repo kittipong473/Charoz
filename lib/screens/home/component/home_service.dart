@@ -1,5 +1,6 @@
 import 'package:charoz/screens/home/provider/home_provider.dart';
 import 'package:charoz/screens/shop/provider/shop_provider.dart';
+import 'package:charoz/screens/user/provider/user_provider.dart';
 import 'package:charoz/utils/constant/my_style.dart';
 import 'package:charoz/utils/constant/my_variable.dart';
 import 'package:charoz/utils/show_progress.dart';
@@ -25,9 +26,8 @@ class _HomeServiceState extends State<HomeService> {
     Provider.of<ShopProvider>(context, listen: false).getCurrentTimeStatus();
   }
 
-  Future getRole() async {
-    MyVariable.role = await Provider.of<HomeProvider>(context, listen: false)
-        .getBottomNavigationBar();
+  void getRole() {
+    Provider.of<HomeProvider>(context, listen: false).getBottomNavigationBar();
     setState(() {});
   }
 
