@@ -1,9 +1,7 @@
-import 'package:charoz/screens/home/model/maintenanceapp_model.dart';
-import 'package:charoz/services/api/home_api.dart';
-import 'package:charoz/services/route/route_page.dart';
-import 'package:charoz/services/route/route_provider.dart';
-import 'package:charoz/utils/constant/my_style.dart';
-import 'package:charoz/utils/constant/my_variable.dart';
+import 'package:charoz/Service/Route/route_page.dart';
+import 'package:charoz/Service/Route/route_provider.dart';
+import 'package:charoz/Utilty/Constant/my_style.dart';
+import 'package:charoz/Utilty/Constant/my_variable.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +19,6 @@ Future main() async {
       if (event != null) {
         MyVariable.accountUid = event.uid;
       }
-      print(event!.uid);
     });
   });
   SystemChrome.setPreferredOrientations([
@@ -60,9 +57,6 @@ class MyApp extends StatelessWidget {
         } else {
           MyVariable.largeDevice = false;
         }
-
-        getMaintenanceStatus();
-
         MaterialColor materialColor =
             MaterialColor(0xfff57f17, MyStyle.mapMaterialColor);
         return MaterialApp(
@@ -77,10 +71,5 @@ class MyApp extends StatelessWidget {
         );
       },
     );
-  }
-
-  Future getMaintenanceStatus() async {
-    MaintenanceApp maintenanceApp = await HomeApi().getMaintenanceStatus();
-    MyVariable.maintainStatus = int.parse(maintenanceApp.status);
   }
 }
