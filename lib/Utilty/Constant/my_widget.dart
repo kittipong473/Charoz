@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:charoz/Screen/Order/Component/order_cart.dart';
 import 'package:charoz/Screen/Product/Component/edit_product.dart';
 import 'package:charoz/Screen/Product/Model/product_model.dart';
 import 'package:charoz/Screen/Product/Provider/product_provider.dart';
@@ -212,6 +213,28 @@ class MyWidget {
         },
         icon: Icon(
           Icons.login_rounded,
+          color: Colors.white,
+          size: 20.sp,
+        ),
+      ),
+    );
+  }
+
+  Positioned cartIcon(BuildContext context) {
+    return Positioned(
+      top: MyVariable.largeDevice ? 60 : 20,
+      right: MyVariable.largeDevice ? 30 : 10,
+      child: IconButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const OrderCart(),
+            ),
+          );
+        },
+        icon: Icon(
+          Icons.shopping_cart_rounded,
           color: Colors.white,
           size: 20.sp,
         ),

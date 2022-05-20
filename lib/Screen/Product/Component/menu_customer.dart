@@ -3,8 +3,8 @@ import 'package:charoz/Screen/Product/Component/Section/drink.dart';
 import 'package:charoz/Screen/Product/Component/Section/food.dart';
 import 'package:charoz/Screen/Product/Component/Section/snack.dart';
 import 'package:charoz/Screen/Product/Component/Section/sweet.dart';
-import 'package:charoz/Screen/Product/Model/product_model.dart';
 import 'package:charoz/Screen/Product/Provider/product_provider.dart';
+import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Constant/my_variable.dart';
 import 'package:charoz/Utilty/Constant/my_widget.dart';
@@ -22,7 +22,6 @@ class MenuCustomer extends StatefulWidget {
 
 class _MenuCustomerState extends State<MenuCustomer> {
   final scrollController = ScrollController();
-  List<ProductModel> favorites = [];
   bool data = false;
   bool scroll = true;
   double countScore = 0.0;
@@ -92,6 +91,12 @@ class _MenuCustomerState extends State<MenuCustomer> {
               chip('ของหวาน', 3, pprovider.productsSweetLength),
             ],
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              chipOrderCart(),
+            ],
+          ),
         ],
       ),
     );
@@ -122,6 +127,29 @@ class _MenuCustomerState extends State<MenuCustomer> {
           });
         },
       ),
+    );
+  }
+
+  Widget chipOrderCart() {
+    return ActionChip(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      backgroundColor: MyStyle.blue,
+      label: Row(
+        children: [
+          Icon(
+            Icons.shopping_cart_rounded,
+            size: 20.sp,
+            color: Colors.white,
+          ),
+          Text(
+            'ตะกร้าของคุณ',
+            style: MyStyle().boldWhite14(),
+          ),
+        ],
+      ),
+      onPressed: () {
+        Navigator.pushNamed(context, RoutePage.routeOrderCart);
+      },
     );
   }
 

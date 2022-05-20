@@ -23,7 +23,7 @@ class UserProvider with ChangeNotifier {
   }
 
   Future getUserWhereToken() async {
-    _user = await UserApi().getUserWhereToken(token: MyVariable.accountUid);
+    _user = await UserApi().getUserWhereToken();
     MyVariable.role = _user!.userRole;
     notifyListeners();
   }

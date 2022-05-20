@@ -1,3 +1,4 @@
+import 'package:charoz/Screen/User/Model/user_model.dart';
 import 'package:charoz/Screen/User/Provider/user_provider.dart';
 import 'package:charoz/Service/Api/user_api.dart';
 import 'package:charoz/Utilty/Constant/my_dialog.dart';
@@ -11,17 +12,8 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class EditUser extends StatefulWidget {
-  final String id;
-  final String firstname;
-  final String lastname;
-  final String birth;
-  const EditUser({
-    Key? key,
-    required this.id,
-    required this.firstname,
-    required this.lastname,
-    required this.birth,
-  }) : super(key: key);
+  final UserModel user;
+  const EditUser({Key? key, required this.user}) : super(key: key);
 
   @override
   _EditUserState createState() => _EditUserState();
@@ -32,15 +24,14 @@ class _EditUserState extends State<EditUser> {
   TextEditingController firstnameController = TextEditingController();
   TextEditingController lastnameController = TextEditingController();
   TextEditingController birthController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
   DateTime? birth;
 
   @override
   void initState() {
     super.initState();
-    firstnameController.text = widget.firstname;
-    lastnameController.text = widget.lastname;
-    birthController.text = widget.birth;
+    firstnameController.text = widget.user.userFirstName;
+    lastnameController.text = widget.user.userLastName;
+    birthController.text = widget.user.userBirth;
   }
 
   @override
@@ -73,8 +64,6 @@ class _EditUserState extends State<EditUser> {
                           SizedBox(height: 3.h),
                           buildBirth(),
                           SizedBox(height: 5.h),
-                          // buildEmail(),
-                          // const SizedBox(height: 30),
                           buildButton(context),
                           SizedBox(height: 2.h),
                         ],
@@ -245,53 +234,13 @@ class _EditUserState extends State<EditUser> {
     );
   }
 
-  Row buildEmail() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          width: 85.w,
-          child: TextFormField(
-            keyboardType: TextInputType.emailAddress,
-            style: MyStyle().normalBlack16(),
-            controller: emailController,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'กรุณากรอก อีเมลล์';
-              } else {
-                return null;
-              }
-            },
-            decoration: InputDecoration(
-              labelStyle: MyStyle().boldBlack16(),
-              labelText: 'อีเมลล์ :',
-              prefixIcon: const Icon(
-                Icons.email_rounded,
-                color: MyStyle.dark,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: MyStyle.dark),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: MyStyle.light),
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Row buildButton(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
           width: 85.w,
-          height: MyVariable.largeDevice ? 60 : 40,
+          height: 5.h,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(primary: MyStyle.blue),
             onPressed: () {
@@ -310,11 +259,10 @@ class _EditUserState extends State<EditUser> {
   }
 
   Future processUpdate() async {
-    String id = widget.id;
+    String id = widget.user.userId;
     String firstname = firstnameController.text;
     String lastname = lastnameController.text;
     String birth = birthController.text;
-    String email = emailController.text;
     String time = DateFormat('dd-MM-yyyy HH:mm').format(DateTime.now());
 
     bool status = await UserApi().editUserWhereId(
@@ -322,7 +270,6 @@ class _EditUserState extends State<EditUser> {
       firstname: firstname,
       lastname: lastname,
       birth: birth,
-      email: email,
       time: time,
     );
 

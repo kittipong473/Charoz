@@ -96,7 +96,7 @@ class _MenuSalerState extends State<MenuSaler> {
             children: [
               chipAddMenu(),
             ],
-          )
+          ),
         ],
       ),
     );

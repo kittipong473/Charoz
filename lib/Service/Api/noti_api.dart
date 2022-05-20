@@ -8,7 +8,7 @@ class NotiApi {
   Future getNotiWhereType(String type) async {
     List<NotiModel> result = [];
     final url =
-        Uri.parse('${RouteApi.domainApi}getNotiWhereType.php?type=$type');
+        Uri.parse('${RouteApi.domainApiNoti}getNotiWhereType.php?type=$type');
     http.Response response = await http.get(url);
     if (response.statusCode == 200 && response.body.toString() != 'null') {
       for (var item in json.decode(response.body)) {
@@ -22,7 +22,7 @@ class NotiApi {
 
   Future getNotiWhereId({required String id}) async {
     NotiModel? result;
-    final url = Uri.parse('${RouteApi.domainApi}getNotiWhereId.php?id=$id');
+    final url = Uri.parse('${RouteApi.domainApiNoti}getNotiWhereId.php?id=$id');
     http.Response response = await http.get(url);
     if (response.statusCode == 200 && response.body.toString() != 'null') {
       for (var item in json.decode(response.body)) {
@@ -35,7 +35,8 @@ class NotiApi {
   }
 
   Future changeNotiStatus({required String id}) async {
-    final url = Uri.parse('${RouteApi.domainApi}changeNotiStatus.php?id=$id');
+    final url =
+        Uri.parse('${RouteApi.domainApiNoti}changeNotiStatus.php?id=$id');
     http.Response response = await http.get(url);
     if (response.statusCode == 200 && response.body.toString() == 'true') {
       return true;
@@ -54,7 +55,7 @@ class NotiApi {
     required String end,
   }) async {
     final url = Uri.parse(
-        '${RouteApi.domainApi}addNoti.php?type=$type&name=$name&detail=$detail&image=$image&refer=$refer&start=$start&end=$end');
+        '${RouteApi.domainApiNoti}addNoti.php?type=$type&name=$name&detail=$detail&image=$image&refer=$refer&start=$start&end=$end');
     http.Response response = await http.get(url);
     if (response.statusCode == 200 && response.body.toString() == 'true') {
       return true;
@@ -64,7 +65,8 @@ class NotiApi {
   }
 
   Future deleteNotiWhereId({required String id}) async {
-    final url = Uri.parse('${RouteApi.domainApi}deleteNotiWhereId.php?id=$id');
+    final url =
+        Uri.parse('${RouteApi.domainApiNoti}deleteNotiWhereId.php?id=$id');
     http.Response response = await http.get(url);
     if (response.statusCode == 200 && response.body.toString() == 'true') {
       return true;

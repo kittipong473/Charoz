@@ -18,6 +18,7 @@ Future main() async {
     MyVariable.auth.authStateChanges().listen((event) {
       if (event != null) {
         MyVariable.accountUid = event.uid;
+        print(event.uid);
       }
     });
   });

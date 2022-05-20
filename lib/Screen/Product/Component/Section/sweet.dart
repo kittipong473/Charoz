@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charoz/Screen/Product/Model/product_model.dart';
+import 'package:charoz/Service/Api/product_api.dart';
 import 'package:charoz/Service/Route/route_api.dart';
 import 'package:charoz/Utilty/Constant/my_function.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
@@ -46,6 +47,11 @@ class _SweetState extends State<Sweet> {
     }
   }
 
+  Future refreshList() async {
+    productModels = await ProductApi().getProductWhereType('ของหวาน');
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -53,18 +59,21 @@ class _SweetState extends State<Sweet> {
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
         body: productModels.isNotEmpty
-            ? GridView.builder(
-                shrinkWrap: true,
-                controller: scrollController,
-                padding: MyVariable.largeDevice
-                    ? const EdgeInsets.only(top: 10)
-                    : const EdgeInsets.only(top: 0),
-                itemCount: productModels.length,
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    childAspectRatio: 2 / 3, maxCrossAxisExtent: 160),
-                itemBuilder: (context, index) {
-                  return buildProductItem(productModels[index], index);
-                },
+            ? RefreshIndicator(
+                onRefresh: refreshList,
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  controller: scrollController,
+                  padding: MyVariable.largeDevice
+                      ? const EdgeInsets.only(top: 10)
+                      : const EdgeInsets.only(top: 0),
+                  itemCount: productModels.length,
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                      childAspectRatio: 2 / 3, maxCrossAxisExtent: 160),
+                  itemBuilder: (context, index) {
+                    return buildProductItem(productModels[index], index);
+                  },
+                ),
               )
             : Center(
                 child: Column(

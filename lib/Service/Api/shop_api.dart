@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 class ShopApi {
   Future getAllShop() async {
     List<ShopModel> result = [];
-    final url = Uri.parse('${RouteApi.domainApi}getAllShop.php');
+    final url = Uri.parse('${RouteApi.domainApiShop}getAllShop.php');
     http.Response response = await http.get(url);
     if (response.statusCode == 200 || response.body.toString() != 'null') {
       for (var item in json.decode(response.body)) {
@@ -23,7 +23,7 @@ class ShopApi {
 
   Future getShopWhereId() async {
     ShopModel? result;
-    final url = Uri.parse('${RouteApi.domainApi}getShopWhereId.php?id=1');
+    final url = Uri.parse('${RouteApi.domainApiShop}getShopWhereId.php?id=1');
     http.Response response = await http.get(url);
     if (response.statusCode == 200 || response.body.toString() != 'null') {
       for (var item in json.decode(response.body)) {
@@ -37,7 +37,7 @@ class ShopApi {
 
   Future getTimeWhereId() async {
     TimeModel? result;
-    final url = Uri.parse('${RouteApi.domainApi}getTimeWhereId.php?id=1');
+    final url = Uri.parse('${RouteApi.domainApiShop}getTimeWhereId.php?id=1');
     http.Response response = await http.get(url);
     if (response.statusCode == 200 || response.body.toString() != 'null') {
       for (var item in json.decode(response.body)) {
@@ -58,7 +58,7 @@ class ShopApi {
     required String time,
   }) async {
     final url = Uri.parse(
-        '${RouteApi.domainApi}editShopWhereId.php?id=$id&name=$name&announce=$announce&detail=$detail&video=$video&updated=$time');
+        '${RouteApi.domainApiShop}editShopWhereId.php?id=$id&name=$name&announce=$announce&detail=$detail&video=$video&updated=$time');
     http.Response response = await http.get(url);
     if (response.statusCode == 200 && response.body.toString() == 'true') {
       return true;
@@ -76,7 +76,7 @@ class ShopApi {
     required String weekendClose,
   }) async {
     final url = Uri.parse(
-        '${RouteApi.domainApi}editTimeWhereId.php?id=$id&type=$type&weekdayOpen=$weekdayOpen&weekdayClose=$weekdayClose&weekendOpen=$weekendOpen&weekendClose=$weekendClose');
+        '${RouteApi.domainApiShop}editTimeWhereId.php?id=$id&type=$type&weekdayOpen=$weekdayOpen&weekdayClose=$weekdayClose&weekendOpen=$weekendOpen&weekendClose=$weekendClose');
     http.Response response = await http.get(url);
     if (response.statusCode == 200 && response.body.toString() == 'true') {
       return true;
@@ -93,7 +93,7 @@ class ShopApi {
     required String time,
   }) async {
     final url = Uri.parse(
-        '${RouteApi.domainApi}editAddressWhereShop.php?id=$id&address=$address&lat=$lat&lng=$lng&updated=$time');
+        '${RouteApi.domainApiShop}editAddressWhereShop.php?id=$id&address=$address&lat=$lat&lng=$lng&updated=$time');
     http.Response response = await http.get(url);
     if (response.statusCode == 200 && response.body.toString() == 'true') {
       return true;

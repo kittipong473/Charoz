@@ -653,7 +653,7 @@ class _EditShopSalerState extends State<EditShopSaler> {
     String time = DateFormat('dd-MM-yyyy HH:mm').format(DateTime.now());
 
     if (file != null) {
-      String url = '${RouteApi.domainApi}saveVideoShop.php';
+      String url = '${RouteApi.domainApiShop}saveVideoShop.php';
       int i = Random().nextInt(100000);
       String nameVideo = 'video$i.jpg';
       Map<String, dynamic> map = {};

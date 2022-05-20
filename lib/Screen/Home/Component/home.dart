@@ -458,7 +458,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   Widget buildShopData() {
-    Color color = MyStyle.dark;
     return InkWell(
       onTap: () => Navigator.pushNamed(context, RoutePage.routeShopDetail),
       child: Container(
@@ -466,26 +465,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: MyStyle.light,
-          boxShadow: [
-            for (double i = 1; i < 5; i++)
-              BoxShadow(
-                spreadRadius: -1,
-                color: color,
-                blurRadius: 5 * i,
-                blurStyle: BlurStyle.outer,
-              ),
-          ],
+          boxShadow: [MyStyle().boxShadow(color: MyStyle.primary)],
         ),
         child: Text(
           'ดูข้อมูลร้านอาหาร',
           style: TextStyle(
-            color: Colors.white,
+            color: MyStyle.dark,
             fontSize: 16.sp,
             fontWeight: FontWeight.bold,
-            shadows: [
-              for (double i = 1; i < 4; i++)
-                Shadow(color: color, blurRadius: 3 * i),
-            ],
+            shadows: [MyStyle().textShadow()],
           ),
         ),
       ),

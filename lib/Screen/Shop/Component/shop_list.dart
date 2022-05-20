@@ -27,7 +27,6 @@ class _ShopListState extends State<ShopList> {
 
   void getData() {
     Provider.of<ShopProvider>(context, listen: false).getAllShop();
-    Provider.of<ShopProvider>(context, listen: false).getTimeWhereId();
   }
 
   @override
@@ -37,22 +36,21 @@ class _ShopListState extends State<ShopList> {
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
         body: Consumer<ShopProvider>(
-          builder: (context, sprovider, child) => sprovider.shops.isEmpty ||
-                  sprovider.time == null
+          builder: (context, sprovider, child) => sprovider.shops.isEmpty
               ? const ShowProgress()
               : Stack(
                   children: [
                     Positioned.fill(
-                      top: 50,
+                      top: 6.h,
                       child: SingleChildScrollView(
                         child: Container(
                           width: 100.w,
-                          height: 85.h,
+                          height: 94.h,
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: ListView.builder(
                             itemCount: sprovider.shopsLength,
-                            itemBuilder: (context, index) => buildShopItem(
-                                sprovider.shops[index], sprovider.time, index),
+                            itemBuilder: (context, index) =>
+                                buildShopItem(sprovider.shops[index], index),
                           ),
                         ),
                       ),
@@ -66,7 +64,7 @@ class _ShopListState extends State<ShopList> {
     );
   }
 
-  Widget buildShopItem(ShopModel shop, TimeModel time, int index) {
+  Widget buildShopItem(ShopModel shop, int index) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 10),
       elevation: 5.0,

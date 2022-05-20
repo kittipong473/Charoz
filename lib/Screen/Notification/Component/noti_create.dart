@@ -417,7 +417,7 @@ class _NotiCreateState extends State<NotiCreate> {
     String end = endController.text;
 
     if (file != null) {
-      String url = '${RouteApi.domainApi}saveImagePromo.php';
+      String url = '${RouteApi.domainApiNoti}saveImagePromo.php';
       int i = Random().nextInt(100000);
       String nameImage = 'promo$i.jpg';
       Map<String, dynamic> map = {};

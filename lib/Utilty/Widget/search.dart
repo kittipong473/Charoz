@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class ProductSearch {
   static Future<List<ProductModel>> getSuggestion(String query) async {
-    final path = Uri.parse('${RouteApi.domainApi}getAllProduct.php');
+    final path = Uri.parse('${RouteApi.domainApiProduct}getAllProduct.php');
     http.Response response = await http.get(path);
 
     final List datas = json.decode(response.body);

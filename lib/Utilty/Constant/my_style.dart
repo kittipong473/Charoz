@@ -317,4 +317,16 @@ class MyStyle {
           letterSpacing: 20,
         ),
       );
+
+  BoxShadow boxShadow({required Color color}) => BoxShadow(
+        color: color,
+        spreadRadius: 5,
+        blurRadius: 10,
+        offset: const Offset(0, 1),
+      );
+  Shadow textShadow() => const Shadow(
+        color: Colors.white,
+        blurRadius: 10,
+        offset: Offset(0, 1),
+      );
 }

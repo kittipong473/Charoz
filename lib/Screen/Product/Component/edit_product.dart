@@ -410,7 +410,7 @@ class _EditProductState extends State<EditProduct> {
     String time = DateFormat('dd-MM-yyyy HH:mm').format(DateTime.now());
 
     if (file != null) {
-      String url = '${RouteApi.domainApi}saveImageProduct.php';
+      String url = '${RouteApi.domainApiProduct}saveImageProduct.php';
       int i = Random().nextInt(100000);
       String nameImage = 'product$i.jpg';
       Map<String, dynamic> map = {};

@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:charoz/Screen/Product/Provider/product_provider.dart';
 import 'package:charoz/Service/Api/product_api.dart';
 import 'package:charoz/Service/Route/route_api.dart';
 import 'package:charoz/Utilty/Constant/my_dialog.dart';
@@ -13,7 +12,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class AddProduct extends StatefulWidget {
@@ -392,7 +390,7 @@ class _AddProductState extends State<AddProduct> {
     String time = DateFormat('dd-MM-yyyy HH:mm').format(DateTime.now());
 
     if (file != null) {
-      String url = '${RouteApi.domainApi}saveImageProduct.php';
+      String url = '${RouteApi.domainApiProduct}saveImageProduct.php';
       int i = Random().nextInt(100000);
       String nameImage = 'product$i.jpg';
       Map<String, dynamic> map = {};
@@ -418,7 +416,6 @@ class _AddProductState extends State<AddProduct> {
     );
 
     if (status) {
-      Provider.of<ProductProvider>(context, listen: false).getAllProduct();
       MyWidget().toast('เพิ่มรายการอาหารเรียบร้อยแล้ว');
       Navigator.pop(context);
     } else {

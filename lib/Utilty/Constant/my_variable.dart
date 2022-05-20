@@ -54,4 +54,13 @@ class MyVariable {
     'ยังไม่ทำงาน',
     'อื่นๆ',
   ];
+  // List of type of address
+  static String chooseAddress = '--เลือกสถานที่--';
+  static List<String> locationTypes = [
+    '--เลือกสถานที่--',
+    'คอนโดถนอมมิตร',
+    'บ้านพัก',
+    'ที่ทำงาน',
+    'อื่นๆ',
+  ];
 }

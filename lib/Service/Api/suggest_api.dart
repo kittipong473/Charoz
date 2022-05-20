@@ -15,7 +15,7 @@ class SuggestApi {
     required String time,
   }) async {
     final url = Uri.parse(
-        '${RouteApi.domainApi}addSuggest.php?age=$age&job=$job&score=$score&total=$total&detail=$detail&created=$time');
+        '${RouteApi.domainApiSuggest}addSuggest.php?age=$age&job=$job&score=$score&total=$total&detail=$detail&created=$time');
     http.Response response = await http.get(url);
     if (response.statusCode == 200 && response.body.toString() == 'true') {
       return true;
@@ -26,7 +26,7 @@ class SuggestApi {
 
   Future getAllAssessment() async {
     List<AssessmentModel> result = [];
-    final url = Uri.parse('${RouteApi.domainApi}getAllAssessment.php');
+    final url = Uri.parse('${RouteApi.domainApiSuggest}getAllAssessment.php');
     http.Response response = await http.get(url);
     if (response.statusCode == 200 || response.body.toString() != 'null') {
       for (var item in json.decode(response.body)) {
@@ -41,7 +41,7 @@ class SuggestApi {
 
   Future getAllSuggest() async {
     List<SuggestionModel> result = [];
-    final url = Uri.parse('${RouteApi.domainApi}getAllSuggest.php');
+    final url = Uri.parse('${RouteApi.domainApiSuggest}getAllSuggest.php');
     http.Response response = await http.get(url);
     if (response.statusCode == 200 || response.body.toString() != 'null') {
       for (var item in json.decode(response.body)) {
@@ -56,7 +56,8 @@ class SuggestApi {
 
   Future getSuggestWhereId({required String id}) async {
     SuggestionModel? result;
-    final url = Uri.parse('${RouteApi.domainApi}getSuggestWhereId.php?id=$id');
+    final url =
+        Uri.parse('${RouteApi.domainApiSuggest}getSuggestWhereId.php?id=$id');
     http.Response response = await http.get(url);
     if (response.statusCode == 200) {
       for (var item in json.decode(response.body)) {

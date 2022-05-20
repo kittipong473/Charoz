@@ -1,11 +1,14 @@
 import 'package:charoz/Screen/Home/Component/page_navigation.dart';
 import 'package:charoz/Screen/Home/Component/splash_page.dart';
 import 'package:charoz/Screen/Notification/Component/noti_create.dart';
+import 'package:charoz/Screen/Order/Component/order_cart.dart';
 import 'package:charoz/Screen/Product/Component/add_product.dart';
 import 'package:charoz/Screen/Shop/Component/shop_detail.dart';
 import 'package:charoz/Screen/Suggestion/Component/question_answer.dart';
 import 'package:charoz/Screen/Suggestion/Component/suggest_complete.dart';
+import 'package:charoz/Screen/User/Component/Address/add_location.dart';
 import 'package:charoz/Screen/User/Component/login_token.dart';
+import 'package:charoz/Screen/User/Component/Address/location_list.dart';
 import 'package:flutter/material.dart';
 
 class RoutePage {
@@ -17,6 +20,9 @@ class RoutePage {
   static String routeNotiCreate = '/noticreate';
   static String routeQuestionAnswer = '/questionanswer';
   static String routeLoginToken = '/logintoken';
+  static String routeOrderCart = '/ordercart';
+  static String routeLocationList = '/locationlist';
+  static String routeAddLocation = '/addlocation';
 }
 
 final Map<String, WidgetBuilder> routes = {
@@ -28,4 +34,7 @@ final Map<String, WidgetBuilder> routes = {
   '/noticreate': (BuildContext context) => const NotiCreate(),
   '/questionanswer': (BuildContext context) => const QuestionAnswer(),
   '/logintoken': (BuildContext context) => const LoginToken(),
+  '/ordercart': (BuildContext context) => const OrderCart(),
+  '/locationlist': (BuildContext context) => const LocationList(),
+  '/addlocation': (BuildContext context) => const AddLocation(),
 };

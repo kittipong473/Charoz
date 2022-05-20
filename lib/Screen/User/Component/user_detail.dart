@@ -1,7 +1,9 @@
 import 'package:charoz/Screen/Shop/Provider/shop_provider.dart';
 import 'package:charoz/Screen/User/Component/edit_user.dart';
 import 'package:charoz/Screen/User/Model/user_model.dart';
+import 'package:charoz/Screen/User/Provider/address_provider.dart';
 import 'package:charoz/Screen/User/Provider/user_provider.dart';
+import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Constant/my_variable.dart';
@@ -27,6 +29,8 @@ class _UserDetailState extends State<UserDetail> {
 
   void getData() {
     Provider.of<ShopProvider>(context, listen: false).getShopWhereId();
+    Provider.of<AddressProvider>(context, listen: false)
+        .getCurrentAddressWhereId();
   }
 
   @override
@@ -35,9 +39,9 @@ class _UserDetailState extends State<UserDetail> {
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
-        body: Consumer2<UserProvider, ShopProvider>(
-          builder: (context, uprovider, sprovider, child) =>
-              sprovider.shop == null
+        body: Consumer3<UserProvider, ShopProvider, AddressProvider>(
+          builder: (context, uprovider, sprovider, aprovider, child) =>
+              sprovider.shop == null || aprovider.address == null
                   ? const ShowProgress()
                   : Stack(
                       children: [
@@ -63,14 +67,14 @@ class _UserDetailState extends State<UserDetail> {
                                   buildBirth(uprovider.user!.userBirth),
                                   SizedBox(height: 3.h),
                                   buildRole(uprovider.user!.userRole),
-                                  SizedBox(height: 5.h),
-                                  if (uprovider.user!.userRole == 'saler') ...[
-                                    buildManage(sprovider.shop!.shopName),
-                                    SizedBox(height: 5.h),
-                                  ],
-                                  buildButton(context, uprovider.user),
                                   SizedBox(height: 3.h),
-                                  // buildEditLocation(context),
+                                  buildLocation(aprovider.address!.addressName),
+                                  SizedBox(height: 5.h),
+                                  buildButton(context, uprovider.user),
+                                  if (MyVariable.role == 'customer') ...[
+                                    SizedBox(height: 5.h),
+                                    buildUserLocation(context),
+                                  ],
                                 ],
                               ),
                             ),
@@ -194,53 +198,17 @@ class _UserDetailState extends State<UserDetail> {
     );
   }
 
-  Widget buildManage(String shop) {
+  Widget buildLocation(String location) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'ดูแลร้านค้า : ',
+          'ที่อยู่ปัจจุบัน : ',
           style: MyStyle().boldBlack18(),
         ),
         Text(
-          shop,
+          location,
           style: MyStyle().normalPrimary18(),
-        ),
-      ],
-    );
-  }
-
-  Widget buildCreateDate(String cdate) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          'วันที่สร้าง : ',
-          style: MyStyle().boldBlack18(),
-        ),
-        Text(
-          cdate,
-          style: MyStyle().normalPrimary18(),
-        ),
-      ],
-    );
-  }
-
-  Widget buildUpdateDate(String udate) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          'วันที่แก้ไข : ',
-          style: MyStyle().boldBlack18(),
-        ),
-        Row(
-          children: [
-            Text(
-              udate,
-              style: MyStyle().normalPrimary18(),
-            ),
-          ],
         ),
       ],
     );
@@ -260,10 +228,7 @@ class _UserDetailState extends State<UserDetail> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => EditUser(
-                    id: user.userId,
-                    firstname: user.userFirstName,
-                    lastname: user.userLastName,
-                    birth: user.userBirth,
+                    user: user,
                   ),
                 ),
               );
@@ -290,7 +255,7 @@ class _UserDetailState extends State<UserDetail> {
     );
   }
 
-  Widget buildEditLocation(BuildContext context) {
+  Widget buildUserLocation(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -298,11 +263,11 @@ class _UserDetailState extends State<UserDetail> {
           width: 80.w,
           height: MyVariable.largeDevice ? 60 : 40,
           child: ElevatedButton(
-            style: ElevatedButton.styleFrom(primary: MyStyle.primary),
-            onPressed: () {},
-            // Navigator.pushNamed(context, RoutePage.routeEditLocation),
+            style: ElevatedButton.styleFrom(primary: MyStyle.blue),
+            onPressed: () =>
+                Navigator.pushNamed(context, RoutePage.routeLocationList),
             child: Text(
-              'ข้อมูลตำแหน่ง Location',
+              'จัดการตำแหน่งที่อยู่',
               style: MyStyle().boldWhite16(),
             ),
           ),

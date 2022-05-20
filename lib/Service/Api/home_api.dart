@@ -9,7 +9,7 @@ class HomeApi {
   Future getMaintenance({required String status}) async {
     MaintenanceModel? result;
     final url = Uri.parse(
-        '${RouteApi.domainApi}getMaintainWhereStatus.php?status=$status');
+        '${RouteApi.domainApiHome}getMaintainWhereStatus.php?status=$status');
     http.Response response = await http.get(url);
     if (response.statusCode == 200 || response.body.toString() != 'null') {
       for (var item in json.decode(response.body)) {
@@ -23,7 +23,7 @@ class HomeApi {
 
   Future getAllBanner() async {
     List<BannerModel> result = [];
-    final url = Uri.parse('${RouteApi.domainApi}getAllBanner.php');
+    final url = Uri.parse('${RouteApi.domainApiHome}getAllBanner.php');
     http.Response response = await http.get(url);
     if (response.statusCode == 200 || response.body.toString() != 'null') {
       for (var item in json.decode(response.body)) {
@@ -42,7 +42,7 @@ class HomeApi {
     required String date,
   }) async {
     final url = Uri.parse(
-        '${RouteApi.domainApi}editCountWhereDevice.php?id=$id&count=$count&date=$date');
+        '${RouteApi.domainApiHome}editCountWhereDevice.php?id=$id&count=$count&date=$date');
     http.Response response = await http.get(url);
     if (response.statusCode == 200 && response.body.toString() == 'true') {
       return true;
@@ -53,7 +53,7 @@ class HomeApi {
 
   Future getStatusWhereMaintain({required int shopid}) async {
     final url = Uri.parse(
-        '${RouteApi.domainApi}getStatusWhereMaintain.php?shopid=$shopid');
+        '${RouteApi.domainApiHome}getStatusWhereMaintain.php?shopid=$shopid');
     http.Response response = await http.get(url);
     if (response.statusCode == 200) {
       for (var item in json.decode(response.body)) {
