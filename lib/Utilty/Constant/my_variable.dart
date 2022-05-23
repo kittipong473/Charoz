@@ -1,15 +1,26 @@
+import 'package:charoz/Screen/Home/Component/home.dart';
+import 'package:charoz/Screen/Notification/Component/noti_customer.dart';
+import 'package:charoz/Screen/Notification/Component/noti_saler.dart';
+import 'package:charoz/Screen/Product/Component/product_list.dart';
+import 'package:charoz/Screen/Shop/Component/shop_list.dart';
+import 'package:charoz/Screen/Suggestion/Component/suggest_question.dart';
+import 'package:charoz/Screen/User/Component/user_detail.dart';
+import 'package:charoz/Screen/User/Component/user_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class MyVariable {
   // Constant Variable
 
+  // User Id
+  static String userTokenId = '';
   // Width and Height between iPad and iPhone
   static bool largeDevice = false;
   // Index Page of each Service
   static int indexPage = 0;
   // Index Page of Product Type
   static int menuIndex = 0;
-  static String menuType = 'อาหาร';
   // Index Page of Customer Notification
   static int notiCustomerIndex = 0;
   // Login Status
@@ -18,6 +29,55 @@ class MyVariable {
   static String role = '';
   // Create FirebaseAuth Variable
   static FirebaseAuth auth = FirebaseAuth.instance;
+  // List of Screen & Icon Navigation Bar
+  static List<Widget> adminScreens = [
+    const NotiCustomer(),
+    const ShopList(),
+    const UserList(),
+    const UserDetail(),
+  ];
+  static List<Widget> adminIcons = [
+    Icon(Icons.campaign_rounded, size: 20.sp),
+    Icon(Icons.store_mall_directory_rounded, size: 20.sp),
+    Icon(Icons.person_rounded, size: 20.sp),
+    Icon(Icons.menu_rounded, size: 20.sp),
+  ];
+  static List<Widget> managerScreens = [
+    const NotiSaler(),
+    const ProductList(),
+    const ShopList(),
+    const UserDetail(),
+  ];
+  static List<Widget> managerIcons = [
+    Icon(Icons.receipt_rounded, size: 20.sp),
+    Icon(Icons.restaurant_rounded, size: 20.sp),
+    Icon(Icons.store_mall_directory_rounded, size: 20.sp),
+    Icon(Icons.menu_rounded, size: 20.sp),
+  ];
+  static List<Widget> customerScreens = [
+    const Home(),
+    const ProductList(),
+    const NotiCustomer(),
+    const UserDetail(),
+  ];
+  static List<Widget> customerIcons = [
+    Icon(Icons.home_rounded, size: 20.sp),
+    Icon(Icons.restaurant_rounded, size: 20.sp),
+    Icon(Icons.notifications_active_rounded, size: 20.sp),
+    Icon(Icons.menu_rounded, size: 20.sp),
+  ];
+  static List<Widget> startScreens = [
+    const Home(),
+    const ProductList(),
+    const NotiCustomer(),
+    const SuggestQuestion(),
+  ];
+  static List<Widget> startIcons = [
+    Icon(Icons.home_rounded, size: 20.sp),
+    Icon(Icons.restaurant_rounded, size: 20.sp),
+    Icon(Icons.notifications_active_rounded, size: 20.sp),
+    Icon(Icons.comment_rounded, size: 20.sp),
+  ];
 
   // Dynamic Variable
 
@@ -55,12 +115,31 @@ class MyVariable {
     'อื่นๆ',
   ];
   // List of type of address
-  static String chooseAddress = '--เลือกสถานที่--';
   static List<String> locationTypes = [
     '--เลือกสถานที่--',
     'คอนโดถนอมมิตร',
     'บ้านพัก',
     'ที่ทำงาน',
     'อื่นๆ',
+  ];
+  // List of number of Tanommit building
+  static List<String> buildingNumbers = [
+    '0',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11',
+    '12',
+    '13',
+    '14',
+    '15',
+    '16'
   ];
 }

@@ -9,43 +9,52 @@ class NotiApi {
     List<NotiModel> result = [];
     final url =
         Uri.parse('${RouteApi.domainApiNoti}getNotiWhereType.php?type=$type');
-    http.Response response = await http.get(url);
-    if (response.statusCode == 200 && response.body.toString() != 'null') {
-      for (var item in json.decode(response.body)) {
-        NotiModel model = NotiModel.fromMap(item);
-        result.add(model);
+    try {
+      http.Response response = await http.get(url);
+      if (response.statusCode == 200 && response.body.toString() != 'null') {
+        for (var item in json.decode(response.body)) {
+          NotiModel model = NotiModel.fromMap(item);
+          result.add(model);
+        }
       }
       return result;
+    } catch (e) {
+      print(e);
     }
-    return result;
   }
 
   Future getNotiWhereId({required String id}) async {
     NotiModel? result;
     final url = Uri.parse('${RouteApi.domainApiNoti}getNotiWhereId.php?id=$id');
-    http.Response response = await http.get(url);
-    if (response.statusCode == 200 && response.body.toString() != 'null') {
-      for (var item in json.decode(response.body)) {
-        result = NotiModel.fromMap(item);
+    try {
+      http.Response response = await http.get(url);
+      if (response.statusCode == 200 && response.body.toString() != 'null') {
+        for (var item in json.decode(response.body)) {
+          result = NotiModel.fromMap(item);
+        }
       }
       return result;
-    } else {
-      return result;
+    } catch (e) {
+      print(e);
     }
   }
 
   Future changeNotiStatus({required String id}) async {
     final url =
         Uri.parse('${RouteApi.domainApiNoti}changeNotiStatus.php?id=$id');
-    http.Response response = await http.get(url);
-    if (response.statusCode == 200 && response.body.toString() == 'true') {
-      return true;
-    } else {
-      return false;
+    try {
+      http.Response response = await http.get(url);
+      if (response.statusCode == 200 && response.body.toString() == 'true') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
-  Future<bool> insertNoti({
+  Future insertNoti({
     required String type,
     required String name,
     required String detail,
@@ -56,22 +65,30 @@ class NotiApi {
   }) async {
     final url = Uri.parse(
         '${RouteApi.domainApiNoti}addNoti.php?type=$type&name=$name&detail=$detail&image=$image&refer=$refer&start=$start&end=$end');
-    http.Response response = await http.get(url);
-    if (response.statusCode == 200 && response.body.toString() == 'true') {
-      return true;
-    } else {
-      return false;
+    try {
+      http.Response response = await http.get(url);
+      if (response.statusCode == 200 && response.body.toString() == 'true') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
   Future deleteNotiWhereId({required String id}) async {
     final url =
         Uri.parse('${RouteApi.domainApiNoti}deleteNotiWhereId.php?id=$id');
-    http.Response response = await http.get(url);
-    if (response.statusCode == 200 && response.body.toString() == 'true') {
-      return true;
-    } else {
-      return false;
+    try {
+      http.Response response = await http.get(url);
+      if (response.statusCode == 200 && response.body.toString() == 'true') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
     }
   }
 }

@@ -35,7 +35,6 @@ class ShopProvider with ChangeNotifier {
   Future getTimeWhereId() async {
     _time = await ShopApi().getTimeWhereId();
     _currentStatus = getCurrentTime(_time!.timeStatus);
-    _currentStatus;
     notifyListeners();
   }
 

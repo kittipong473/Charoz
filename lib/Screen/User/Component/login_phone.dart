@@ -319,6 +319,9 @@ class _LoginPhoneState extends State<LoginPhone> {
       MyVariable.indexPage = 0;
       MyVariable.role = await Provider.of<UserProvider>(context, listen: false)
           .getUserRoleWherePhone(phone: phoneController.text);
+      MyVariable.userTokenId =
+          await Provider.of<UserProvider>(context, listen: false)
+              .getUserIdWherePhone(phone: phoneController.text);
       MyWidget().toast('ยินดีต้อนรับสู่ Application');
       load = false;
       Navigator.pushNamedAndRemoveUntil(

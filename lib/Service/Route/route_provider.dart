@@ -3,7 +3,7 @@ import 'package:charoz/Screen/Notification/Provider/noti_provider.dart';
 import 'package:charoz/Screen/Product/Provider/product_provider.dart';
 import 'package:charoz/Screen/Shop/Provider/shop_provider.dart';
 import 'package:charoz/Screen/Suggestion/Provider/suggest_provider.dart';
-import 'package:charoz/Screen/User/Provider/address_provider.dart';
+import 'package:charoz/Screen/Address/Provider/address_provider.dart';
 import 'package:charoz/Screen/User/Provider/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';

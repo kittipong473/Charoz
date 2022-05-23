@@ -1,24 +1,29 @@
 import 'dart:convert';
 
-import 'package:charoz/Screen/User/Model/address_model.dart';
+import 'package:charoz/Screen/Address/Model/address_model.dart';
 import 'package:charoz/Service/Api/user_api.dart';
 import 'package:charoz/Service/Route/route_api.dart';
+import 'package:charoz/Utilty/Constant/my_variable.dart';
 import 'package:http/http.dart' as http;
 
 class AddressApi {
   Future getAllAddressWhereUserId() async {
-    String id = await UserApi().getUserIdWhereToken();
+    String id = MyVariable.userTokenId;
     List<AddressModel> result = [];
     final url = Uri.parse(
         '${RouteApi.domainApiAddress}getAllAddressWhereUserId.php?id=$id');
-    http.Response response = await http.get(url);
-    if (response.statusCode == 200 || response.body.toString() != 'null') {
-      for (var item in json.decode(response.body)) {
-        AddressModel model = AddressModel.fromMap(item);
-        result.add(model);
+    try {
+      http.Response response = await http.get(url);
+      if (response.statusCode == 200 && response.body.toString() != 'null') {
+        for (var item in json.decode(response.body)) {
+          AddressModel model = AddressModel.fromMap(item);
+          result.add(model);
+        }
       }
+      return result;
+    } catch (e) {
+      print(e);
     }
-    return result;
   }
 
   Future getCurrentAddressWhereId() async {
@@ -26,18 +31,20 @@ class AddressApi {
     AddressModel? result;
     final url = Uri.parse(
         '${RouteApi.domainApiAddress}getAddressWhereAddressId.php?id=$id');
-    http.Response response = await http.get(url);
-    if (response.statusCode == 200 || response.body.toString() != 'null') {
-      for (var item in json.decode(response.body)) {
-        result = AddressModel.fromMap(item);
+    try {
+      http.Response response = await http.get(url);
+      if (response.statusCode == 200 && response.body.toString() != 'null') {
+        for (var item in json.decode(response.body)) {
+          result = AddressModel.fromMap(item);
+        }
       }
       return result;
-    } else {
-      return null;
+    } catch (e) {
+      print(e);
     }
   }
 
-  Future<bool> insertAddress({
+  Future insertAddress({
     required String userid,
     required String name,
     required String desc,
@@ -46,12 +53,31 @@ class AddressApi {
     required String time,
   }) async {
     final url = Uri.parse(
-        '${RouteApi.domainApiNoti}addAddress.php?userid=$userid&name=$name&desc=$desc&lat=$lat&lng=$lng&time=$time');
-    http.Response response = await http.get(url);
-    if (response.statusCode == 200 && response.body.toString() == 'true') {
-      return true;
-    } else {
-      return false;
+        '${RouteApi.domainApiAddress}addAddress.php?userid=$userid&name=$name&desc=$desc&lat=$lat&lng=$lng&time=$time');
+    try {
+      http.Response response = await http.get(url);
+      if (response.statusCode == 200 && response.body.toString() == 'true') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future deleteAddressWhereId({required String id}) async {
+    final url = Uri.parse(
+        '${RouteApi.domainApiProduct}deleteAddressWhereId.php?id=$id');
+    try {
+      http.Response response = await http.get(url);
+      if (response.statusCode == 200 && response.body.toString() == 'true') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
     }
   }
 }

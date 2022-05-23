@@ -1,7 +1,7 @@
 import 'package:charoz/Screen/Shop/Provider/shop_provider.dart';
 import 'package:charoz/Screen/User/Component/edit_user.dart';
 import 'package:charoz/Screen/User/Model/user_model.dart';
-import 'package:charoz/Screen/User/Provider/address_provider.dart';
+import 'package:charoz/Screen/Address/Provider/address_provider.dart';
 import 'package:charoz/Screen/User/Provider/user_provider.dart';
 import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
@@ -22,26 +22,14 @@ class UserDetail extends StatefulWidget {
 
 class _UserDetailState extends State<UserDetail> {
   @override
-  void initState() {
-    super.initState();
-    getData();
-  }
-
-  void getData() {
-    Provider.of<ShopProvider>(context, listen: false).getShopWhereId();
-    Provider.of<AddressProvider>(context, listen: false)
-        .getCurrentAddressWhereId();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
-        body: Consumer3<UserProvider, ShopProvider, AddressProvider>(
-          builder: (context, uprovider, sprovider, aprovider, child) =>
-              sprovider.shop == null || aprovider.address == null
+        body: Consumer2<UserProvider, ShopProvider>(
+          builder: (context, uprovider, sprovider, child) =>
+              sprovider.shop == null
                   ? const ShowProgress()
                   : Stack(
                       children: [
@@ -67,8 +55,6 @@ class _UserDetailState extends State<UserDetail> {
                                   buildBirth(uprovider.user!.userBirth),
                                   SizedBox(height: 3.h),
                                   buildRole(uprovider.user!.userRole),
-                                  SizedBox(height: 3.h),
-                                  buildLocation(aprovider.address!.addressName),
                                   SizedBox(height: 5.h),
                                   buildButton(context, uprovider.user),
                                   if (MyVariable.role == 'customer') ...[
@@ -198,22 +184,6 @@ class _UserDetailState extends State<UserDetail> {
     );
   }
 
-  Widget buildLocation(String location) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          'ที่อยู่ปัจจุบัน : ',
-          style: MyStyle().boldBlack18(),
-        ),
-        Text(
-          location,
-          style: MyStyle().normalPrimary18(),
-        ),
-      ],
-    );
-  }
-
   Widget buildButton(BuildContext context, UserModel user) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -267,7 +237,7 @@ class _UserDetailState extends State<UserDetail> {
             onPressed: () =>
                 Navigator.pushNamed(context, RoutePage.routeLocationList),
             child: Text(
-              'จัดการตำแหน่งที่อยู่',
+              'จัดการที่อยู่',
               style: MyStyle().boldWhite16(),
             ),
           ),

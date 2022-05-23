@@ -14,7 +14,6 @@ import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Constant/my_variable.dart';
 import 'package:charoz/Utilty/Constant/my_widget.dart';
 import 'package:charoz/Utilty/Widget/show_progress.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -33,15 +32,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late TransformationController transformationController;
   late AnimationController animationController;
   Animation<Matrix4>? animation;
-  final navigationKey = GlobalKey<CurvedNavigationBarState>();
   List<String> types = [];
-
-  @override
-  void initState() {
-    super.initState();
-    getData();
-    getVideo();
-  }
 
   void getData() {
     Provider.of<ShopProvider>(context, listen: false).getShopWhereId();
@@ -73,99 +64,95 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     super.dispose();
-    transformationController.dispose();
-    animationController.dispose();
-    if (types[1] == 'mp3' || types[1] == 'mp4') {
-      videoPlayerController!.dispose();
-    }
+    // transformationController.dispose();
+    // animationController.dispose();
+    // if (types[1] == 'mp3' || types[1] == 'mp4') {
+    //   videoPlayerController!.dispose();
+    // }
   }
 
   @override
   Widget build(BuildContext context) {
+    getData();
+    // getVideo();
     return SafeArea(
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
-        body: Consumer3<HomeProvider, ShopProvider, ProductProvider>(
-          builder: (context, hprovider, sprovider, pprovider, child) {
-            if (sprovider.shop == null ||
-                sprovider.currentStatus == null ||
-                pprovider.productsSuggest.isEmpty ||
-                hprovider.banners.isEmpty) {
-              return const ShowProgress();
-            } else {
-              types = sprovider.shop!.shopVideo.split(".");
-              if (types[1] == 'mp3' || types[1] == 'mp4') {
-                setVideo(sprovider.shop!.shopVideo);
-              }
-              return Stack(
-                children: [
-                  Positioned.fill(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          SizedBox(height: 8.h),
-                          buildStatus(sprovider.currentStatus),
-                          SizedBox(height: 1.h),
-                          buildCarousel(hprovider),
-                          SizedBox(height: 3.h),
-                          buildVideo(types[1], sprovider.shop!.shopVideo),
-                          SizedBox(height: 3.h),
-                          MyWidget().buildTitlePadding(title: 'อาหารแนะนำ'),
-                          buildSuggestList(pprovider),
-                          SizedBox(height: 3.h),
-                          MyWidget()
-                              .buildTitlePadding(title: 'เลือกดูประเภทอาหาร'),
-                          SizedBox(height: 2.h),
-                          buildChip(),
-                          SizedBox(height: 3.h),
-                          buildDetail(sprovider.shop!.shopDetail),
-                          buildAnnounce(sprovider.shop!.shopAnnounce),
-                          SizedBox(height: 3.h),
-                          buildShopData(),
-                          SizedBox(height: 3.h),
-                        ],
-                      ),
-                    ),
-                  ),
-                  MyWidget().backgroundTitle(),
-                  MyWidget().title('Charoz Steak House'),
-                ],
-              );
-            }
-          },
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: 8.h),
+                    buildStatus(),
+                    SizedBox(height: 1.h),
+                    buildCarousel(),
+                    SizedBox(height: 3.h),
+                    buildVideo(),
+                    SizedBox(height: 3.h),
+                    MyWidget().buildTitlePadding(title: 'อาหารแนะนำ'),
+                    buildSuggestList(),
+                    SizedBox(height: 3.h),
+                    MyWidget().buildTitlePadding(title: 'เลือกดูประเภทอาหาร'),
+                    SizedBox(height: 2.h),
+                    buildChip(),
+                    SizedBox(height: 3.h),
+                    buildDetail(),
+                    buildAnnounce(),
+                    SizedBox(height: 3.h),
+                    buildShopData(),
+                    SizedBox(height: 3.h),
+                  ],
+                ),
+              ),
+            ),
+            MyWidget().backgroundTitle(),
+            MyWidget().title('Charoz Steak House'),
+          ],
         ),
       ),
     );
   }
 
-  Widget buildStatus(String status) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (status == 'เปิดบริการ') ...[
-          Lottie.asset(MyImage.gifOpen, width: 30.sp, height: 30.sp),
-          Text('สถานะร้านค้า : $status', style: MyStyle().boldGreen18()),
-          Lottie.asset(MyImage.gifOpen, width: 30.sp, height: 30.sp),
-        ] else ...[
-          Lottie.asset(MyImage.gifClosed, width: 30.sp, height: 30.sp),
-          Text('สถานะร้านค้า : $status', style: MyStyle().boldRed18()),
-          Lottie.asset(MyImage.gifClosed, width: 30.sp, height: 30.sp),
-        ]
-      ],
+  Widget buildStatus() {
+    return Consumer<ShopProvider>(
+      builder: (_, value, __) => value.currentStatus == null
+          ? const ShowProgress()
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (value.currentStatus == 'เปิดบริการ') ...[
+                  Lottie.asset(MyImage.gifOpen, width: 30.sp, height: 30.sp),
+                  Text('สถานะร้านค้า : ${value.currentStatus}',
+                      style: MyStyle().boldGreen18()),
+                  Lottie.asset(MyImage.gifOpen, width: 30.sp, height: 30.sp),
+                ] else ...[
+                  Lottie.asset(MyImage.gifClosed, width: 30.sp, height: 30.sp),
+                  Text('สถานะร้านค้า : ${value.currentStatus}',
+                      style: MyStyle().boldRed18()),
+                  Lottie.asset(MyImage.gifClosed, width: 30.sp, height: 30.sp),
+                ]
+              ],
+            ),
     );
   }
 
-  Widget buildCarousel(HomeProvider hprovider) {
-    return CarouselSlider.builder(
-      options: CarouselOptions(
-        height: 16.h,
-        autoPlay: true,
-        autoPlayInterval: const Duration(seconds: 3),
-      ),
-      itemCount: hprovider.bannersLength,
-      itemBuilder: (context, index, realIndex) =>
-          buildImage(hprovider.banners[index], index),
+  Widget buildCarousel() {
+    return Consumer<HomeProvider>(
+      builder: (_, value, __) => value.banners.isEmpty
+          ? const ShowProgress()
+          : CarouselSlider.builder(
+              options: CarouselOptions(
+                height: 16.h,
+                autoPlay: true,
+                autoPlayInterval: const Duration(seconds: 3),
+              ),
+              itemCount: value.bannersLength,
+              itemBuilder: (context, index, realIndex) =>
+                  buildImage(value.banners[index], index),
+            ),
     );
   }
 
@@ -261,35 +248,46 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     animationController.forward(from: 0);
   }
 
-  Widget buildVideo(String type, String img) {
+  Widget buildVideo() {
     return Container(
       width: 100.w,
       height: 20.h,
       color: Colors.black,
-      child: type == 'mp3' || type == 'mp4'
-          ? videoPlayerController == null
-              ? const ShowProgress()
-              : VideoPlayer(videoPlayerController!)
-          : CachedNetworkImage(
-              fit: BoxFit.cover,
-              imageUrl: '${RouteApi.domainVideo}$img',
-              placeholder: (context, url) => const ShowProgress(),
-              errorWidget: (context, url, error) => Image.asset(MyImage.error),
-            ),
+      child:
+          // type == 'mp3' || type == 'mp4'
+          //     ? videoPlayerController == null
+          //         ? const ShowProgress()
+          //         : VideoPlayer(videoPlayerController!)
+          //     :
+          Consumer<ShopProvider>(
+        builder: (_, value, __) => value.shop == null
+            ? const ShowProgress()
+            : CachedNetworkImage(
+                fit: BoxFit.cover,
+                imageUrl: '${RouteApi.domainVideo}${value.shop.shopVideo}',
+                placeholder: (context, url) => const ShowProgress(),
+                errorWidget: (context, url, error) =>
+                    Image.asset(MyImage.error),
+              ),
+      ),
     );
   }
 
-  Widget buildSuggestList(ProductProvider pprovider) {
+  Widget buildSuggestList() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: SizedBox(
         width: 100.w,
         height: 27.h,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: pprovider.productsSuggestLength,
-          itemBuilder: (context, index) =>
-              buildSuggestItem(pprovider.productsSuggest[index], index),
+        child: Consumer<ProductProvider>(
+          builder: (_, value, __) => value.productsSuggest.isEmpty
+              ? const ShowProgress()
+              : ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: value.productsSuggestLength,
+                  itemBuilder: (context, index) =>
+                      buildSuggestItem(value.productsSuggest[index], index),
+                ),
         ),
       ),
     );
@@ -399,7 +397,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         setState(() {
           MyVariable.indexPage = 1;
           MyVariable.menuIndex = index;
-          MyVariable.menuType = title;
         });
         Navigator.pushNamedAndRemoveUntil(
             context, RoutePage.routePageNavigation, (route) => false);
@@ -407,7 +404,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget buildDetail(String announce) {
+  Widget buildDetail() {
     return Container(
       width: 100.w,
       color: Colors.yellow,
@@ -417,9 +414,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         children: [
           SizedBox(
             width: MyVariable.largeDevice ? 70.w : 60.w,
-            child: Text(
-              announce,
-              style: MyStyle().boldPurple18(),
+            child: Consumer<ShopProvider>(
+              builder: (_, value, __) => value.shop == null
+                  ? const ShowProgress()
+                  : Text(
+                      value.shop.shopDetail,
+                      style: MyStyle().boldPurple18(),
+                    ),
             ),
           ),
           Icon(
@@ -432,7 +433,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget buildAnnounce(String announce) {
+  Widget buildAnnounce() {
     return Container(
       width: 100.w,
       color: Colors.green.shade200,
@@ -447,9 +448,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ),
           SizedBox(
             width: MyVariable.largeDevice ? 70.w : 60.w,
-            child: Text(
-              announce,
-              style: MyStyle().boldRed18(),
+            child: Consumer<ShopProvider>(
+              builder: (context, value, child) => value.shop == null
+                  ? const ShowProgress()
+                  : Text(
+                      value.shop.shopAnnounce,
+                      style: MyStyle().boldRed18(),
+                    ),
             ),
           ),
         ],

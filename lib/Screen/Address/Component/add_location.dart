@@ -17,10 +17,11 @@ class AddLocation extends StatefulWidget {
 
 class _AddLocationState extends State<AddLocation> {
   final formKey = GlobalKey<FormState>();
-  TextEditingController nameController = TextEditingController();
   TextEditingController descController = TextEditingController();
   TextEditingController latController = TextEditingController();
   TextEditingController lngController = TextEditingController();
+  String chooseAddress = '--เลือกสถานที่--';
+  String chooseNumber = '0';
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +46,17 @@ class _AddLocationState extends State<AddLocation> {
                       child: Column(
                         children: [
                           SizedBox(height: 8.h),
-                          buildName(),
+                          buildType(),
                           SizedBox(height: 5.h),
-                          buildDesc(),
-                          SizedBox(height: 3.h),
-                          buildButton(context),
+                          if (chooseAddress == 'คอนโดถนอมมิตร') ...[
+                            buildNumber(),
+                            SizedBox(height: 5.h),
+                            buildButton(context, 1),
+                          ] else if (chooseAddress != '--เลือกสถานที่--') ...[
+                            buildDesc(),
+                            SizedBox(height: 5.h),
+                            buildButton(context, 2),
+                          ],
                         ],
                       ),
                     ),
@@ -66,7 +73,7 @@ class _AddLocationState extends State<AddLocation> {
     );
   }
 
-  Row buildName() {
+  Row buildType() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -75,7 +82,7 @@ class _AddLocationState extends State<AddLocation> {
           style: MyStyle().boldBlack16(),
         ),
         Container(
-          width: 60.w,
+          width: 50.w,
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -88,11 +95,11 @@ class _AddLocationState extends State<AddLocation> {
               color: MyStyle.dark,
             ),
             isExpanded: true,
-            value: MyVariable.chooseAddress,
+            value: chooseAddress,
             items: MyVariable.locationTypes.map(buildAddressItem).toList(),
             onChanged: (value) {
               setState(() {
-                MyVariable.chooseAddress = value as String;
+                chooseAddress = value as String;
               });
             },
           ),
@@ -111,26 +118,66 @@ class _AddLocationState extends State<AddLocation> {
     );
   }
 
+  Row buildNumber() {
+    descController.clear();
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'หมายเลขตึก : ',
+          style: MyStyle().boldBlack16(),
+        ),
+        Container(
+          width: 20.w,
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: MyStyle.primary),
+          ),
+          child: DropdownButton(
+            iconSize: 36,
+            icon: const Icon(
+              Icons.arrow_drop_down_outlined,
+              color: MyStyle.dark,
+            ),
+            isExpanded: true,
+            value: chooseNumber,
+            items: MyVariable.buildingNumbers.map(buildNumberItem).toList(),
+            onChanged: (value) {
+              setState(() {
+                chooseNumber = value as String;
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  DropdownMenuItem<String> buildNumberItem(String item) {
+    return DropdownMenuItem(
+      value: item,
+      child: Text(
+        item,
+        style: MyStyle().normalBlack16(),
+      ),
+    );
+  }
+
   Row buildDesc() {
+    chooseNumber = '0';
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          width: 85.w,
+          width: 80.w,
           child: TextFormField(
             style: MyStyle().normalBlack16(),
-            controller: nameController,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'กรุณากรอก ที่อยู่';
-              } else {
-                return null;
-              }
-            },
+            controller: descController,
             decoration: InputDecoration(
               labelStyle: MyStyle().boldBlack16(),
-              labelText: 'ที่อยู่ :',
+              labelText: 'ข้อมูลที่อยู่ :',
               prefixIcon: const Icon(
                 Icons.description_rounded,
                 color: MyStyle.dark,
@@ -150,7 +197,7 @@ class _AddLocationState extends State<AddLocation> {
     );
   }
 
-  Row buildButton(BuildContext context) {
+  Row buildButton(BuildContext context, int check) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -160,7 +207,11 @@ class _AddLocationState extends State<AddLocation> {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(primary: MyStyle.blue),
             onPressed: () {
-              if (formKey.currentState!.validate()) {
+              if (check == 1 && chooseNumber == '0') {
+                MyDialog().singleDialog(context, 'กรุณาระบุหมายเลขตึก');
+              } else if (check == 2 && descController.text.isEmpty) {
+                MyDialog().singleDialog(context, 'กรุณาระบุข้อมูลที่อยู่');
+              } else {
                 processInsert();
               }
             },
@@ -175,14 +226,15 @@ class _AddLocationState extends State<AddLocation> {
   }
 
   Future processInsert() async {
-    String userid = await UserApi().getUserIdWhereToken();
-    String name = nameController.text;
-    String desc = descController.text;
+    String userid = MyVariable.userTokenId;
+    String desc = descController.text.isEmpty
+        ? 'ตึกหมายเลข $chooseNumber'
+        : descController.text;
     String time = DateFormat('dd-MM-yyyy HH:mm').format(DateTime.now());
 
     bool status = await AddressApi().insertAddress(
       userid: userid,
-      name: name,
+      name: chooseAddress,
       desc: desc,
       lat: "0",
       lng: "0",

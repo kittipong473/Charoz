@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charoz/Screen/Product/Model/product_model.dart';
+import 'package:charoz/Screen/Product/Provider/product_provider.dart';
 import 'package:charoz/Service/Api/product_api.dart';
 import 'package:charoz/Service/Route/route_api.dart';
 import 'package:charoz/Utilty/Constant/my_function.dart';
@@ -10,11 +11,11 @@ import 'package:charoz/Utilty/Constant/my_widget.dart';
 import 'package:charoz/Utilty/Widget/show_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class Food extends StatefulWidget {
-  final List<ProductModel> productFoods;
-  const Food({Key? key, required this.productFoods}) : super(key: key);
+  const Food({Key? key}) : super(key: key);
 
   @override
   State<Food> createState() => _FoodState();
@@ -23,13 +24,11 @@ class Food extends StatefulWidget {
 class _FoodState extends State<Food> {
   final scrollController = ScrollController();
   bool scroll = true;
-  List<ProductModel> productModels = [];
 
   @override
   void initState() {
     super.initState();
     scrollController.addListener(listenScrolling);
-    productModels = widget.productFoods;
   }
 
   void listenScrolling() {
@@ -47,51 +46,45 @@ class _FoodState extends State<Food> {
     }
   }
 
-  Future refreshList() async {
-    productModels = await ProductApi().getProductWhereType('อาหาร');
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
-        body: productModels.isNotEmpty
-            ? RefreshIndicator(
-                onRefresh: refreshList,
-                child: GridView.builder(
+        body: Consumer<ProductProvider>(
+          builder: (_, value, __) => value.productsFood.isNotEmpty
+              ? GridView.builder(
                   shrinkWrap: true,
                   controller: scrollController,
                   padding: MyVariable.largeDevice
                       ? const EdgeInsets.only(top: 10)
                       : const EdgeInsets.only(top: 0),
-                  itemCount: productModels.length,
+                  itemCount: value.productsFoodLength,
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                       childAspectRatio: 2 / 3, maxCrossAxisExtent: 160),
                   itemBuilder: (context, index) {
-                    return buildProductItem(productModels[index], index);
+                    return buildProductItem(value.productsFood[index], index);
                   },
+                )
+              : Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'ไม่มีรายการ "อาหาร" ในขณะนี้',
+                        style: MyStyle().boldPrimary20(),
+                      ),
+                      SizedBox(height: 3.h),
+                      Text(
+                        'กรุณารอรายการได้ในภายหลัง',
+                        style: MyStyle().boldPrimary20(),
+                      ),
+                    ],
+                  ),
                 ),
-              )
-            : Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'ไม่มีรายการ "อาหาร" ในขณะนี้',
-                      style: MyStyle().boldPrimary20(),
-                    ),
-                    SizedBox(height: 3.h),
-                    Text(
-                      'กรุณารอรายการได้ในภายหลัง',
-                      style: MyStyle().boldPrimary20(),
-                    ),
-                  ],
-                ),
-              ),
+        ),
         floatingActionButton: FloatingActionButton(
           child: scroll
               ? const Icon(Icons.arrow_downward_rounded)

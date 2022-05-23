@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:animations/animations.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:charoz/Screen/Home/Provider/home_provider.dart';
+import 'package:charoz/Screen/Product/Provider/product_provider.dart';
 import 'package:charoz/Screen/Shop/Model/shop_model.dart';
 import 'package:charoz/Screen/Shop/Provider/shop_provider.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
@@ -29,7 +30,6 @@ class _ShopDetailState extends State<ShopDetail> {
   @override
   void initState() {
     super.initState();
-    getData();
     checkLocation();
     transformationController = TransformationController();
   }
@@ -41,9 +41,7 @@ class _ShopDetailState extends State<ShopDetail> {
   }
 
   Future checkLocation() async {
-    allowLocation = await Provider.of<HomeProvider>(context, listen: false)
-        .checkPermission(context);
-    setState(() {});
+    allowLocation = await MyWidget().checkPermission(context);
   }
 
   @override
@@ -54,167 +52,185 @@ class _ShopDetailState extends State<ShopDetail> {
 
   @override
   Widget build(BuildContext context) {
+    getData();
     return SafeArea(
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
-        body: Consumer<ShopProvider>(
-          builder: (context, sprovider, child) => !allowLocation ||
-                  sprovider.shop == null ||
-                  sprovider.time == null ||
-                  sprovider.shopimages.isEmpty
-              ? const ShowProgress()
-              : Stack(
-                  children: [
-                    Positioned.fill(
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: MyVariable.largeDevice
-                              ? const EdgeInsets.symmetric(horizontal: 40)
-                              : const EdgeInsets.symmetric(horizontal: 20),
-                          child: Column(
-                            children: [
-                              SizedBox(height: 10.h),
-                              MyWidget().buildTitle(title: 'ชื่อร้านค้า :'),
-                              SizedBox(height: 1.h),
-                              buildName(sprovider.shop!.shopName),
-                              SizedBox(height: 2.h),
-                              MyWidget().buildTitle(title: 'รายละเอียด :'),
-                              SizedBox(height: 1.h),
-                              buildDetail(sprovider.shop!.shopDetail),
-                              SizedBox(height: 2.h),
-                              MyWidget()
-                                  .buildTitle(title: 'เวลาเปิด-ปิด วันทำงาน :'),
-                              SizedBox(height: 1.h),
-                              buildWeekDayTime(sprovider.time!.timeWeekdayOpen,
-                                  sprovider.time!.timeWeekdayClose),
-                              SizedBox(height: 2.h),
-                              MyWidget()
-                                  .buildTitle(title: 'เวลาเปิด-ปิด วันหยุด :'),
-                              SizedBox(height: 1.h),
-                              buildWeekEndTime(sprovider.time!.timeWeekendOpen,
-                                  sprovider.time!.timeWeekendClose),
-                              SizedBox(height: 2.h),
-                              MyWidget().buildTitle(title: 'ตำแหน่งร้านค้า :'),
-                              SizedBox(height: 1.h),
-                              buildAddress(sprovider.shop!.shopAddress),
-                              SizedBox(height: 2.h),
-                              buildMap(sprovider.shop),
-                              SizedBox(height: 5.h),
-                              MyWidget().buildTitle(
-                                  title: 'รูปภาพเกี่ยวกับร้านค้า :'),
-                              SizedBox(height: 1.h),
-                              buildShopImage(sprovider.shopimages),
-                              SizedBox(height: 3.h),
-                            ],
-                          ),
+        body: !allowLocation
+            ? const ShowProgress()
+            : Stack(
+                children: [
+                  Positioned.fill(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: MyVariable.largeDevice
+                            ? const EdgeInsets.symmetric(horizontal: 40)
+                            : const EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 10.h),
+                            MyWidget().buildTitle(title: 'ชื่อร้านค้า :'),
+                            SizedBox(height: 1.h),
+                            buildName(),
+                            SizedBox(height: 2.h),
+                            MyWidget().buildTitle(title: 'รายละเอียด :'),
+                            SizedBox(height: 1.h),
+                            buildDetail(),
+                            SizedBox(height: 2.h),
+                            MyWidget()
+                                .buildTitle(title: 'เวลาเปิด-ปิด วันทำงาน :'),
+                            SizedBox(height: 1.h),
+                            buildWeekDayTime(),
+                            SizedBox(height: 2.h),
+                            MyWidget()
+                                .buildTitle(title: 'เวลาเปิด-ปิด วันหยุด :'),
+                            SizedBox(height: 1.h),
+                            buildWeekEndTime(),
+                            SizedBox(height: 2.h),
+                            MyWidget().buildTitle(title: 'ตำแหน่งร้านค้า :'),
+                            SizedBox(height: 1.h),
+                            buildAddress(),
+                            SizedBox(height: 2.h),
+                            buildMap(),
+                            SizedBox(height: 5.h),
+                            MyWidget()
+                                .buildTitle(title: 'รูปภาพเกี่ยวกับร้านค้า :'),
+                            SizedBox(height: 1.h),
+                            buildShopImage(),
+                            SizedBox(height: 3.h),
+                          ],
                         ),
                       ),
                     ),
-                    MyWidget().backgroundTitle(),
-                    MyWidget().title('ข้อมูลร้านค้า'),
-                    MyWidget().backPage(context),
-                    if (MyVariable.role == 'admin' ||
-                        MyVariable.role == 'saler') ...[
-                      MyWidget()
-                          .editShop(context, sprovider.shop!, sprovider.time!),
-                    ],
+                  ),
+                  MyWidget().backgroundTitle(),
+                  MyWidget().title('ข้อมูลร้านค้า'),
+                  MyWidget().backPage(context),
+                  if (MyVariable.role == 'admin' ||
+                      MyVariable.role == 'saler') ...[
+                    Consumer<ShopProvider>(
+                      builder: (_, value, __) => MyWidget()
+                          .editShop(context, value.shop!, value.time!),
+                    ),
                   ],
-                ),
-        ),
+                ],
+              ),
       ),
     );
   }
 
-  Widget buildName(String name) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          name,
-          style: MyStyle().normalBlue18(),
-        ),
-      ],
+  Widget buildName() {
+    return Consumer<ShopProvider>(
+      builder: (_, value, __) => value.shop == null
+          ? const ShowProgress()
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  value.shop.shopName,
+                  style: MyStyle().normalBlue18(),
+                ),
+              ],
+            ),
     );
   }
 
-  Widget buildDetail(String detail) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: 80.w,
-          child: Text(
-            detail,
-            style: MyStyle().normalBlue18(),
+  Widget buildDetail() {
+    return Consumer<ShopProvider>(
+      builder: (_, value, __) => value.shop == null
+          ? const ShowProgress()
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 80.w,
+                  child: Text(
+                    value.shop.shopDetail,
+                    style: MyStyle().normalBlue18(),
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+
+  Widget buildWeekDayTime() {
+    return Consumer<ShopProvider>(
+      builder: (_, value, __) => value.time == null
+          ? const ShowProgress()
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  child: Text(
+                    '${value.time.timeWeekdayOpen} น. - ${value.time.timeWeekdayClose} น.',
+                    style: MyStyle().normalBlue18(),
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+
+  Widget buildWeekEndTime() {
+    return Consumer<ShopProvider>(
+      builder: (_, value, __) => value.time == null
+          ? const ShowProgress()
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  child: Text(
+                    '${value.time.timeWeekendOpen} น. - ${value.time!.timeWeekendClose} น.',
+                    style: MyStyle().normalBlue18(),
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+
+  Widget buildAddress() {
+    return Consumer<ShopProvider>(
+      builder: (_, value, __) => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 70.w,
+            child: Text(
+              value.shop.shopAddress,
+              style: MyStyle().normalBlue18(),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget buildWeekDayTime(String open, String close) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          child: Text(
-            '$open น. - $close น.',
-            style: MyStyle().normalBlue18(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildWeekEndTime(String open, String close) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          child: Text(
-            '$open น. - $close น.',
-            style: MyStyle().normalBlue18(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildAddress(String address) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: 70.w,
-          child: Text(
-            address,
-            style: MyStyle().normalBlue18(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildMap(ShopModel shop) {
+  Widget buildMap() {
     return SizedBox(
       width: 80.w,
       height: 80.w,
-      child: GoogleMap(
-        myLocationEnabled: true,
-        compassEnabled: false,
-        tiltGesturesEnabled: false,
-        mapType: MapType.normal,
-        initialCameraPosition: CameraPosition(
-          target:
-              LatLng(double.parse(shop.shopLat), double.parse(shop.shopLng)),
-          zoom: 18,
-          tilt: 80,
-        ),
-        onMapCreated: (controller) {
-          _controller.complete(controller);
-        },
-        markers: setMarker(shop),
+      child: Consumer<ShopProvider>(
+        builder: (_, value, __) => value.shop == null
+            ? const ShowProgress()
+            : GoogleMap(
+                myLocationEnabled: true,
+                compassEnabled: false,
+                tiltGesturesEnabled: false,
+                mapType: MapType.normal,
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(double.parse(value.shop.shopLat),
+                      double.parse(value.shop.shopLng)),
+                  zoom: 18,
+                  tilt: 80,
+                ),
+                onMapCreated: (controller) {
+                  _controller.complete(controller);
+                },
+                markers: setMarker(value.shop),
+              ),
       ),
     );
   }
@@ -230,12 +246,16 @@ class _ShopDetailState extends State<ShopDetail> {
     };
   }
 
-  Widget buildShopImage(List shopimages) {
-    return CarouselSlider.builder(
-      options: CarouselOptions(height: 30.h, autoPlay: true),
-      itemCount: shopimages.length,
-      itemBuilder: (context, index, realIndex) =>
-          buildShopImageItem(shopimages[index], index),
+  Widget buildShopImage() {
+    return Consumer<ShopProvider>(
+      builder: (_, value, __) => value.shopimages.isEmpty
+          ? const ShowProgress()
+          : CarouselSlider.builder(
+              options: CarouselOptions(height: 30.h, autoPlay: true),
+              itemCount: value.shopimagesLength,
+              itemBuilder: (context, index, realIndex) =>
+                  buildShopImageItem(value.shopimages[index], index),
+            ),
     );
   }
 

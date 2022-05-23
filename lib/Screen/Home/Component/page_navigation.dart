@@ -16,19 +16,13 @@ class _PageNavigationState extends State<PageNavigation> {
   final navigationKey = GlobalKey<CurvedNavigationBarState>();
   String? role;
 
-  @override
-  void initState() {
-    super.initState();
-    getData();
-  }
-
   void getData() {
     Provider.of<HomeProvider>(context, listen: false).getBottomNavigationBar();
-    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    getData();
     return SafeArea(
       top: false,
       child: Consumer<HomeProvider>(

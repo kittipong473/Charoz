@@ -6,9 +6,9 @@ import 'package:charoz/Screen/Product/Component/add_product.dart';
 import 'package:charoz/Screen/Shop/Component/shop_detail.dart';
 import 'package:charoz/Screen/Suggestion/Component/question_answer.dart';
 import 'package:charoz/Screen/Suggestion/Component/suggest_complete.dart';
-import 'package:charoz/Screen/User/Component/Address/add_location.dart';
+import 'package:charoz/Screen/Address/Component/add_location.dart';
 import 'package:charoz/Screen/User/Component/login_token.dart';
-import 'package:charoz/Screen/User/Component/Address/location_list.dart';
+import 'package:charoz/Screen/Address/Component/location_list.dart';
 import 'package:flutter/material.dart';
 
 class RoutePage {

@@ -1,7 +1,9 @@
+import 'package:charoz/Screen/Address/Model/address_model.dart';
 import 'package:flutter/material.dart';
 
 class EditLocation extends StatefulWidget {
-  const EditLocation({Key? key}) : super(key: key);
+  final AddressModel address;
+  const EditLocation({Key? key, required this.address}) : super(key: key);
 
   @override
   State<EditLocation> createState() => _EditLocationState();

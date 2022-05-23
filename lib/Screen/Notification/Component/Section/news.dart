@@ -11,51 +11,44 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class News extends StatefulWidget {
-  final List<NotiModel> notiNews;
-  const News({Key? key, required this.notiNews}) : super(key: key);
+  const News({Key? key}) : super(key: key);
 
   @override
   _NewsState createState() => _NewsState();
 }
 
 class _NewsState extends State<News> {
-  List<NotiModel> notiModels = [];
-
-  @override
-  void initState() {
-    super.initState();
-    notiModels = widget.notiNews;
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
-        body: notiModels.isNotEmpty
-            ? ListView.builder(
-                itemCount: notiModels.length,
-                itemBuilder: (context, index) =>
-                    buildPromotionItem(notiModels[index], index),
-              )
-            : Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'ไม่มีข่าวสารในขณะนี้',
-                      style: MyStyle().boldPrimary20(),
-                    ),
-                    SizedBox(height: 3.h),
-                    Text(
-                      'กรุณารอข่าวสารได้ในภายหลัง',
-                      style: MyStyle().boldPrimary20(),
-                    ),
-                  ],
+        body: Consumer<NotiProvider>(
+          builder: (_, value, __) => value.notiNews.isNotEmpty
+              ? ListView.builder(
+                  itemCount: value.notiNewsLength,
+                  itemBuilder: (context, index) =>
+                      buildPromotionItem(value.notiNews[index], index),
+                )
+              : Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'ไม่มีข่าวสารในขณะนี้',
+                        style: MyStyle().boldPrimary20(),
+                      ),
+                      SizedBox(height: 3.h),
+                      Text(
+                        'กรุณารอข่าวสารได้ในภายหลัง',
+                        style: MyStyle().boldPrimary20(),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+        ),
       ),
     );
   }

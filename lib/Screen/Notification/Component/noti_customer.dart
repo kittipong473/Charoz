@@ -6,6 +6,7 @@ import 'package:charoz/Screen/Notification/Provider/noti_provider.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Constant/my_variable.dart';
 import 'package:charoz/Utilty/Constant/my_widget.dart';
+import 'package:charoz/Utilty/Widget/show_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -18,56 +19,58 @@ class NotiCustomer extends StatefulWidget {
 }
 
 class _NotiCustomerState extends State<NotiCustomer> {
-  @override
-  void initState() {
-    super.initState();
+  Future getData() async {
     Provider.of<NotiProvider>(context, listen: false).getAllNoti();
   }
 
   @override
   Widget build(BuildContext context) {
+    getData();
     return SafeArea(
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
-        body: Consumer<NotiProvider>(
-          builder: (context, nprovider, child) => Stack(
-            children: [
-              Positioned.fill(
-                top: 10.h,
+        body: Stack(
+          children: [
+            Positioned.fill(
+              top: 10.h,
+              child: RefreshIndicator(
+                onRefresh: getData,
                 child: Column(
                   children: [
-                    buildChip(nprovider),
+                    buildChip(),
                     SizedBox(
                       width: 100.w,
                       height: 76.h,
-                      child: setPage(MyVariable.notiCustomerIndex, nprovider),
+                      child: setPage(),
                     ),
                   ],
                 ),
               ),
-              MyWidget().backgroundTitle(),
-              MyWidget().title('การแจ้งเตือน'),
-              if (MyVariable.role == "admin") ...[
-                MyWidget().createNoti(context),
-              ],
+            ),
+            MyWidget().backgroundTitle(),
+            MyWidget().title('การแจ้งเตือน'),
+            if (MyVariable.role == "admin") ...[
+              MyWidget().createNoti(context),
             ],
-          ),
+          ],
         ),
       ),
     );
   }
 
-  Widget buildChip(NotiProvider nprovider) {
+  Widget buildChip() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          chip('โปรโมชั่น', 0, nprovider.notiPromosLength),
-          chip('ข่าวสาร', 1, nprovider.notiNewsLength),
-          chip('อื่นๆ', 2, 1),
-        ],
+      child: Consumer<NotiProvider>(
+        builder: (_, value, __) => Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            chip('ข่าวสาร', 0, value.notiNewsLength),
+            chip('โปรโมชั่น', 1, value.notiPromosLength),
+            chip('อื่นๆ', 2, 1),
+          ],
+        ),
       ),
     );
   }
@@ -99,12 +102,12 @@ class _NotiCustomerState extends State<NotiCustomer> {
     );
   }
 
-  Widget setPage(int indexPage, NotiProvider nprovider) {
+  Widget setPage() {
     List<Widget> pages = [
-      Promo(notiPromos: nprovider.notiPromos),
-      News(notiNews: nprovider.notiNews),
+      const News(),
+      const Promo(),
       const Others(),
     ];
-    return pages[indexPage];
+    return pages[MyVariable.notiCustomerIndex];
   }
 }

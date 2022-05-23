@@ -1,4 +1,4 @@
-import 'package:charoz/Screen/User/Model/address_model.dart';
+import 'package:charoz/Screen/Address/Model/address_model.dart';
 import 'package:charoz/Service/Api/address_api.dart';
 import 'package:flutter/cupertino.dart';
 

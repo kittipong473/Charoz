@@ -12,6 +12,7 @@ import 'package:charoz/Screen/User/Component/login_phone.dart';
 import 'package:charoz/Service/Api/product_api.dart';
 import 'package:charoz/Service/Route/route_api.dart';
 import 'package:charoz/Service/Route/route_page.dart';
+import 'package:charoz/Utilty/Constant/my_dialog.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Constant/my_variable.dart';
@@ -20,11 +21,41 @@ import 'package:charoz/Utilty/Widget/show_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class MyWidget {
+  Future checkPermission(BuildContext context) async {
+    bool locationService;
+    LocationPermission locationPermission;
+    locationService = await Geolocator.isLocationServiceEnabled();
+    if (locationService) {
+      locationPermission = await Geolocator.checkPermission();
+      if (locationPermission == LocationPermission.denied) {
+        locationPermission = await Geolocator.requestPermission();
+        if (locationPermission == LocationPermission.deniedForever) {
+          MyDialog().alertLocationService(context, 'ไม่สามารถใช้งานได้',
+              'กรุณาอนุญาตการเข้าถึง Location เพื่อเข้าใช้งานแอพพลิเคชั่น');
+        } else {
+          return true;
+        }
+      } else {
+        if (locationPermission == LocationPermission.deniedForever) {
+          MyDialog().alertLocationService(context, 'ไม่สามารถใช้งานได้',
+              'กรุณาอนุญาตการเข้าถึง Location เพื่อเข้าใช้งานแอพพลิเคชั่น');
+        } else {
+          return true;
+        }
+      }
+    } else {
+      MyDialog().alertLocationService(context, 'Location ของคุณปิดอยู่',
+          'กรูณาเปิด Location เพื่อเข้าใช้งานแอพพลิเคชั่น');
+      return false;
+    }
+  }
+
   Future toast(String title) async {
     return Fluttertoast.showToast(
       msg: title,
@@ -467,6 +498,26 @@ class MyWidget {
             ]
           ],
         ),
+      ),
+    );
+  }
+
+  Widget emptyData(String title, String subtitle) {
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            title,
+            style: MyStyle().boldPrimary20(),
+          ),
+          SizedBox(height: 3.h),
+          Text(
+            subtitle,
+            style: MyStyle().boldPrimary20(),
+          ),
+        ],
       ),
     );
   }

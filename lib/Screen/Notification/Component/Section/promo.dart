@@ -1,60 +1,55 @@
 import 'package:animations/animations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charoz/Screen/Notification/Model/noti_model.dart';
+import 'package:charoz/Screen/Notification/Provider/noti_provider.dart';
 import 'package:charoz/Service/Route/route_api.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Constant/my_variable.dart';
 import 'package:charoz/Utilty/Widget/show_progress.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class Promo extends StatefulWidget {
-  final List<NotiModel> notiPromos;
-  const Promo({Key? key, required this.notiPromos}) : super(key: key);
+  const Promo({Key? key}) : super(key: key);
 
   @override
   _PromoState createState() => _PromoState();
 }
 
 class _PromoState extends State<Promo> {
-  List<NotiModel> notiModels = [];
-
-  @override
-  void initState() {
-    super.initState();
-    notiModels = widget.notiPromos;
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
-        body: notiModels.isNotEmpty
-            ? ListView.builder(
-                itemCount: notiModels.length,
-                itemBuilder: (context, index) =>
-                    buildPromotionItem(notiModels[index], index),
-              )
-            : Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'ไม่มีโปรโมชั่นในขณะนี้',
-                      style: MyStyle().boldPrimary20(),
-                    ),
-                    SizedBox(height: 3.h),
-                    Text(
-                      'กรุณารอช่วงโปรโมชั่นในภายหลัง',
-                      style: MyStyle().boldPrimary20(),
-                    ),
-                  ],
+        body: Consumer<NotiProvider>(
+          builder: (_, value, __) => value.notiPromos.isNotEmpty
+              ? ListView.builder(
+                  itemCount: value.notiPromosLength,
+                  itemBuilder: (context, index) =>
+                      buildPromotionItem(value.notiPromos[index], index),
+                )
+              : Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'ไม่มีโปรโมชั่นในขณะนี้',
+                        style: MyStyle().boldPrimary20(),
+                      ),
+                      SizedBox(height: 3.h),
+                      Text(
+                        'กรุณารอช่วงโปรโมชั่นในภายหลัง',
+                        style: MyStyle().boldPrimary20(),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+        ),
       ),
     );
   }

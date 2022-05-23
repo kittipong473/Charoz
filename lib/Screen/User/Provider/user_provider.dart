@@ -25,6 +25,7 @@ class UserProvider with ChangeNotifier {
   Future getUserWhereToken() async {
     _user = await UserApi().getUserWhereToken();
     MyVariable.role = _user!.userRole;
+    MyVariable.userTokenId = _user!.userId;
     notifyListeners();
   }
 
@@ -38,6 +39,11 @@ class UserProvider with ChangeNotifier {
     return _user!.userRole;
   }
 
+  Future<String> getUserIdWherePhone({required String phone}) async {
+    _user = await UserApi().getUserEmailWherePhone(phone: phone);
+    return _user!.userId;
+  }
+
   Future signOutFirebase(BuildContext context) async {
     await Firebase.initializeApp().then((value) async {
       await FirebaseAuth.instance.signOut().then((value) async {
@@ -45,6 +51,7 @@ class UserProvider with ChangeNotifier {
         MyVariable.indexPage = 0;
         MyVariable.login = false;
         MyVariable.role = '';
+        MyVariable.userTokenId = '';
         Navigator.pushNamedAndRemoveUntil(
             context, RoutePage.routePageNavigation, (route) => false);
         notifyListeners();

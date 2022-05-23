@@ -9,14 +9,16 @@ class ProductApi {
     ProductModel? result;
     final url =
         Uri.parse('${RouteApi.domainApiProduct}getProductWhereId.php?id=$id');
-    http.Response response = await http.get(url);
-    if (response.statusCode == 200 || response.body.toString() != 'null') {
-      for (var item in json.decode(response.body)) {
-        result = ProductModel.fromMap(item);
+    try {
+      http.Response response = await http.get(url);
+      if (response.statusCode == 200 && response.body.toString() != 'null') {
+        for (var item in json.decode(response.body)) {
+          result = ProductModel.fromMap(item);
+        }
       }
       return result;
-    } else {
-      return null;
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -24,15 +26,17 @@ class ProductApi {
     List<ProductModel> result = [];
     final url = Uri.parse(
         '${RouteApi.domainApiProduct}getProductWhereType.php?type=$type');
-    http.Response response = await http.get(url);
-    if (response.statusCode == 200 || response.body.toString() != 'null') {
-      for (var item in json.decode(response.body)) {
-        ProductModel model = ProductModel.fromMap(item);
-        result.add(model);
+    try {
+      http.Response response = await http.get(url);
+      if (response.statusCode == 200 && response.body.toString() != 'null') {
+        for (var item in json.decode(response.body)) {
+          ProductModel model = ProductModel.fromMap(item);
+          result.add(model);
+        }
       }
       return result;
-    } else {
-      return null;
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -40,15 +44,17 @@ class ProductApi {
     List<ProductModel> result = [];
     final url =
         Uri.parse('${RouteApi.domainApiProduct}getProductWhereSuggest.php');
-    http.Response response = await http.get(url);
-    if (response.statusCode == 200 || response.body.toString() != 'null') {
-      for (var item in json.decode(response.body)) {
-        ProductModel model = ProductModel.fromMap(item);
-        result.add(model);
+    try {
+      http.Response response = await http.get(url);
+      if (response.statusCode == 200 && response.body.toString() != 'null') {
+        for (var item in json.decode(response.body)) {
+          ProductModel model = ProductModel.fromMap(item);
+          result.add(model);
+        }
       }
       return result;
-    } else {
-      return null;
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -56,46 +62,55 @@ class ProductApi {
     List<ProductModel> result = [];
     final url = Uri.parse(
         '${RouteApi.domainApiProduct}getProductWhereFavorite.php?id=$id');
-    http.Response response = await http.get(url);
-    if (response.statusCode == 200 || response.body.toString() != 'null') {
-      for (var item in json.decode(response.body)) {
-        ProductModel model = ProductModel.fromMap(item);
-        result.add(model);
+    try {
+      http.Response response = await http.get(url);
+      if (response.statusCode == 200 && response.body.toString() != 'null') {
+        for (var item in json.decode(response.body)) {
+          ProductModel model = ProductModel.fromMap(item);
+          result.add(model);
+        }
       }
       return result;
-    } else {
-      return null;
+    } catch (e) {
+      print(e);
     }
   }
 
   Future editStatusWhereProduct(String status, String id) async {
     final url = Uri.parse(
         '${RouteApi.domainApiProduct}editStatusWhereProduct.php?id=$id&status=$status');
-    http.Response response = await http.get(url);
-    if (response.statusCode == 200 && response.body.toString() == 'true') {
-      return true;
-    } else {
-      return false;
+    try {
+      http.Response response = await http.get(url);
+      if (response.statusCode == 200 && response.body.toString() == 'true') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
-  Future<bool> insertProduct({
-    required String name,
-    required String type,
-    required String price,
-    required String score,
-    required String detail,
-    required String image,
-    required int suggest,
-    required String time,
-  }) async {
+  Future insertProduct(
+      {required String name,
+      required String type,
+      required String price,
+      required String score,
+      required String detail,
+      required String image,
+      required int suggest,
+      required String time}) async {
     final url = Uri.parse(
         '${RouteApi.domainApiProduct}addProduct.php?name=$name&type=$type&price=$price&score=$score&detail=$detail&image=$image&suggest=$suggest&created=$time&updated=$time');
-    http.Response response = await http.get(url);
-    if (response.statusCode == 200 && response.body.toString() == 'true') {
-      return true;
-    } else {
-      return false;
+    try {
+      http.Response response = await http.get(url);
+      if (response.statusCode == 200 && response.body.toString() == 'true') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -112,11 +127,15 @@ class ProductApi {
   }) async {
     final url = Uri.parse(
         '${RouteApi.domainApiProduct}editProductWhereId.php?id=$id&name=$name&type=$type&price=$price&score=$score&detail=$detail&image=$image&suggest=$suggest&updated=$time');
-    http.Response response = await http.get(url);
-    if (response.statusCode == 200 && response.body.toString() == 'true') {
-      return true;
-    } else {
-      return false;
+    try {
+      http.Response response = await http.get(url);
+      if (response.statusCode == 200 && response.body.toString() == 'true') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -124,22 +143,30 @@ class ProductApi {
       {required String id, required String status}) async {
     final url = Uri.parse(
         '${RouteApi.domainApiProduct}changeProductStatusWhereId.php?id=$id&status=$status');
-    http.Response response = await http.get(url);
-    if (response.statusCode == 200 && response.body.toString() == 'true') {
-      return true;
-    } else {
-      return false;
+    try {
+      http.Response response = await http.get(url);
+      if (response.statusCode == 200 && response.body.toString() == 'true') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
   Future deleteProductWhereId({required String id}) async {
     final url = Uri.parse(
         '${RouteApi.domainApiProduct}deleteProductWhereId.php?id=$id');
-    http.Response response = await http.get(url);
-    if (response.statusCode == 200 && response.body.toString() == 'true') {
-      return true;
-    } else {
-      return false;
+    try {
+      http.Response response = await http.get(url);
+      if (response.statusCode == 200 && response.body.toString() == 'true') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
     }
   }
 }
