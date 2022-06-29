@@ -1,47 +1,49 @@
 import 'dart:convert';
 
-import 'package:charoz/Screen/Notification/Model/noti_model.dart';
+import 'package:charoz/Model/noti_model.dart';
+import 'package:charoz/Service/Api/Convert_Model_Type/convert_model.dart';
 import 'package:charoz/Service/Route/route_api.dart';
+import 'package:charoz/Utilty/Constant/my_variable.dart';
 import 'package:http/http.dart' as http;
 
 class NotiApi {
-  Future getNotiWhereType(String type) async {
-    List<NotiModel> result = [];
-    final url =
-        Uri.parse('${RouteApi.domainApiNoti}getNotiWhereType.php?type=$type');
-    try {
-      http.Response response = await http.get(url);
-      if (response.statusCode == 200 && response.body.toString() != 'null') {
-        for (var item in json.decode(response.body)) {
-          NotiModel model = NotiModel.fromMap(item);
-          result.add(model);
-        }
-      }
-      return result;
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future getNotiWhereId({required String id}) async {
-    NotiModel? result;
+  Future getNotiWhereId({required int id}) async {
     final url = Uri.parse('${RouteApi.domainApiNoti}getNotiWhereId.php?id=$id');
     try {
       http.Response response = await http.get(url);
       if (response.statusCode == 200 && response.body.toString() != 'null') {
-        for (var item in json.decode(response.body)) {
-          result = NotiModel.fromMap(item);
-        }
+        return ConvertModel().noti(json.decode(response.body));
+      } else {
+        return null;
       }
-      return result;
     } catch (e) {
-      print(e);
+      rethrow;
     }
   }
 
-  Future changeNotiStatus({required String id}) async {
+  Future getAllNotiWhereType({required String type}) async {
+    List<NotiModel> result = [];
+    int id = MyVariable.userTokenId;
+    final url = Uri.parse(
+        '${RouteApi.domainApiNoti}getAllNotiWhereType.php?type=$type&id=$id');
+    try {
+      http.Response response = await http.get(url);
+      if (response.statusCode == 200 && response.body.toString() != 'null') {
+        for (var item in json.decode(response.body)) {
+          result.add(ConvertModel().noti(item));
+        }
+        return result;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future editNotiStatusWhereId({required int id}) async {
     final url =
-        Uri.parse('${RouteApi.domainApiNoti}changeNotiStatus.php?id=$id');
+        Uri.parse('${RouteApi.domainApiNoti}editNotiStatusWhereId.php?id=$id');
     try {
       http.Response response = await http.get(url);
       if (response.statusCode == 200 && response.body.toString() == 'true') {
@@ -50,7 +52,7 @@ class NotiApi {
         return false;
       }
     } catch (e) {
-      print(e);
+      rethrow;
     }
   }
 
@@ -59,12 +61,12 @@ class NotiApi {
     required String name,
     required String detail,
     required String image,
-    required String refer,
-    required String start,
-    required String end,
+    required String userid,
+    required DateTime start,
+    required DateTime end,
   }) async {
     final url = Uri.parse(
-        '${RouteApi.domainApiNoti}addNoti.php?type=$type&name=$name&detail=$detail&image=$image&refer=$refer&start=$start&end=$end');
+        '${RouteApi.domainApiNoti}insertNoti.php?type=$type&name=$name&detail=$detail&image=$image&userid=$userid&start=$start&end=$end');
     try {
       http.Response response = await http.get(url);
       if (response.statusCode == 200 && response.body.toString() == 'true') {
@@ -73,11 +75,11 @@ class NotiApi {
         return false;
       }
     } catch (e) {
-      print(e);
+      rethrow;
     }
   }
 
-  Future deleteNotiWhereId({required String id}) async {
+  Future deleteNotiWhereId({required int id}) async {
     final url =
         Uri.parse('${RouteApi.domainApiNoti}deleteNotiWhereId.php?id=$id');
     try {
@@ -88,7 +90,7 @@ class NotiApi {
         return false;
       }
     } catch (e) {
-      print(e);
+      rethrow;
     }
   }
 }

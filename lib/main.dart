@@ -2,7 +2,6 @@ import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Service/Route/route_provider.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Constant/my_variable.dart';
-import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,7 +17,6 @@ Future main() async {
     MyVariable.auth.authStateChanges().listen((event) {
       if (event != null) {
         MyVariable.accountUid = event.uid;
-        print(event.uid);
       }
     });
   });
@@ -26,23 +24,15 @@ Future main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    systemNavigationBarColor: Colors.transparent,
+    statusBarBrightness: Brightness.dark,
+    statusBarIconBrightness: Brightness.dark,
+  ));
   runApp(MultiProvider(
     providers: routeMultiProvider(),
-
-    // Basically mode
-    child: const MaterialApp(
-      home: MyApp(),
-      debugShowCheckedModeBanner: false,
-    ),
-
-    // Testing Emulator mode
-    // child: DevicePreview(
-    //   builder: (context) => const MaterialApp(
-    //     home: MyApp(),
-    //     useInheritedMediaQuery: true,
-    //     debugShowCheckedModeBanner: false,
-    //   ),
-    // ),
+    child: const MaterialApp(home: MyApp(), debugShowCheckedModeBanner: false),
   ));
 }
 
@@ -62,7 +52,6 @@ class MyApp extends StatelessWidget {
             MaterialColor(0xfff57f17, MyStyle.mapMaterialColor);
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          builder: DevicePreview.appBuilder,
           title: MyVariable.mainTitle,
           routes: routes,
           initialRoute: initialRoute,
