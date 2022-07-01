@@ -24,8 +24,8 @@ class ShopProvider with ChangeNotifier {
     _shopImageList = [MyImage.showshop2, MyImage.showshop3, MyImage.showshop4];
   }
 
-  Future getShopWhereId() async {
-    _shop = await ShopApi().getShopWhereId();
+  Future getShopWhereId(int id) async {
+    _shop = await ShopApi().getShopWhereId(id: id);
     notifyListeners();
   }
 
@@ -34,37 +34,31 @@ class ShopProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future getTimeWhereId() async {
-    _time = await ShopApi().getTimeWhereId();
-    _shopStatus = getCurrentTime(_time!.timeStatus);
+  Future getTimeWhereId(int id) async {
+    _time = await ShopApi().getTimeWhereId(id: id);
     notifyListeners();
   }
 
-  String getCurrentTime(String value) {
-    List<String> times = MyFunction().convertToList(value);
+  void getTimeStatus() {
+    List<String> times = MyFunction().convertToList(_time!.timeStatus);
     var now = DateTime.now();
     var timenow = DateFormat('HH.mm').format(DateTime.now());
     double cal = double.parse(timenow);
     if (_time!.timeChoose == 'เปิดตามเวลาปกติ') {
-      if (now.weekday >= 1 && now.weekday <= 5) {
-        if (cal >= convertTime(_time!.timeWeekdayOpen) &&
-            cal <= convertTime(_time!.timeWeekdayClose)) {
-          return times[0];
+      if (now.weekday >= 1 && now.weekday <= 6) {
+        if (cal >= convertTime(_time!.timeOpen) &&
+            cal <= convertTime(_time!.timeClose)) {
+          _shopStatus = times[0];
         } else {
-          return times[1];
+          _shopStatus = times[1];
         }
       } else {
-        if (cal >= convertTime(_time!.timeWeekendOpen) &&
-            cal <= convertTime(_time!.timeWeekendClose)) {
-          return times[0];
-        } else {
-          return times[1];
-        }
+        _shopStatus = time[1];
       }
     } else if (_time!.timeChoose == 'ปิดชั่วคราว') {
-      return times[2];
+      _shopStatus = times[2];
     } else {
-      return times[3];
+      _shopStatus = times[3];
     }
   }
 

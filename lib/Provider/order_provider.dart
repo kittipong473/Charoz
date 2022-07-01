@@ -5,13 +5,11 @@ import 'package:flutter/cupertino.dart';
 class OrderProvider with ChangeNotifier {
   ProductModel? _product;
   List<ProductModel>? _productAlls;
-  List<ProductModel>? _productLists;
-  List<ProductModel>? _productsSuggest;
+  List<ProductModel>? _productList;
 
   get product => _product;
   get productAlls => _productAlls;
-  get productLists => _productLists;
-  get productsSuggest => _productsSuggest;
+  get productList => _productList;
 
   Future getAllProduct() async {
     _productAlls = await ProductApi().getAllProduct();
@@ -19,12 +17,18 @@ class OrderProvider with ChangeNotifier {
   }
 
   Future getProductSuggest() async {
-    _productsSuggest = await ProductApi().getAllProductWhereSuggest();
+    if (_productList != null) {
+      _productList!.clear();
+    }
+    _productList = await ProductApi().getAllProductWhereSuggest();
     notifyListeners();
   }
 
   Future getAllProductWhereType(String type) async {
-    _productLists = await ProductApi().getAllProductWhereType(type);
+    if (_productList != null) {
+      _productList!.clear();
+    }
+    _productList = await ProductApi().getAllProductWhereType(type);
     notifyListeners();
   }
 

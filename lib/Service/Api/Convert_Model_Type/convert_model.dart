@@ -14,9 +14,9 @@ class ConvertModel {
   AddressModel address(dynamic item) {
     return AddressModel(
       addressId: int.parse(item['addressId']),
-      addressUserId: int.parse(item['addressUserId']),
+      userId: int.parse(item['userId']),
       addressName: item['addressName'],
-      addressDescription: item['addressDescription'],
+      addressDetail: item['addressDetail'],
       addressLat: double.parse(item['addressLat']),
       addressLng: double.parse(item['addressLng']),
       created: DateTime.parse(item['created']),
@@ -36,9 +36,9 @@ class ConvertModel {
   FavouriteModel favourite(dynamic item) {
     return FavouriteModel(
       favouriteId: int.parse(item['favouriteId']),
-      favouriteUserId: int.parse(item['favouriteUserId']),
+      userId: int.parse(item['userId']),
       favouriteProducts: item['favouriteProducts'],
-      updated: DateTime.parse(item['updated']),
+      created: DateTime.parse(item['created']),
     );
   }
 
@@ -54,6 +54,7 @@ class ConvertModel {
   NotiModel noti(dynamic item) {
     return NotiModel(
       notiId: int.parse(item['notiId']),
+      userId: int.parse(item['userId']),
       notiType: item['notiType'],
       notiName: item['notiName'],
       notiDetail: item['notiDetail'],
@@ -67,7 +68,7 @@ class ConvertModel {
   NotiOrderModel notiorder(dynamic item) {
     return NotiOrderModel(
       notiorderId: int.parse(item['notiorderId']),
-      notiorderOrderId: int.parse(item['notiorderOrderId']),
+      orderId: int.parse(item['orderId']),
       notiorderName: item['notiorderName'],
       notiorderStatus: item['notiorderStatus'],
       created: DateTime.parse(item['created']),
@@ -78,10 +79,10 @@ class ConvertModel {
   OrderListModel orderlist(dynamic item) {
     return OrderListModel(
       orderId: int.parse(item['orderId']),
-      orderShopId: int.parse(item['orderShopId']),
-      orderCustomerId: int.parse(item['orderCustomerId']),
-      orderRiderId: int.parse(item['orderRiderId']),
-      orderProductIds: item['orderProductIds'],
+      shopId: int.parse(item['shopId']),
+      customerId: int.parse(item['customerId']),
+      riderId: int.parse(item['riderId']),
+      productIds: item['productIds'],
       orderProductAmounts: item['orderProductAmounts'],
       orderTotal: double.parse(item['orderTotal']),
       orderPaymentType: item['orderPaymentType'],
@@ -117,7 +118,7 @@ class ConvertModel {
       shopAddress: item['shopAddress'],
       shopLat: double.parse(item['shopLat']),
       shopLng: double.parse(item['shopLng']),
-      shopVideo: item['shopVideo'],
+      shopImage: item['shopImage'],
       created: DateTime.parse(item['created']),
       updated: DateTime.parse(item['updated']),
     );
@@ -127,10 +128,8 @@ class ConvertModel {
     return TimeModel(
       timeId: int.parse(item['timeId']),
       shopId: int.parse(item['shopId']),
-      timeWeekdayOpen: item['timeWeekdayOpen'],
-      timeWeekdayClose: item['timeWeekdayClose'],
-      timeWeekendOpen: item['timeWeekendOpen'],
-      timeWeekendClose: item['timeWeekendClose'],
+      timeOpen: item['timeOpen'],
+      timeClose: item['timeClose'],
       timeStatus: item['timeStatus'],
       timeChoose: item['timeChoose'],
     );
@@ -144,8 +143,8 @@ class ConvertModel {
       userBirth: DateTime.parse(item['userBirth']),
       userEmail: item['userEmail'],
       userPhone: item['userPhone'],
+      userImage: item['userImage'],
       userRole: item['userRole'],
-      userLocation: int.parse(item['userLocation']),
       userEmailToken: item['userEmailToken'],
       userPhoneToken: item['userPhoneToken'],
       userGoogleToken: item['userGoogleToken'],

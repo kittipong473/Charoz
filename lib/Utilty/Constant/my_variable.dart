@@ -48,9 +48,10 @@ class MyVariable {
   static List<String> notisManager = ['ออเดอร์', 'โปรโมชั่น', 'ข่าวสาร'];
   // Type of Admin Notification
   static List<String> notisAdmin = ['ติดต่อ', 'โปรโมชั่น', 'ข่าวสาร'];
+  // List of Time Status
+  static List<String> timeTypes = ['เปิดตามเวลาปกติ', 'ปิดชั่วคราว', 'ปิดช่วงเทศกาล'];
   // List of type of address
   static List<String> locationTypes = [
-    '--เลือกสถานที่--',
     'คอนโดถนอมมิตร',
     'บ้านพัก',
     'ที่ทำงาน',

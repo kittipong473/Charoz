@@ -403,19 +403,6 @@ class _EditProductState extends State<EditProduct> {
     int suggestion = suggest ? 1 : 0;
     DateTime time = DateTime.now();
 
-    if (file != null) {
-      String url = '${RouteApi.domainApiProduct}saveImageProduct.php';
-      int i = Random().nextInt(100000);
-      String nameImage = 'product$i.jpg';
-      Map<String, dynamic> map = {};
-      map['file'] =
-          await MultipartFile.fromFile(file!.path, filename: nameImage);
-      FormData data = FormData.fromMap(map);
-      await Dio().post(url, data: data).then((value) {
-        image = nameImage;
-      });
-    }
-
     bool status = await ProductApi().editProductWhereId(
       id: id,
       name: name,

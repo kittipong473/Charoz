@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 class LocationService {
-  Future<bool> checkPermission(BuildContext context) async {
+  Future<bool> checkPermission() async {
     bool locationService;
     LocationPermission locationPermission;
     locationService = await Geolocator.isLocationServiceEnabled();

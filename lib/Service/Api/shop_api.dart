@@ -24,8 +24,8 @@ class ShopApi {
     }
   }
 
-  Future getShopWhereId() async {
-    final url = Uri.parse('${RouteApi.domainApiShop}getShopWhereId.php?id=1');
+  Future getShopWhereId({required int id}) async {
+    final url = Uri.parse('${RouteApi.domainApiShop}getShopWhereId.php?id=$id');
     try {
       http.Response response = await http.get(url);
       if (response.statusCode == 200 && response.body.toString() != 'null') {
@@ -38,8 +38,8 @@ class ShopApi {
     }
   }
 
-  Future getTimeWhereId() async {
-    final url = Uri.parse('${RouteApi.domainApiShop}getTimeWhereId.php?id=1');
+  Future getTimeWhereId({required int id}) async {
+    final url = Uri.parse('${RouteApi.domainApiShop}getTimeWhereId.php?id=$id');
     try {
       http.Response response = await http.get(url);
       if (response.statusCode == 200 && response.body.toString() != 'null') {
@@ -52,16 +52,16 @@ class ShopApi {
     }
   }
 
-  Future editInformationShopWhereId({
+  Future editShopByManager({
     required int id,
     required String name,
     required String announce,
     required String detail,
-    required String video,
+    required String image,
     required DateTime time,
   }) async {
     final url = Uri.parse(
-        '${RouteApi.domainApiShop}editInformationShopWhereId.php?id=$id&name=$name&announce=$announce&detail=$detail&video=$video&updated=$time');
+        '${RouteApi.domainApiShop}editShopByManager.php?id=$id&name=$name&announce=$announce&detail=$detail&image=$image&updated=$time');
     try {
       http.Response response = await http.get(url);
       if (response.statusCode == 200 && response.body.toString() == 'true') {
@@ -74,15 +74,19 @@ class ShopApi {
     }
   }
 
-  Future editAddressShopWhereId({
+  Future editShopByAdmin({
     required int id,
+    required String name,
+    required String announce,
+    required String detail,
     required String address,
     required double lat,
     required double lng,
+    required String image,
     required DateTime time,
   }) async {
     final url = Uri.parse(
-        '${RouteApi.domainApiShop}editAddressShopWhereId.php?id=$id&address=$address&lat=$lat&lng=$lng&updated=$time');
+        '${RouteApi.domainApiShop}editShopByAdmin.php?id=$id&name=$name&announce=$announce&detail=$detail&address=$address&lat=$lat&lng=$lng&image=$image&updated=$time');
     try {
       http.Response response = await http.get(url);
       if (response.statusCode == 200 && response.body.toString() == 'true') {
@@ -95,16 +99,14 @@ class ShopApi {
     }
   }
 
-  Future editTimeWhereId({
+  Future editTimeWhereShop({
     required int id,
     required String type,
-    required String weekdayOpen,
-    required String weekdayClose,
-    required String weekendOpen,
-    required String weekendClose,
+    required String timeOpen,
+    required String timeClose,
   }) async {
     final url = Uri.parse(
-        '${RouteApi.domainApiShop}editTimeWhereId.php?id=$id&type=$type&weekdayOpen=$weekdayOpen&weekdayClose=$weekdayClose&weekendOpen=$weekendOpen&weekendClose=$weekendClose');
+        '${RouteApi.domainApiShop}editTimeWhereShop.php?id=$id&type=$type&timeOpen=$timeOpen&timeClose=$timeClose');
     try {
       http.Response response = await http.get(url);
       if (response.statusCode == 200 && response.body.toString() == 'true') {

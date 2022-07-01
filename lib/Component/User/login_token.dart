@@ -1,7 +1,4 @@
-import 'package:charoz/Component/User/register_phone.dart';
 import 'package:charoz/Provider/user_provider.dart';
-import 'package:charoz/Service/Api/user_api.dart';
-import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
@@ -10,6 +7,7 @@ import 'package:charoz/Utilty/Function/show_toast.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -25,8 +23,7 @@ class _LoginTokenState extends State<LoginToken> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController otpController = TextEditingController();
   bool otpVisible = false;
-  String verificationID = "";
-  bool load = false;
+  String? verificationID;
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +38,7 @@ class _LoginTokenState extends State<LoginToken> {
             children: [
               Positioned.fill(
                 child: Padding(
-                  padding: MyVariable.largeDevice
-                      ? const EdgeInsets.symmetric(horizontal: 40)
-                      : const EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 5.w),
                   child: Form(
                     key: formKey,
                     child: Column(
@@ -83,37 +78,21 @@ class _LoginTokenState extends State<LoginToken> {
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(primary: MyStyle.bluePrimary),
               onPressed: () {
-                if (load) return;
-                setState(() => load = true);
                 if (formKey.currentState!.validate()) {
                   if (otpVisible) {
-                    verifyOTP();
+                    EasyLoading.show(status: 'loading...');
+                    Provider.of<UserProvider>(context, listen: false)
+                        .authenTokenFirebase(context, verificationID!,
+                            otpController.text, phoneController.text);
                   } else {
+                    EasyLoading.show(status: 'loading...');
                     requestOTP();
                   }
                 }
               },
-              child: load
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const CircularProgressIndicator(color: Colors.white),
-                        SizedBox(width: 3.w),
-                        Text(
-                          'Please Wait...',
-                          style: MyStyle().normalWhite18(),
-                        ),
-                      ],
-                    )
-                  : otpVisible
-                      ? Text(
-                          'ยืนยันรหัส OTP',
-                          style: MyStyle().boldWhite16(),
-                        )
-                      : Text(
-                          'ส่งคำขอรหัส OTP',
-                          style: MyStyle().boldWhite16(),
-                        ),
+              child: otpVisible
+                  ? Text('ยืนยันรหัส OTP', style: MyStyle().normalWhite16())
+                  : Text('ส่งคำขอรหัส OTP', style: MyStyle().normalWhite16()),
             ),
           ),
         ],
@@ -209,47 +188,14 @@ class _LoginTokenState extends State<LoginToken> {
         });
       },
       verificationFailed: (FirebaseAuthException e) {
-        setState(() => load = false);
         DialogAlert().singleDialog(context, e.code);
       },
       codeSent: (String verificationId, int? resendToken) {
         otpVisible = true;
         verificationID = verificationId;
-        load = false;
-        setState(() {});
+        EasyLoading.dismiss();
       },
       codeAutoRetrievalTimeout: (String verificationId) {},
     );
-  }
-
-  Future verifyOTP() async {
-    PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: verificationID, smsCode: otpController.text);
-    await MyVariable.auth.signInWithCredential(credential).then((value) async {
-      bool status =
-          await UserApi().checkUserWherePhone(phone: phoneController.text);
-      if (!status) {
-        MyVariable.login = true;
-        MyVariable.indexPageNavigation = 0;
-        MyVariable.role =
-            await Provider.of<UserProvider>(context, listen: false)
-                .getUserRoleWherePhone(phone: phoneController.text);
-        ShowToast().toast('ยินดีต้อนรับสู่ Application');
-        load = false;
-        Navigator.pushNamedAndRemoveUntil(
-            context, RoutePage.routePageNavigation, (route) => false);
-      } else {
-        load = false;
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => RegisterPhone(
-              phone: phoneController.text,
-              tokenP: value.user!.uid,
-            ),
-          ),
-        );
-      }
-    });
   }
 }

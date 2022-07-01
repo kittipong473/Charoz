@@ -1,11 +1,7 @@
-import 'package:charoz/Component/Notification/manage_noti.dart';
-import 'package:charoz/Component/Notification/noti_admin.dart';
+import 'package:charoz/Component/Notification/noti_list.dart';
 import 'package:charoz/Component/Order/rider_order_detail.dart';
 import 'package:charoz/Config/home.dart';
 import 'package:charoz/Provider/config_provider.dart';
-import 'package:charoz/Component/Notification/noti_customer.dart';
-import 'package:charoz/Component/Notification/noti_rider.dart';
-import 'package:charoz/Component/Notification/noti_manager.dart';
 import 'package:charoz/Component/Order/manager_order_list.dart';
 import 'package:charoz/Component/Order/order_cart.dart';
 import 'package:charoz/Component/Order/rider_order_list.dart';
@@ -56,7 +52,7 @@ class _PageNavigationState extends State<PageNavigation> {
               color: MyStyle.primary,
               buttonBackgroundColor: MyStyle.bluePrimary,
               backgroundColor: MyStyle.colorBackGround,
-              height: MyVariable.largeDevice ? 75 : 50,
+              height: 6.h,
               animationCurve: Curves.easeInOut,
               animationDuration: const Duration(milliseconds: 300),
               index: MyVariable.indexPageNavigation,
@@ -73,7 +69,7 @@ class _PageNavigationState extends State<PageNavigation> {
   void getBottomNavigationBar() {
     if (MyVariable.role == 'admin') {
       screens = [
-        const NotiAdmin(),
+        NotiList(notiList: MyVariable.notisAdmin),
         const UserList(),
         const ManagerOrderList(),
         const ShopList(),
@@ -88,7 +84,7 @@ class _PageNavigationState extends State<PageNavigation> {
       ];
     } else if (MyVariable.role == 'manager') {
       screens = [
-        const NotiManager(),
+        NotiList(notiList: MyVariable.notisManager),
         const ProductList(),
         const ManagerOrderList(),
         const ShopList(),
@@ -103,7 +99,7 @@ class _PageNavigationState extends State<PageNavigation> {
       ];
     } else if (MyVariable.role == 'rider') {
       screens = [
-        const NotiRider(),
+        NotiList(notiList: MyVariable.notisRider),
         const RiderOrderDetail(),
         const RiderOrderList(),
         const ShopList(),
@@ -121,7 +117,7 @@ class _PageNavigationState extends State<PageNavigation> {
         const Home(),
         const ProductList(),
         const OrderCart(),
-        const NotiCustomer(),
+        NotiList(notiList: MyVariable.notisCustomer),
         const UserProfile(),
       ];
       icons = [
@@ -136,7 +132,7 @@ class _PageNavigationState extends State<PageNavigation> {
         const Home(),
         const ProductList(),
         const ShopList(),
-        const NotiCustomer(),
+        NotiList(notiList: MyVariable.notisUser),
         const LoginPhone(),
       ];
       icons = [

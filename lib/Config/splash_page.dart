@@ -1,9 +1,5 @@
-import 'package:charoz/Config/maintenance.dart';
-import 'package:charoz/Model/address_model.dart';
-import 'package:charoz/Provider/address_provider.dart';
+import 'package:charoz/Provider/config_provider.dart';
 import 'package:charoz/Provider/user_provider.dart';
-import 'package:charoz/Service/Api/address_api.dart';
-import 'package:charoz/Service/Api/config_api.dart';
 import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Constant/my_variable.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
@@ -24,13 +20,12 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
-    super.initState();
     loadData();
+    super.initState();
   }
 
   Future loadData() async {
     if (MyVariable.accountUid != "") {
-      MyVariable.login = true;
       await Provider.of<UserProvider>(context, listen: false)
           .getUserWhereToken();
     } else {
@@ -41,12 +36,11 @@ class _SplashPageState extends State<SplashPage> {
     int maintenance = 2;
 
     if (maintenance == 0 || maintenance == 1) {
+      Provider.of<ConfigProvider>(context, listen: false)
+          .getMaintenance(maintenance);
       Future.delayed(Duration.zero, () {
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => MaintenancePage(status: maintenance)),
-            (route) => false);
+        Navigator.pushNamedAndRemoveUntil(
+            context, RoutePage.routeMaintenancePage, (route) => false);
       });
     } else if (maintenance == 2) {
       Future.delayed(Duration.zero, () {

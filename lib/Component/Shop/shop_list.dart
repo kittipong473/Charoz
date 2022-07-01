@@ -1,3 +1,4 @@
+import 'package:charoz/Component/Shop/shop_detail.dart';
 import 'package:charoz/Model/shop_model.dart';
 import 'package:charoz/Provider/shop_provider.dart';
 import 'package:charoz/Service/Route/route_page.dart';
@@ -40,14 +41,14 @@ class _ShopListState extends State<ShopList> {
               : Stack(
                   children: [
                     Positioned.fill(
-                      top: 6.h,
+                      top: 8.h,
                       child: SingleChildScrollView(
-                        child: Container(
+                        child: SizedBox(
                           width: 100.w,
                           height: 94.h,
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: ListView.builder(
                             itemCount: sprovider.shopList.length,
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
                             itemBuilder: (context, index) =>
                                 buildShopItem(sprovider.shopList[index], index),
                           ),
@@ -68,7 +69,10 @@ class _ShopListState extends State<ShopList> {
       elevation: 5.0,
       child: InkWell(
         onTap: () {
-          Navigator.pushNamed(context, RoutePage.routeShopDetail);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ShopDetail(id: shop.shopId)));
         },
         child: Padding(
           padding: MyVariable.largeDevice

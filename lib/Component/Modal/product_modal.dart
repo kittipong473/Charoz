@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:charoz/Provider/noti_provider.dart';
-import 'package:charoz/Service/Api/noti_api.dart';
-import 'package:charoz/Utilty/Function/dialog_alert.dart';
+import 'package:charoz/Provider/order_provider.dart';
+import 'package:charoz/Service/Api/product_api.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Constant/my_variable.dart';
+import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Function/save_image_path.dart';
 import 'package:charoz/Utilty/Function/show_toast.dart';
 import 'package:charoz/Utilty/Widget/dropdown_menu.dart';
@@ -13,53 +13,39 @@ import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class ManageNoti extends StatefulWidget {
-  const ManageNoti({Key? key}) : super(key: key);
-
-  @override
-  _ManageNotiState createState() => _ManageNotiState();
-}
-
-class _ManageNotiState extends State<ManageNoti> {
+class ProductModal {
   final formKey = GlobalKey<FormState>();
   TextEditingController nameController = TextEditingController();
+  TextEditingController priceController = TextEditingController();
+  TextEditingController scoreController = TextEditingController();
   TextEditingController detailController = TextEditingController();
-  TextEditingController startController = TextEditingController();
-  TextEditingController endController = TextEditingController();
-  TextEditingController useridController = TextEditingController();
-  MaskTextInputFormatter dateFormat =
-      MaskTextInputFormatter(mask: '##-##-####');
-  DateTime? startValue;
-  DateTime? endValue;
+  MaskTextInputFormatter scoreFormat = MaskTextInputFormatter(mask: '#.#');
+  bool suggest = false;
   String? image;
   File? file;
   String? chooseType;
 
-  @override
-  void initState() {
-    super.initState();
-    startValue = DateTime.now();
-    image = 'null';
-    startController.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
-  }
+  Future<dynamic> openModalAddProduct(context) => showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => modalAddProduct(context));
 
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Scaffold(
-        backgroundColor: MyStyle.colorBackGround,
-        body: GestureDetector(
+  Widget modalAddProduct(BuildContext context) {
+    return SizedBox(
+      width: 100.w,
+      height: 90.h,
+      child: StatefulBuilder(
+        builder: (context, setState) => GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
           behavior: HitTestBehavior.opaque,
           child: Stack(
             children: [
               Positioned.fill(
+                top: 7.h,
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 5.w),
@@ -68,20 +54,19 @@ class _ManageNotiState extends State<ManageNoti> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SizedBox(height: 10.h),
-                          buildType(),
+                          buildType(setState),
                           SizedBox(height: 3.h),
                           buildName(),
                           SizedBox(height: 3.h),
+                          buildPrice(),
+                          SizedBox(height: 3.h),
+                          buildScore(),
+                          SizedBox(height: 3.h),
                           buildDetail(),
-                          SizedBox(height: 3.h),
-                          buildStart(),
-                          SizedBox(height: 3.h),
-                          buildEnd(),
-                          SizedBox(height: 3.h),
-                          buildUserId(),
-                          SizedBox(height: 3.h),
-                          buildImage(),
+                          SizedBox(height: 1.h),
+                          buildImage(setState),
+                          SizedBox(height: 1.h),
+                          buildCheck(setState),
                           SizedBox(height: 3.h),
                           buildButton(context),
                           SizedBox(height: 2.h),
@@ -91,8 +76,7 @@ class _ManageNotiState extends State<ManageNoti> {
                   ),
                 ),
               ),
-              ScreenWidget().appBarTitle('เพิ่มการแจ้งเตือน'),
-              ScreenWidget().backPage(context),
+              ScreenWidget().modalTitle('เพิ่มรายการอาหาร'),
             ],
           ),
         ),
@@ -100,13 +84,13 @@ class _ManageNotiState extends State<ManageNoti> {
     );
   }
 
-  Widget buildType() {
+  Widget buildType(Function setState) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text('ประเภท : ', style: MyStyle().normalBlack16()),
         Container(
-          width: 50.w,
+          width: 40.w,
           padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -114,20 +98,14 @@ class _ManageNotiState extends State<ManageNoti> {
           ),
           child: DropdownButton(
             iconSize: 24.sp,
-            icon: const Icon(Icons.arrow_drop_down_outlined,
-                color: MyStyle.primary),
+            icon:
+                const Icon(Icons.arrow_drop_down_outlined, color: MyStyle.dark),
             isExpanded: true,
             value: chooseType,
-            items: MyVariable.role == 'admin'
-                ? MyVariable.notisAdmin
-                    .map(DropDownMenu().dropdownItem)
-                    .toList()
-                : MyVariable.notisUser
-                    .map(DropDownMenu().dropdownItem)
-                    .toList(),
-            onChanged: (value) {
-              setState(() => chooseType = value as String);
-            },
+            items: MyVariable.productTypes
+                .map(DropDownMenu().dropdownItem)
+                .toList(),
+            onChanged: (value) => setState(() => chooseType = value as String),
           ),
         ),
       ],
@@ -137,30 +115,103 @@ class _ManageNotiState extends State<ManageNoti> {
   Widget buildName() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      width: 90.w,
+      width: 80.w,
       child: TextFormField(
         style: MyStyle().normalBlack16(),
         controller: nameController,
         validator: (value) {
           if (value!.isEmpty) {
-            return 'กรุณากรอก หัวข้อ';
+            return 'กรุณากรอก ชื่ออาหาร';
           } else {
             return null;
           }
         },
         decoration: InputDecoration(
           labelStyle: MyStyle().normalBlack16(),
-          labelText: 'หัวข้อ :',
+          labelText: 'ชื่ออาหาร :',
           prefixIcon: const Icon(
             Icons.description_rounded,
             color: MyStyle.dark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
+            borderSide: const BorderSide(color: MyStyle.dark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
+            borderSide: const BorderSide(color: MyStyle.light),
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildPrice() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      width: 80.w,
+      child: TextFormField(
+        style: MyStyle().normalBlack16(),
+        keyboardType: TextInputType.number,
+        controller: priceController,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'กรุณากรอก ราคา';
+          } else {
+            return null;
+          }
+        },
+        decoration: InputDecoration(
+          labelStyle: MyStyle().normalBlack16(),
+          labelText: 'ราคา :',
+          prefixIcon: const Icon(
+            Icons.attach_money_rounded,
+            color: MyStyle.dark,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: MyStyle.dark),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: MyStyle.light),
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildScore() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      width: 80.w,
+      child: TextFormField(
+        inputFormatters: [scoreFormat],
+        style: MyStyle().normalBlack16(),
+        keyboardType: TextInputType.number,
+        controller: scoreController,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'กรุณากรอก คะแนน';
+          } else {
+            return null;
+          }
+        },
+        decoration: InputDecoration(
+          labelStyle: MyStyle().normalBlack16(),
+          labelText: 'คะแนน :',
+          hintText: 'X.X',
+          hintStyle: MyStyle().normalGrey16(),
+          prefixIcon: const Icon(
+            Icons.score_rounded,
+            color: MyStyle.dark,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: MyStyle.dark),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: MyStyle.light),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -171,31 +222,24 @@ class _ManageNotiState extends State<ManageNoti> {
   Widget buildDetail() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      width: 90.w,
+      width: 80.w,
       child: TextFormField(
-        maxLines: 5,
         style: MyStyle().normalBlack16(),
+        maxLines: 3,
         controller: detailController,
-        validator: (value) {
-          if (value!.isEmpty) {
-            return 'กรุณากรอก รายละเอียด';
-          } else {
-            return null;
-          }
-        },
         decoration: InputDecoration(
           labelStyle: MyStyle().normalBlack16(),
-          labelText: 'รายละเอียด :',
+          labelText: 'รายละเอียด : ',
           prefixIcon: const Icon(
             Icons.details_rounded,
             color: MyStyle.dark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
+            borderSide: const BorderSide(color: MyStyle.dark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
+            borderSide: const BorderSide(color: MyStyle.light),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -203,134 +247,7 @@ class _ManageNotiState extends State<ManageNoti> {
     );
   }
 
-  Widget buildStart() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      width: 90.w,
-      child: TextFormField(
-        keyboardType: TextInputType.number,
-        inputFormatters: [dateFormat],
-        style: MyStyle().normalBlack16(),
-        controller: startController,
-        validator: (value) {
-          if (value!.isEmpty) {
-            return 'กรุณากรอก เวลาเริ่ม';
-          } else {
-            return null;
-          }
-        },
-        decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
-          labelText: 'เวลาเริ่ม :',
-          prefixIcon: const Icon(
-            Icons.calendar_today_rounded,
-            color: MyStyle.dark,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildEnd() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      width: 90.w,
-      child: TextFormField(
-        keyboardType: TextInputType.number,
-        inputFormatters: [dateFormat],
-        style: MyStyle().normalBlack16(),
-        controller: endController,
-        validator: (value) {
-          if (value!.isEmpty) {
-            return 'กรุณากรอก เวลาสิ้นสุด';
-          } else {
-            return null;
-          }
-        },
-        decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
-          labelText: 'เวลาสิ้นสุด :',
-          prefixIcon: const Icon(
-            Icons.calendar_today_rounded,
-            color: MyStyle.dark,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          suffixIcon: IconButton(
-            onPressed: () {
-              showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(DateTime.now().year - 100),
-                lastDate: DateTime(DateTime.now().year + 1),
-              ).then((value) {
-                setState(() {
-                  endValue = value;
-                  endController.text =
-                      DateFormat('dd-MM-yyyy').format(endValue!);
-                });
-              });
-            },
-            icon: const Icon(
-              Icons.calendar_today_rounded,
-              color: MyStyle.primary,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildUserId() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      width: 50.w,
-      child: TextFormField(
-        keyboardType: TextInputType.number,
-        style: MyStyle().normalBlack16(),
-        controller: useridController,
-        validator: (value) {
-          if (value!.isEmpty) {
-            return 'กรุณากรอก รหัสเป้าหมาย';
-          } else {
-            return null;
-          }
-        },
-        decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
-          labelText: 'รหัสเป้าหมาย :',
-          prefixIcon: const Icon(
-            Icons.key_rounded,
-            color: MyStyle.dark,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildImage() {
+  Widget buildImage(Function setState) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -346,7 +263,7 @@ class _ManageNotiState extends State<ManageNoti> {
           width: 40.w,
           height: 40.w,
           child: file == null
-              ? Image.asset(MyImage.image, fit: BoxFit.cover)
+              ? Image.asset(MyImage.image, fit: BoxFit.contain)
               : Image.file(file!),
         ),
         IconButton(
@@ -361,43 +278,63 @@ class _ManageNotiState extends State<ManageNoti> {
     );
   }
 
+  Widget buildCheck(Function setState) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Checkbox(
+          value: suggest,
+          activeColor: MyStyle.primary,
+          onChanged: (check) {
+            setState(() => suggest = check!);
+          },
+        ),
+        Text(
+          'แนะนำรายการอาหารที่หน้าหลัก',
+          style: MyStyle().normalBlack16(),
+        )
+      ],
+    );
+  }
+
   Widget buildButton(BuildContext context) {
     return SizedBox(
-      width: 90.w,
+      width: 80.w,
       height: 5.h,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(primary: MyStyle.bluePrimary),
         onPressed: () {
           if (formKey.currentState!.validate()) {
             EasyLoading.show(status: 'loading...');
-            processInsert();
+            processInsert(context);
           } else if (chooseType == null) {
-            DialogAlert().singleDialog(context, 'กรุณาเลือก หัวข้อ');
+            DialogAlert().singleDialog(context, 'กรุณาเลือก ประเภท');
           }
         },
-        child: Text('เพิ่มการแจ้งเตือน', style: MyStyle().normalWhite16()),
+        child: Text('เพิ่มรายการอาหาร', style: MyStyle().normalWhite16()),
       ),
     );
   }
 
-  Future processInsert() async {
-    String chooseImage = await SaveImagePath().saveNotiImage(image!, file);
+  Future processInsert(BuildContext context) async {
+    String chooseImage = await SaveImagePath().saveProductImage(image!, file);
 
-    bool status = await NotiApi().insertNoti(
-      type: chooseType!,
+    bool status = await ProductApi().insertProduct(
       name: nameController.text,
-      detail: detailController.text,
-      userid: int.parse(useridController.text),
+      type: chooseType!,
+      price: double.parse(priceController.text),
+      score: double.parse(scoreController.text),
+      detail: detailController.text.isEmpty ? 'ไม่มี' : detailController.text,
       image: chooseImage,
-      start: startValue!,
-      end: endValue!,
+      suggest: suggest ? 1 : 0,
+      time: DateTime.now(),
     );
 
     if (status) {
-      Provider.of<NotiProvider>(context, listen: false)
-          .getAllNotiWhereType(MyVariable.notisAdmin[MyVariable.indexNotiChip]);
+      Provider.of<OrderProvider>(context, listen: false).getAllProductWhereType(
+          MyVariable.productTypes[MyVariable.indexProductChip]);
       EasyLoading.dismiss();
-      ShowToast().toast('เพิ่มการแจ้งเตือนเรียบร้อย');
+      ShowToast().toast('เพิ่มรายการอาหารเรียบร้อยแล้ว');
       Navigator.pop(context);
     } else {
       EasyLoading.dismiss();

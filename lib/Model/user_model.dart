@@ -8,8 +8,8 @@ class UserModel {
   final DateTime userBirth;
   final String userEmail;
   final String userPhone;
+  final String userImage;
   final String userRole;
-  final int userLocation;
   final String userEmailToken;
   final String userPhoneToken;
   final String userGoogleToken;
@@ -20,8 +20,8 @@ class UserModel {
     required this.userBirth,
     required this.userEmail,
     required this.userPhone,
+    required this.userImage,
     required this.userRole,
-    required this.userLocation,
     required this.userEmailToken,
     required this.userPhoneToken,
     required this.userGoogleToken,
@@ -34,8 +34,8 @@ class UserModel {
     DateTime? userBirth,
     String? userEmail,
     String? userPhone,
+    String? userImage,
     String? userRole,
-    int? userLocation,
     String? userEmailToken,
     String? userPhoneToken,
     String? userGoogleToken,
@@ -47,8 +47,8 @@ class UserModel {
       userBirth: userBirth ?? this.userBirth,
       userEmail: userEmail ?? this.userEmail,
       userPhone: userPhone ?? this.userPhone,
+      userImage: userImage ?? this.userImage,
       userRole: userRole ?? this.userRole,
-      userLocation: userLocation ?? this.userLocation,
       userEmailToken: userEmailToken ?? this.userEmailToken,
       userPhoneToken: userPhoneToken ?? this.userPhoneToken,
       userGoogleToken: userGoogleToken ?? this.userGoogleToken,
@@ -56,15 +56,15 @@ class UserModel {
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    return {
       'userId': userId,
       'userFirstName': userFirstName,
       'userLastName': userLastName,
       'userBirth': userBirth.millisecondsSinceEpoch,
       'userEmail': userEmail,
       'userPhone': userPhone,
+      'userImage': userImage,
       'userRole': userRole,
-      'userLocation': userLocation,
       'userEmailToken': userEmailToken,
       'userPhoneToken': userPhoneToken,
       'userGoogleToken': userGoogleToken,
@@ -73,60 +73,59 @@ class UserModel {
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      userId: map['userId'] as int,
-      userFirstName: map['userFirstName'] as String,
-      userLastName: map['userLastName'] as String,
-      userBirth: DateTime.fromMillisecondsSinceEpoch(map['userBirth'] as int),
-      userEmail: map['userEmail'] as String,
-      userPhone: map['userPhone'] as String,
-      userRole: map['userRole'] as String,
-      userLocation: map['userLocation'] as int,
-      userEmailToken: map['userEmailToken'] as String,
-      userPhoneToken: map['userPhoneToken'] as String,
-      userGoogleToken: map['userGoogleToken'] as String,
+      userId: map['userId']?.toInt() ?? 0,
+      userFirstName: map['userFirstName'] ?? '',
+      userLastName: map['userLastName'] ?? '',
+      userBirth: DateTime.fromMillisecondsSinceEpoch(map['userBirth']),
+      userEmail: map['userEmail'] ?? '',
+      userPhone: map['userPhone'] ?? '',
+      userImage: map['userImage'] ?? '',
+      userRole: map['userRole'] ?? '',
+      userEmailToken: map['userEmailToken'] ?? '',
+      userPhoneToken: map['userPhoneToken'] ?? '',
+      userGoogleToken: map['userGoogleToken'] ?? '',
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory UserModel.fromJson(String source) =>
-      UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory UserModel.fromJson(String source) => UserModel.fromMap(json.decode(source));
 
   @override
   String toString() {
-    return 'UserModel(userId: $userId, userFirstName: $userFirstName, userLastName: $userLastName, userBirth: $userBirth, userEmail: $userEmail, userPhone: $userPhone, userRole: $userRole, userLocation: $userLocation, userEmailToken: $userEmailToken, userPhoneToken: $userPhoneToken, userGoogleToken: $userGoogleToken)';
+    return 'UserModel(userId: $userId, userFirstName: $userFirstName, userLastName: $userLastName, userBirth: $userBirth, userEmail: $userEmail, userPhone: $userPhone, userImage: $userImage, userRole: $userRole, userEmailToken: $userEmailToken, userPhoneToken: $userPhoneToken, userGoogleToken: $userGoogleToken)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-
+  
     return other is UserModel &&
-        other.userId == userId &&
-        other.userFirstName == userFirstName &&
-        other.userLastName == userLastName &&
-        other.userBirth == userBirth &&
-        other.userEmail == userEmail &&
-        other.userPhone == userPhone &&
-        other.userRole == userRole &&
-        other.userLocation == userLocation &&
-        other.userEmailToken == userEmailToken &&
-        other.userPhoneToken == userPhoneToken &&
-        other.userGoogleToken == userGoogleToken;
+      other.userId == userId &&
+      other.userFirstName == userFirstName &&
+      other.userLastName == userLastName &&
+      other.userBirth == userBirth &&
+      other.userEmail == userEmail &&
+      other.userPhone == userPhone &&
+      other.userImage == userImage &&
+      other.userRole == userRole &&
+      other.userEmailToken == userEmailToken &&
+      other.userPhoneToken == userPhoneToken &&
+      other.userGoogleToken == userGoogleToken;
   }
 
   @override
   int get hashCode {
     return userId.hashCode ^
-        userFirstName.hashCode ^
-        userLastName.hashCode ^
-        userBirth.hashCode ^
-        userEmail.hashCode ^
-        userPhone.hashCode ^
-        userRole.hashCode ^
-        userLocation.hashCode ^
-        userEmailToken.hashCode ^
-        userPhoneToken.hashCode ^
-        userGoogleToken.hashCode;
+      userFirstName.hashCode ^
+      userLastName.hashCode ^
+      userBirth.hashCode ^
+      userEmail.hashCode ^
+      userPhone.hashCode ^
+      userImage.hashCode ^
+      userRole.hashCode ^
+      userEmailToken.hashCode ^
+      userPhoneToken.hashCode ^
+      userGoogleToken.hashCode;
   }
 }

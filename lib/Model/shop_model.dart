@@ -9,7 +9,7 @@ class ShopModel {
   final String shopAddress;
   final double shopLat;
   final double shopLng;
-  final String shopVideo;
+  final String shopImage;
   final DateTime created;
   final DateTime updated;
   ShopModel({
@@ -20,7 +20,7 @@ class ShopModel {
     required this.shopAddress,
     required this.shopLat,
     required this.shopLng,
-    required this.shopVideo,
+    required this.shopImage,
     required this.created,
     required this.updated,
   });
@@ -33,7 +33,7 @@ class ShopModel {
     String? shopAddress,
     double? shopLat,
     double? shopLng,
-    String? shopVideo,
+    String? shopImage,
     DateTime? created,
     DateTime? updated,
   }) {
@@ -45,14 +45,14 @@ class ShopModel {
       shopAddress: shopAddress ?? this.shopAddress,
       shopLat: shopLat ?? this.shopLat,
       shopLng: shopLng ?? this.shopLng,
-      shopVideo: shopVideo ?? this.shopVideo,
+      shopImage: shopImage ?? this.shopImage,
       created: created ?? this.created,
       updated: updated ?? this.updated,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    return {
       'shopId': shopId,
       'shopName': shopName,
       'shopAnnounce': shopAnnounce,
@@ -60,7 +60,7 @@ class ShopModel {
       'shopAddress': shopAddress,
       'shopLat': shopLat,
       'shopLng': shopLng,
-      'shopVideo': shopVideo,
+      'shopImage': shopImage,
       'created': created.millisecondsSinceEpoch,
       'updated': updated.millisecondsSinceEpoch,
     };
@@ -68,57 +68,56 @@ class ShopModel {
 
   factory ShopModel.fromMap(Map<String, dynamic> map) {
     return ShopModel(
-      shopId: map['shopId'] as int,
-      shopName: map['shopName'] as String,
-      shopAnnounce: map['shopAnnounce'] as String,
-      shopDetail: map['shopDetail'] as String,
-      shopAddress: map['shopAddress'] as String,
-      shopLat: map['shopLat'] as double,
-      shopLng: map['shopLng'] as double,
-      shopVideo: map['shopVideo'] as String,
-      created: DateTime.fromMillisecondsSinceEpoch(map['created'] as int),
-      updated: DateTime.fromMillisecondsSinceEpoch(map['updated'] as int),
+      shopId: map['shopId']?.toInt() ?? 0,
+      shopName: map['shopName'] ?? '',
+      shopAnnounce: map['shopAnnounce'] ?? '',
+      shopDetail: map['shopDetail'] ?? '',
+      shopAddress: map['shopAddress'] ?? '',
+      shopLat: map['shopLat']?.toDouble() ?? 0.0,
+      shopLng: map['shopLng']?.toDouble() ?? 0.0,
+      shopImage: map['shopImage'] ?? '',
+      created: DateTime.fromMillisecondsSinceEpoch(map['created']),
+      updated: DateTime.fromMillisecondsSinceEpoch(map['updated']),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory ShopModel.fromJson(String source) =>
-      ShopModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory ShopModel.fromJson(String source) => ShopModel.fromMap(json.decode(source));
 
   @override
   String toString() {
-    return 'ShopModel(shopId: $shopId, shopName: $shopName, shopAnnounce: $shopAnnounce, shopDetail: $shopDetail, shopAddress: $shopAddress, shopLat: $shopLat, shopLng: $shopLng, shopVideo: $shopVideo, created: $created, updated: $updated)';
+    return 'ShopModel(shopId: $shopId, shopName: $shopName, shopAnnounce: $shopAnnounce, shopDetail: $shopDetail, shopAddress: $shopAddress, shopLat: $shopLat, shopLng: $shopLng, shopImage: $shopImage, created: $created, updated: $updated)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-
+  
     return other is ShopModel &&
-        other.shopId == shopId &&
-        other.shopName == shopName &&
-        other.shopAnnounce == shopAnnounce &&
-        other.shopDetail == shopDetail &&
-        other.shopAddress == shopAddress &&
-        other.shopLat == shopLat &&
-        other.shopLng == shopLng &&
-        other.shopVideo == shopVideo &&
-        other.created == created &&
-        other.updated == updated;
+      other.shopId == shopId &&
+      other.shopName == shopName &&
+      other.shopAnnounce == shopAnnounce &&
+      other.shopDetail == shopDetail &&
+      other.shopAddress == shopAddress &&
+      other.shopLat == shopLat &&
+      other.shopLng == shopLng &&
+      other.shopImage == shopImage &&
+      other.created == created &&
+      other.updated == updated;
   }
 
   @override
   int get hashCode {
     return shopId.hashCode ^
-        shopName.hashCode ^
-        shopAnnounce.hashCode ^
-        shopDetail.hashCode ^
-        shopAddress.hashCode ^
-        shopLat.hashCode ^
-        shopLng.hashCode ^
-        shopVideo.hashCode ^
-        created.hashCode ^
-        updated.hashCode;
+      shopName.hashCode ^
+      shopAnnounce.hashCode ^
+      shopDetail.hashCode ^
+      shopAddress.hashCode ^
+      shopLat.hashCode ^
+      shopLng.hashCode ^
+      shopImage.hashCode ^
+      created.hashCode ^
+      updated.hashCode;
   }
 }

@@ -5,6 +5,7 @@ import 'package:charoz/Utilty/Constant/my_variable.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -26,9 +27,10 @@ Future main() async {
   ]);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
-    systemNavigationBarColor: Colors.transparent,
     statusBarBrightness: Brightness.dark,
     statusBarIconBrightness: Brightness.dark,
+    systemNavigationBarColor: Colors.black,
+    systemNavigationBarIconBrightness: Brightness.light,
   ));
   runApp(MultiProvider(
     providers: routeMultiProvider(),
@@ -52,6 +54,7 @@ class MyApp extends StatelessWidget {
             MaterialColor(0xfff57f17, MyStyle.mapMaterialColor);
         return MaterialApp(
           debugShowCheckedModeBanner: false,
+          builder: EasyLoading.init(),
           title: MyVariable.mainTitle,
           routes: routes,
           initialRoute: initialRoute,

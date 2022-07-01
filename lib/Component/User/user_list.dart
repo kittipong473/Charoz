@@ -1,12 +1,11 @@
-import 'package:animations/animations.dart';
 import 'package:charoz/Model/user_model.dart';
 import 'package:charoz/Provider/user_provider.dart';
-import 'package:charoz/Service/Api/user_api.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Constant/my_variable.dart';
 import 'package:charoz/Utilty/Function/dialog_detail.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
+import 'package:charoz/Utilty/Widget/show_image.dart';
 import 'package:charoz/Utilty/Widget/show_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -35,12 +34,12 @@ class _UserListState extends State<UserList> {
         body: Stack(
           children: [
             Positioned.fill(
+              top: 8.h,
               child: Column(
                 children: [
-                  const SizedBox(height: 80),
                   SizedBox(
                     width: 100.w,
-                    height: MyVariable.largeDevice ? 78.h : 73.h,
+                    height: 73.h,
                     child: Consumer<UserProvider>(
                       builder: (_, provider, __) => provider.userList == null
                           ? const ShowProgress()
@@ -82,7 +81,9 @@ class _UserListState extends State<UserList> {
             SizedBox(
               width: 25.w,
               height: 25.w,
-              child: Image.asset(MyImage.person),
+              child: user.userImage == 'null'
+                  ? Image.asset(MyImage.person)
+                  : ShowImage().userImage(user.userImage),
             ),
             Text(user.userPhone, style: MyStyle().normalPrimary14()),
             Text(user.userFirstName, style: MyStyle().normalBlack14()),

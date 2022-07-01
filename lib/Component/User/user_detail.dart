@@ -7,6 +7,7 @@ import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Constant/my_variable.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
+import 'package:charoz/Utilty/Widget/show_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -26,33 +27,31 @@ class _UserProfileState extends State<UserProfile> {
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
         body: Consumer<UserProvider>(
-          builder: (context, uprovider, child) => Stack(
+          builder: (context, provider, child) => Stack(
             children: [
               Positioned.fill(
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: MyVariable.largeDevice
-                        ? const EdgeInsets.symmetric(horizontal: 40)
-                        : const EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
                     child: Column(
                       children: [
                         SizedBox(height: 10.h),
-                        buildImage(),
+                        buildImage(provider.user!.userImage),
                         SizedBox(height: 3.h),
-                        buildFirstName(uprovider.user!.userFirstName),
+                        buildFirstName(provider.user!.userFirstName),
                         SizedBox(height: 3.h),
-                        buildLastName(uprovider.user!.userLastName),
+                        buildLastName(provider.user!.userLastName),
                         SizedBox(height: 3.h),
-                        buildEmail(uprovider.user!.userEmail),
+                        buildEmail(provider.user!.userEmail),
                         SizedBox(height: 3.h),
-                        buildPhone(uprovider.user!.userPhone),
+                        buildPhone(provider.user!.userPhone),
                         SizedBox(height: 3.h),
                         buildBirth(MyFunction()
-                            .convertBirthTime(uprovider.user!.userBirth)),
+                            .convertBirthTime(provider.user!.userBirth)),
                         SizedBox(height: 3.h),
-                        buildRole(uprovider.user!.userRole),
+                        buildRole(provider.user!.userRole),
                         SizedBox(height: 5.h),
-                        buildButton(context, uprovider.user),
+                        buildButton(context, provider.user),
                         if (MyVariable.role == 'customer') ...[
                           SizedBox(height: 5.h),
                           buildUserLocation(context),
@@ -70,17 +69,14 @@ class _UserProfileState extends State<UserProfile> {
     );
   }
 
-  Widget buildImage() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Image.asset(
-          MyImage.person,
-          width: 30.w,
-          height: 30.w,
-        ),
-      ],
-    );
+  Widget buildImage(String image) {
+    return image == 'null'
+        ? Image.asset(
+            MyImage.person,
+            width: 30.w,
+            height: 30.w,
+          )
+        : ShowImage().userImage(image);
   }
 
   Widget buildFirstName(String fname) {
@@ -185,35 +181,23 @@ class _UserProfileState extends State<UserProfile> {
       children: [
         SizedBox(
           width: 35.w,
-          height: MyVariable.largeDevice ? 60 : 40,
+          height: 5.h,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(primary: Colors.green),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditUser(
-                    user: user,
-                  ),
-                ),
-              );
-            },
-            child: Text(
-              'แก้ไขข้อมูล',
-              style: MyStyle().boldWhite16(),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => EditUser(user: user)),
             ),
+            child: Text('แก้ไขข้อมูล', style: MyStyle().normalWhite16()),
           ),
         ),
         SizedBox(
           width: 35.w,
-          height: MyVariable.largeDevice ? 60 : 40,
+          height: 5.h,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(primary: Colors.red),
             onPressed: () => UserProvider().signOutFirebase(context),
-            child: Text(
-              'ลงชื่อออก',
-              style: MyStyle().boldWhite16(),
-            ),
+            child: Text('ลงชื่อออก', style: MyStyle().normalWhite16()),
           ),
         ),
       ],
@@ -221,23 +205,15 @@ class _UserProfileState extends State<UserProfile> {
   }
 
   Widget buildUserLocation(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: 80.w,
-          height: MyVariable.largeDevice ? 60 : 40,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(primary: MyStyle.bluePrimary),
-            onPressed: () =>
-                Navigator.pushNamed(context, RoutePage.routeLocationList),
-            child: Text(
-              'จัดการที่อยู่',
-              style: MyStyle().boldWhite16(),
-            ),
-          ),
-        ),
-      ],
+    return SizedBox(
+      width: 80.w,
+      height: 5.h,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(primary: MyStyle.bluePrimary),
+        onPressed: () =>
+            Navigator.pushNamed(context, RoutePage.routeLocationList),
+        child: Text('จัดการที่อยู่', style: MyStyle().normalWhite16()),
+      ),
     );
   }
 }

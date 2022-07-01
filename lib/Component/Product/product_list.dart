@@ -1,7 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:charoz/Component/Modal/product_modal.dart';
 import 'package:charoz/Model/product_model.dart';
 import 'package:charoz/Provider/order_provider.dart';
-import 'package:charoz/Service/Route/route_api.dart';
 import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
@@ -10,7 +9,7 @@ import 'package:charoz/Utilty/Function/dialog_detail.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:charoz/Utilty/Widget/search_product.dart';
-import 'package:charoz/Utilty/Widget/show_progress.dart';
+import 'package:charoz/Utilty/Widget/show_image.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -80,49 +79,35 @@ class _ProductListState extends State<ProductList> {
             buildSearch(),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          child: scroll
-              ? const Icon(Icons.arrow_downward_rounded)
-              : const Icon(Icons.arrow_upward_rounded),
-          onPressed: scroll ? scrollDown : scrollUp,
-        ),
+        floatingActionButton: MyVariable.role == 'manager'
+            ? FloatingActionButton(
+                backgroundColor: MyStyle.bluePrimary,
+                child: const Icon(Icons.add_rounded, color: Colors.white),
+                onPressed: () => ProductModal().openModalAddProduct(context),
+              )
+            : FloatingActionButton(
+                backgroundColor: MyStyle.bluePrimary,
+                child: scroll
+                    ? const Icon(Icons.arrow_downward_rounded,
+                        color: Colors.white)
+                    : const Icon(Icons.arrow_upward_rounded,
+                        color: Colors.white),
+                onPressed: scroll ? scrollDown : scrollUp,
+              ),
       ),
     );
   }
 
-  Widget buildProductList() {
-    return SizedBox(
-      width: 100.w,
-      height: MyVariable.role == 'manager' ? 65.h : 70.h,
-      child: Consumer<OrderProvider>(
-        builder: (_, provider, __) => provider.productLists == null
-            ? Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('ไม่มีรายการอาหารในขณะนี้',
-                        style: MyStyle().boldPrimary20()),
-                    SizedBox(height: 3.h),
-                    Text('กรุณารอรายการได้ในภายหลัง',
-                        style: MyStyle().boldPrimary20()),
-                  ],
-                ),
-              )
-            : GridView.builder(
-                shrinkWrap: true,
-                controller: scrollController,
-                padding: MyVariable.largeDevice
-                    ? const EdgeInsets.only(top: 10)
-                    : const EdgeInsets.only(top: 0),
-                itemCount: provider.productLists.length,
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    childAspectRatio: 2 / 3, maxCrossAxisExtent: 160),
-                itemBuilder: (context, index) =>
-                    buildProductItem(provider.productLists[index], index),
-              ),
-      ),
-    );
+  void scrollUp() {
+    double start = 0;
+    scrollController.animateTo(start,
+        duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
+  }
+
+  void scrollDown() {
+    double end = scrollController.position.maxScrollExtent;
+    scrollController.animateTo(end,
+        duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
   }
 
   Widget buildChip() {
@@ -139,14 +124,6 @@ class _ProductListState extends State<ProductList> {
               chip(MyVariable.productTypes[3], 3),
             ],
           ),
-          if (MyVariable.role == 'manager') ...[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                chipAddProduct(),
-              ],
-            ),
-          ],
         ],
       ),
     );
@@ -164,33 +141,8 @@ class _ProductListState extends State<ProductList> {
             : MyStyle().normalBlack16(),
       ),
       onPressed: () {
-        setState(() {
-          MyVariable.indexProductChip = index;
-          getData();
-        });
-      },
-    );
-  }
-
-  Widget chipAddProduct() {
-    return ActionChip(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      backgroundColor: MyStyle.bluePrimary,
-      label: Row(
-        children: [
-          Icon(
-            Icons.add_rounded,
-            size: 20.sp,
-            color: Colors.white,
-          ),
-          Text(
-            'เพิ่มรายการ',
-            style: MyStyle().boldWhite14(),
-          ),
-        ],
-      ),
-      onPressed: () {
-        Navigator.pushNamed(context, RoutePage.routeAddProduct);
+        setState(() => MyVariable.indexProductChip = index);
+        getData();
       },
     );
   }
@@ -219,6 +171,29 @@ class _ProductListState extends State<ProductList> {
     );
   }
 
+  Widget buildProductList() {
+    return SizedBox(
+      width: 100.w,
+      height: 70.h,
+      child: Consumer<OrderProvider>(
+        builder: (_, provider, __) => provider.productList == null
+            ? ScreenWidget().showEmptyData(
+                'ไม่มีรายการ ${MyVariable.productTypes[MyVariable.indexProductChip]} ในขณะนี้',
+                'กรุณารอรายการได้ในภายหลัง')
+            : GridView.builder(
+                shrinkWrap: true,
+                controller: scrollController,
+                padding: const EdgeInsets.only(top: 0),
+                itemCount: provider.productList.length,
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    childAspectRatio: 2 / 3, maxCrossAxisExtent: 160),
+                itemBuilder: (context, index) =>
+                    buildProductItem(provider.productList[index], index),
+              ),
+      ),
+    );
+  }
+
   Widget buildProductItem(ProductModel product, int index) {
     return Card(
       color: product.productStatus == 0 ? Colors.grey.shade400 : Colors.white,
@@ -241,14 +216,7 @@ class _ProductListState extends State<ProductList> {
                     Positioned.fill(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5),
-                        child: CachedNetworkImage(
-                          fit: BoxFit.fill,
-                          imageUrl:
-                              '${RouteApi.domainProduct}${product.productImage}',
-                          placeholder: (context, url) => const ShowProgress(),
-                          errorWidget: (context, url, error) =>
-                              Image.asset(MyImage.error),
-                        ),
+                        child: ShowImage().productImage(product.productImage),
                       ),
                     ),
                     if (product.productSuggest == 0) ...[
@@ -282,17 +250,5 @@ class _ProductListState extends State<ProductList> {
         ),
       ),
     );
-  }
-
-  void scrollUp() {
-    double start = 0;
-    scrollController.animateTo(start,
-        duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
-  }
-
-  void scrollDown() {
-    double end = scrollController.position.maxScrollExtent;
-    scrollController.animateTo(end,
-        duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
   }
 }

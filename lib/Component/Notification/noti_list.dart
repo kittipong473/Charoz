@@ -8,14 +8,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class NotiAdmin extends StatefulWidget {
-  const NotiAdmin({Key? key}) : super(key: key);
+class NotiList extends StatefulWidget {
+  final List notiList;
+  const NotiList({Key? key, required this.notiList}) : super(key: key);
 
   @override
-  State<NotiAdmin> createState() => _NotiAdminState();
+  State<NotiList> createState() => _NotiListState();
 }
 
-class _NotiAdminState extends State<NotiAdmin> {
+class _NotiListState extends State<NotiList> {
   @override
   void initState() {
     getData();
@@ -24,7 +25,7 @@ class _NotiAdminState extends State<NotiAdmin> {
 
   Future getData() async {
     Provider.of<NotiProvider>(context, listen: false)
-        .getAllNotiWhereType(MyVariable.notisAdmin[MyVariable.indexNotiChip]);
+        .getAllNotiWhereType(widget.notiList[MyVariable.indexNotiChip]);
   }
 
   @override
@@ -48,7 +49,9 @@ class _NotiAdminState extends State<NotiAdmin> {
               ),
             ),
             ScreenWidget().appBarTitle('การแจ้งเตือน'),
-            ScreenWidget().createNoti(context),
+            if (MyVariable.role == 'admin' || MyVariable.role == 'manager') ...[
+              ScreenWidget().createNoti(context),
+            ],
           ],
         ),
       ),
@@ -61,9 +64,9 @@ class _NotiAdminState extends State<NotiAdmin> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          chip(MyVariable.notisAdmin[0], 0),
-          chip(MyVariable.notisAdmin[1], 1),
-          chip(MyVariable.notisAdmin[2], 2),
+          for (var i = 0; i < widget.notiList.length; i++) ...[
+            chip(widget.notiList[i], i),
+          ],
         ],
       ),
     );
@@ -99,12 +102,12 @@ class _NotiAdminState extends State<NotiAdmin> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'ยังไม่มี ${MyVariable.notisAdmin[MyVariable.indexNotiChip]} ในขณะนี้',
+                      'ยังไม่มี ${widget.notiList[MyVariable.indexNotiChip]} ในขณะนี้',
                       style: MyStyle().normalPrimary18(),
                     ),
                     SizedBox(height: 3.h),
                     Text(
-                      'กรุณารอรายการ ${MyVariable.notisAdmin[MyVariable.indexNotiChip]} ได้ในภายหลัง',
+                      'กรุณารอรายการ ${widget.notiList[MyVariable.indexNotiChip]} ได้ในภายหลัง',
                       style: MyStyle().normalPrimary18(),
                     ),
                   ],

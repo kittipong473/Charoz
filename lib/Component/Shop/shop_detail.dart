@@ -16,7 +16,8 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ShopDetail extends StatefulWidget {
-  const ShopDetail({Key? key}) : super(key: key);
+  final int id;
+  const ShopDetail({Key? key, required this.id}) : super(key: key);
 
   @override
   _ShopDetailState createState() => _ShopDetailState();
@@ -24,7 +25,7 @@ class ShopDetail extends StatefulWidget {
 
 class _ShopDetailState extends State<ShopDetail> {
   GoogleMapController? googleMapController;
-  bool allowLocation = false;
+  bool? allowLocation;
 
   @override
   void initState() {
@@ -34,12 +35,13 @@ class _ShopDetailState extends State<ShopDetail> {
   }
 
   Future checkLocation() async {
-    allowLocation = await LocationService().checkPermission(context);
+    allowLocation = await LocationService().checkPermission();
+    setState(() {});
   }
 
   void getData() {
-    Provider.of<ShopProvider>(context, listen: false).getShopWhereId();
-    Provider.of<ShopProvider>(context, listen: false).getTimeWhereId();
+    Provider.of<ShopProvider>(context, listen: false).getShopWhereId(widget.id);
+    Provider.of<ShopProvider>(context, listen: false).getTimeWhereId(widget.id);
     Provider.of<ShopProvider>(context, listen: false).getShopDetailImage();
   }
 
@@ -49,158 +51,121 @@ class _ShopDetailState extends State<ShopDetail> {
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: MyVariable.largeDevice
-                      ? const EdgeInsets.symmetric(horizontal: 40)
-                      : const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 10.h),
-                      ScreenWidget().buildTitle('ชื่อร้านค้า :'),
-                      SizedBox(height: 1.h),
-                      buildName(),
-                      SizedBox(height: 2.h),
-                      ScreenWidget().buildTitle('รายละเอียด :'),
-                      SizedBox(height: 1.h),
-                      buildDetail(),
-                      SizedBox(height: 2.h),
-                      ScreenWidget().buildTitle('เวลาเปิด-ปิด วันทำงาน :'),
-                      SizedBox(height: 1.h),
-                      buildWeekDayTime(),
-                      SizedBox(height: 2.h),
-                      ScreenWidget().buildTitle('เวลาเปิด-ปิด วันหยุด :'),
-                      SizedBox(height: 1.h),
-                      buildWeekEndTime(),
-                      SizedBox(height: 2.h),
-                      ScreenWidget().buildTitle('ตำแหน่งร้านค้า :'),
-                      SizedBox(height: 1.h),
-                      buildAddress(),
-                      SizedBox(height: 2.h),
-                      allowLocation ? buildActiveMap() : buildDisableMap(),
-                      SizedBox(height: 5.h),
-                      ScreenWidget().buildTitle('รูปภาพเกี่ยวกับร้านค้า :'),
-                      SizedBox(height: 1.h),
-                      buildShopImageList(),
-                      SizedBox(height: 3.h),
-                    ],
+        body: Consumer<ShopProvider>(
+          builder: (_, provider, __) => Stack(
+            children: [
+              Positioned.fill(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
+                    child: Column(
+                      children: [
+                        SizedBox(height: 10.h),
+                        ScreenWidget().buildTitle('ชื่อร้านค้า :'),
+                        SizedBox(height: 1.h),
+                        buildName(provider.shop.shopName),
+                        SizedBox(height: 2.h),
+                        ScreenWidget().buildTitle('รายละเอียด :'),
+                        SizedBox(height: 1.h),
+                        buildDetail(provider.shop.shopDetail),
+                        SizedBox(height: 2.h),
+                        ScreenWidget().buildTitle('เวลาเปิด-ปิด :'),
+                        SizedBox(height: 1.h),
+                        buildTime(
+                            provider.time.timeOpen, provider.time.timeClose),
+                        SizedBox(height: 2.h),
+                        ScreenWidget().buildTitle('ตำแหน่งร้านค้า :'),
+                        SizedBox(height: 1.h),
+                        buildAddress(provider.shop.shopAddress),
+                        SizedBox(height: 2.h),
+                        allowLocation != null
+                            ? allowLocation!
+                                ? buildActiveMap(provider.shop)
+                                : buildDisableMap()
+                            : const ShowProgress(),
+                        SizedBox(height: 5.h),
+                        ScreenWidget().buildTitle('รูปภาพเกี่ยวกับร้านค้า :'),
+                        SizedBox(height: 1.h),
+                        buildShopImageList(provider.shopImageList),
+                        SizedBox(height: 3.h),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            ScreenWidget().appBarTitle('ข้อมูลร้านค้า'),
-            ScreenWidget().backPage(context),
-            // if (MyVariable.role == 'admin' ||
-            //     MyVariable.role == 'saler') ...[
-            //   Consumer<ShopProvider>(
-            //     builder: (_, value, __) => ScreenWidget()
-            //         .editShop(context, value.shop!, value.time!),
-            //   ),
-            // ],
-          ],
+              ScreenWidget().appBarTitle('ข้อมูลร้านค้า'),
+              ScreenWidget().backPage(context),
+              if (MyVariable.role == 'admin' ||
+                  MyVariable.role == 'manager') ...[
+                ScreenWidget()
+                    .editShop(context, provider.shop!, provider.time!),
+              ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget buildName() {
-    return Consumer<ShopProvider>(
-      builder: (_, value, __) => value.shop == null
-          ? const ShowProgress()
-          : SizedBox(
-              width: 80.w,
-              child: Text(
-                value.shop.shopName,
-                style: MyStyle().normalBlue18(),
-                textAlign: TextAlign.center,
-              ),
-            ),
-    );
-  }
-
-  Widget buildDetail() {
-    return Consumer<ShopProvider>(
-      builder: (_, value, __) => value.shop == null
-          ? const ShowProgress()
-          : SizedBox(
-              width: 80.w,
-              child: Text(
-                value.shop.shopDetail,
-                style: MyStyle().normalBlue18(),
-                textAlign: TextAlign.center,
-              ),
-            ),
-    );
-  }
-
-  Widget buildWeekDayTime() {
-    return Consumer<ShopProvider>(
-      builder: (_, value, __) => value.time == null
-          ? const ShowProgress()
-          : SizedBox(
-              width: 80.w,
-              child: Text(
-                '${MyFunction().convertShopTime(value.time.timeWeekdayOpen)} น. - ${MyFunction().convertShopTime(value.time.timeWeekdayClose)} น.',
-                style: MyStyle().normalBlue18(),
-                textAlign: TextAlign.center,
-              ),
-            ),
-    );
-  }
-
-  Widget buildWeekEndTime() {
-    return Consumer<ShopProvider>(
-      builder: (_, value, __) => value.time == null
-          ? const ShowProgress()
-          : SizedBox(
-              width: 80.w,
-              child: Text(
-                '${MyFunction().convertShopTime(value.time.timeWeekendOpen)} น. - ${MyFunction().convertShopTime(value.time.timeWeekendClose)} น.',
-                style: MyStyle().normalBlue18(),
-                textAlign: TextAlign.center,
-              ),
-            ),
-    );
-  }
-
-  Widget buildAddress() {
-    return Consumer<ShopProvider>(
-      builder: (_, value, __) => SizedBox(
-        width: 80.w,
-        child: Text(
-          value.shop.shopAddress,
-          style: MyStyle().normalBlue18(),
-          textAlign: TextAlign.center,
-        ),
+  Widget buildName(String name) {
+    return SizedBox(
+      width: 80.w,
+      child: Text(
+        name,
+        style: MyStyle().normalPrimary18(),
+        textAlign: TextAlign.center,
       ),
     );
   }
 
-  Widget buildActiveMap() {
+  Widget buildDetail(String detail) {
+    return SizedBox(
+      width: 80.w,
+      child: Text(
+        detail,
+        style: MyStyle().normalPrimary18(),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget buildTime(String open, String close) {
+    return SizedBox(
+      width: 80.w,
+      child: Text(
+        '${MyFunction().convertShopTime(open)} น. - ${MyFunction().convertShopTime(close)} น.',
+        style: MyStyle().normalPrimary18(),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget buildAddress(String address) {
+    return SizedBox(
+      width: 80.w,
+      child: Text(
+        address,
+        style: MyStyle().normalPrimary18(),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget buildActiveMap(ShopModel shop) {
     return SizedBox(
       width: 80.w,
       height: 80.w,
-      child: Consumer<ShopProvider>(
-        builder: (_, value, __) => value.shop == null
-            ? const ShowProgress()
-            : GoogleMap(
-                myLocationEnabled: true,
-                compassEnabled: false,
-                tiltGesturesEnabled: false,
-                mapType: MapType.normal,
-                initialCameraPosition: CameraPosition(
-                  target: LatLng(value.shop.shopLat, value.shop.shopLng),
-                  zoom: 18,
-                  tilt: 80,
-                ),
-                onMapCreated: (controller) {
-                  setState(() => googleMapController = controller);
-                },
-                markers: setMarker(value.shop),
-              ),
+      child: GoogleMap(
+        myLocationEnabled: true,
+        compassEnabled: false,
+        tiltGesturesEnabled: false,
+        mapType: MapType.normal,
+        initialCameraPosition: CameraPosition(
+            target: LatLng(shop.shopLat, shop.shopLng), zoom: 18, tilt: 80),
+        onMapCreated: (controller) {
+          setState(() => googleMapController = controller);
+        },
+        markers: setMarker(shop),
       ),
     );
   }
@@ -229,16 +194,12 @@ class _ShopDetailState extends State<ShopDetail> {
     };
   }
 
-  Widget buildShopImageList() {
-    return Consumer<ShopProvider>(
-      builder: (_, value, __) => value.shopImageList == null
-          ? const ShowProgress()
-          : CarouselSlider.builder(
-              options: CarouselOptions(height: 30.h, autoPlay: true),
-              itemCount: value.shopImageList.length,
-              itemBuilder: (context, index, realIndex) =>
-                  buildShopImageItem(value.shopImageList[index], index),
-            ),
+  Widget buildShopImageList(List shopImageList) {
+    return CarouselSlider.builder(
+      options: CarouselOptions(height: 30.h, autoPlay: true),
+      itemCount: shopImageList.length,
+      itemBuilder: (context, index, realIndex) =>
+          buildShopImageItem(shopImageList[index], index),
     );
   }
 

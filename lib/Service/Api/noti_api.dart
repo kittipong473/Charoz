@@ -61,7 +61,7 @@ class NotiApi {
     required String name,
     required String detail,
     required String image,
-    required String userid,
+    required int userid,
     required DateTime start,
     required DateTime end,
   }) async {

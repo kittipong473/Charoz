@@ -1,11 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:charoz/Model/banner_model.dart';
 import 'package:charoz/Provider/config_provider.dart';
 import 'package:charoz/Model/product_model.dart';
 import 'package:charoz/Provider/order_provider.dart';
 import 'package:charoz/Provider/shop_provider.dart';
-import 'package:charoz/Service/Route/route_api.dart';
 import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Function/dialog_detail.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
@@ -13,6 +11,7 @@ import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Constant/my_variable.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
+import 'package:charoz/Utilty/Widget/show_image.dart';
 import 'package:charoz/Utilty/Widget/show_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -40,10 +39,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     super.initState();
   }
 
-  void getData() {
+  Future getData() async {
     Provider.of<ConfigProvider>(context, listen: false).getAllBanner();
-    Provider.of<ShopProvider>(context, listen: false).getShopWhereId();
-    Provider.of<ShopProvider>(context, listen: false).getTimeWhereId();
+    Provider.of<ShopProvider>(context, listen: false).getShopWhereId(1);
+    await Provider.of<ShopProvider>(context, listen: false).getTimeWhereId(1);
+    if (mounted) Provider.of<ShopProvider>(context, listen: false).getTimeStatus();
     Provider.of<OrderProvider>(context, listen: false).getProductSuggest();
   }
 
@@ -83,76 +83,75 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(height: 8.h),
-                    buildStatus(),
-                    SizedBox(height: 1.h),
-                    buildCarouselList(),
-                    SizedBox(height: 3.h),
-                    buildVideo(),
-                    SizedBox(height: 3.h),
-                    ScreenWidget().buildTitlePadding('อาหารแนะนำ'),
-                    buildSuggestList(),
-                    SizedBox(height: 3.h),
-                    ScreenWidget().buildTitlePadding('เลือกดูประเภทอาหาร'),
-                    SizedBox(height: 2.h),
-                    buildChip(),
-                    SizedBox(height: 3.h),
-                    buildDetail(),
-                    buildAnnounce(),
-                  ],
-                ),
-              ),
-            ),
-            ScreenWidget().appBarTitle('Charoz Steak House'),
-          ],
+        body: Consumer3<ShopProvider, ConfigProvider, OrderProvider>(
+          builder: (_, sprovider, cprovider, oprovider, __) =>
+              sprovider.shop == null ||
+                      sprovider.shopStatus == null ||
+                      cprovider.bannerList == null ||
+                      oprovider.productList == null
+                  ? const ShowProgress()
+                  : Stack(
+                      children: [
+                        Positioned.fill(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                SizedBox(height: 8.h),
+                                buildStatus(sprovider.shopStatus),
+                                SizedBox(height: 1.h),
+                                buildCarouselList(cprovider.bannerList),
+                                SizedBox(height: 3.h),
+                                buildVideo(sprovider.shop.shopImage),
+                                SizedBox(height: 3.h),
+                                ScreenWidget().buildTitlePadding('อาหารแนะนำ'),
+                                buildSuggestList(oprovider.productList),
+                                SizedBox(height: 3.h),
+                                ScreenWidget()
+                                    .buildTitlePadding('เลือกดูประเภทอาหาร'),
+                                SizedBox(height: 2.h),
+                                buildChip(),
+                                SizedBox(height: 3.h),
+                                buildDetail(sprovider.shop.shopDetail),
+                                buildAnnounce(sprovider.shop.shopAnnounce),
+                              ],
+                            ),
+                          ),
+                        ),
+                        ScreenWidget().appBarTitle('Charoz Steak House'),
+                      ],
+                    ),
         ),
       ),
     );
   }
 
-  Widget buildStatus() {
-    return Consumer<ShopProvider>(
-      builder: (_, provider, __) => provider.shopStatus == null
-          ? const ShowProgress()
-          : Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (provider.shopStatus == 'เปิดบริการ') ...[
-                  Lottie.asset(MyImage.gifOpen, width: 30.sp, height: 30.sp),
-                  Text('สถานะร้านค้า : ${provider.shopStatus}',
-                      style: MyStyle().boldGreen18()),
-                  Lottie.asset(MyImage.gifOpen, width: 30.sp, height: 30.sp),
-                ] else ...[
-                  Lottie.asset(MyImage.gifClosed, width: 30.sp, height: 30.sp),
-                  Text('สถานะร้านค้า : ${provider.shopStatus}',
-                      style: MyStyle().boldRed18()),
-                  Lottie.asset(MyImage.gifClosed, width: 30.sp, height: 30.sp),
-                ]
-              ],
-            ),
+  Widget buildStatus(String status) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (status == 'เปิดบริการ') ...[
+          Lottie.asset(MyImage.gifOpen, width: 30.sp, height: 30.sp),
+          Text('สถานะร้านค้า : $status', style: MyStyle().boldGreen18()),
+          Lottie.asset(MyImage.gifOpen, width: 30.sp, height: 30.sp),
+        ] else ...[
+          Lottie.asset(MyImage.gifClosed, width: 30.sp, height: 30.sp),
+          Text('สถานะร้านค้า : $status', style: MyStyle().boldRed18()),
+          Lottie.asset(MyImage.gifClosed, width: 30.sp, height: 30.sp),
+        ]
+      ],
     );
   }
 
-  Widget buildCarouselList() {
-    return Consumer<ConfigProvider>(
-      builder: (_, provider, __) => provider.bannerList == null
-          ? const ShowProgress()
-          : CarouselSlider.builder(
-              options: CarouselOptions(
-                height: 16.h,
-                autoPlay: true,
-                autoPlayInterval: const Duration(seconds: 3),
-              ),
-              itemCount: provider.bannerList.length,
-              itemBuilder: (context, index, realIndex) =>
-                  buildCarouselItem(provider.bannerList[index], index),
-            ),
+  Widget buildCarouselList(List bannerList) {
+    return CarouselSlider.builder(
+      options: CarouselOptions(
+        height: 16.h,
+        autoPlay: true,
+        autoPlayInterval: const Duration(seconds: 3),
+      ),
+      itemCount: bannerList.length,
+      itemBuilder: (context, index, realIndex) =>
+          buildCarouselItem(bannerList[index], index),
     );
   }
 
@@ -166,18 +165,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             color: Colors.grey, borderRadius: BorderRadius.circular(20)),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
-          child: CachedNetworkImage(
-            fit: BoxFit.cover,
-            imageUrl: '${RouteApi.domainBanner}${banner.bannerUrl}',
-            placeholder: (context, url) => const ShowProgress(),
-            errorWidget: (context, url, error) => Image.asset(MyImage.error),
-          ),
+          child: ShowImage().bannerImage(banner.bannerUrl),
         ),
       ),
     );
   }
 
-  Widget buildVideo() {
+  Widget buildVideo(String path) {
     return Container(
       width: 100.w,
       height: 20.h,
@@ -188,35 +182,21 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           //         ? const ShowProgress()
           //         : VideoPlayer(videoPlayerController!)
           //     :
-          Consumer<ShopProvider>(
-        builder: (_, value, __) => value.shop == null
-            ? const ShowProgress()
-            : CachedNetworkImage(
-                fit: BoxFit.cover,
-                imageUrl: '${RouteApi.domainVideo}${value.shop.shopVideo}',
-                placeholder: (context, url) => const ShowProgress(),
-                errorWidget: (context, url, error) =>
-                    Image.asset(MyImage.error),
-              ),
-      ),
+          ShowImage().shopImage(path),
     );
   }
 
-  Widget buildSuggestList() {
+  Widget buildSuggestList(List productList) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: SizedBox(
         width: 100.w,
         height: 25.h,
-        child: Consumer<OrderProvider>(
-          builder: (_, value, __) => value.productsSuggest == null
-              ? const ShowProgress()
-              : ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: value.productsSuggest.length,
-                  itemBuilder: (context, index) =>
-                      buildSuggestItem(value.productsSuggest[index], index),
-                ),
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: productList.length,
+          itemBuilder: (context, index) =>
+              buildSuggestItem(productList[index], index),
         ),
       ),
     );
@@ -241,14 +221,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   Positioned.fill(
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(5),
-                      child: CachedNetworkImage(
-                        fit: BoxFit.cover,
-                        imageUrl:
-                            '${RouteApi.domainProduct}${product.productImage}',
-                        placeholder: (context, url) => const ShowProgress(),
-                        errorWidget: (context, url, error) =>
-                            Image.asset(MyImage.error),
-                      ),
+                      child: ShowImage().productImage(product.productImage),
                     ),
                   ),
                   Positioned(
@@ -326,7 +299,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget buildDetail() {
+  Widget buildDetail(String detail) {
     return Container(
       width: 100.w,
       color: Colors.yellow,
@@ -336,26 +309,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         children: [
           SizedBox(
             width: MyVariable.largeDevice ? 70.w : 60.w,
-            child: Consumer<ShopProvider>(
-              builder: (_, value, __) => value.shop == null
-                  ? const ShowProgress()
-                  : Text(
-                      value.shop.shopDetail,
-                      style: MyStyle().normalPurple18(),
-                    ),
-            ),
+            child: Text(detail, style: MyStyle().normalPurple18()),
           ),
-          Icon(
-            Icons.description_rounded,
-            color: Colors.purple.shade700,
-            size: 35.sp,
-          ),
+          Icon(Icons.description_rounded,
+              color: Colors.purple.shade700, size: 35.sp),
         ],
       ),
     );
   }
 
-  Widget buildAnnounce() {
+  Widget buildAnnounce(String announce) {
     return Container(
       width: 100.w,
       color: Colors.green.shade200,
@@ -363,21 +326,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Icon(
-            Icons.campaign_rounded,
-            color: Colors.red.shade700,
-            size: 35.sp,
-          ),
+          Icon(Icons.campaign_rounded, color: Colors.red.shade700, size: 35.sp),
           SizedBox(
             width: MyVariable.largeDevice ? 70.w : 60.w,
-            child: Consumer<ShopProvider>(
-              builder: (context, value, child) => value.shop == null
-                  ? const ShowProgress()
-                  : Text(
-                      value.shop.shopAnnounce,
-                      style: MyStyle().normalRed18(),
-                    ),
-            ),
+            child: Text(announce, style: MyStyle().normalRed18()),
           ),
         ],
       ),

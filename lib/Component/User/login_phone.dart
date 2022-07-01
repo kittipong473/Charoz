@@ -3,10 +3,10 @@ import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
-import 'package:charoz/Utilty/Constant/my_variable.dart';
-import 'package:charoz/Utilty/Function/show_toast.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -22,6 +22,7 @@ class _LoginPhoneState extends State<LoginPhone> {
   final formKey = GlobalKey<FormState>();
   TextEditingController phoneController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  MaskTextInputFormatter phoneFormat = MaskTextInputFormatter(mask: '##########');
 
   @override
   Widget build(BuildContext context) {
@@ -37,12 +38,11 @@ class _LoginPhoneState extends State<LoginPhone> {
               Positioned.fill(
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: MyVariable.largeDevice
-                        ? const EdgeInsets.symmetric(horizontal: 40)
-                        : const EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Form(
                       key: formKey,
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           SizedBox(height: 10.h),
                           buildImage(),
@@ -82,115 +82,115 @@ class _LoginPhoneState extends State<LoginPhone> {
     );
   }
 
-  Row buildUser() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          width: 85.w,
-          child: TextFormField(
-            style: MyStyle().normalBlack16(),
-            keyboardType: TextInputType.number,
-            controller: phoneController,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'กรุณากรอก เบอร์โทรศัพท์';
-              } else if (value.length != 10) {
-                return 'กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง';
-              } else {
-                return null;
-              }
-            },
-            decoration: InputDecoration(
-              labelStyle: MyStyle().normalBlack16(),
-              labelText: 'เบอร์โทรศัพท์ :',
-              errorStyle: MyStyle().normalRed14(),
-              prefixIcon: const Icon(
-                Icons.phone_rounded,
-                color: MyStyle.dark,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: MyStyle.dark),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: MyStyle.light),
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
+  Widget buildUser() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      width: 80.w,
+      child: TextFormField(
+        inputFormatters: [phoneFormat],
+        style: MyStyle().normalBlack16(),
+        keyboardType: TextInputType.number,
+        controller: phoneController,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'กรุณากรอก เบอร์โทรศัพท์';
+          } else if (value.length != 10) {
+            return 'กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง';
+          } else {
+            return null;
+          }
+        },
+        decoration: InputDecoration(
+          labelStyle: MyStyle().normalBlack16(),
+          labelText: 'เบอร์โทรศัพท์ :',
+          errorStyle: MyStyle().normalRed14(),
+          prefixIcon: const Icon(
+            Icons.phone_rounded,
+            color: MyStyle.dark,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: MyStyle.dark),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: MyStyle.light),
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
-      ],
+      ),
     );
   }
 
-  Row buildPassword() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          width: 85.w,
-          child: TextFormField(
-            style: MyStyle().normalBlack16(),
-            obscureText: statusPassword,
-            enableSuggestions: false,
-            autocorrect: false,
-            controller: passwordController,
-            toolbarOptions: const ToolbarOptions(
-                copy: false, paste: false, cut: false, selectAll: false),
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'กรุณากรอก Password';
-              } else if (value.length < 6 || value.length > 20) {
-                return 'Password ต้องมีตัวอักษร 6-20 ตัว';
-              } else {
-                return null;
-              }
-            },
-            decoration: InputDecoration(
-              labelStyle: MyStyle().normalBlack16(),
-              labelText: 'รหัสผ่าน :',
-              errorStyle: MyStyle().normalRed14(),
-              prefixIcon: const Icon(
-                Icons.lock_open_rounded,
-                color: MyStyle.dark,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: MyStyle.dark),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: MyStyle.light),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              suffixIcon: IconButton(
-                onPressed: () {
-                  setState(() {
-                    statusPassword = !statusPassword;
-                  });
-                },
-                icon: statusPassword
-                    ? Icon(
-                        Icons.visibility_rounded,
-                        size: MyVariable.largeDevice ? 35 : 25,
-                        color: MyStyle.primary,
-                      )
-                    : Icon(
-                        Icons.visibility_off_rounded,
-                        size: MyVariable.largeDevice ? 35 : 25,
-                        color: MyStyle.primary,
-                      ),
-              ),
-            ),
+  Widget buildPassword() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      width: 80.w,
+      child: TextFormField(
+        style: MyStyle().normalBlack16(),
+        obscureText: statusPassword,
+        enableSuggestions: false,
+        autocorrect: false,
+        controller: passwordController,
+        toolbarOptions: const ToolbarOptions(
+            copy: false, paste: false, cut: false, selectAll: false),
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'กรุณากรอก Password';
+          } else if (value.length < 6 || value.length > 20) {
+            return 'Password ต้องมีตัวอักษร 6-20 ตัว';
+          } else {
+            return null;
+          }
+        },
+        decoration: InputDecoration(
+          labelStyle: MyStyle().normalBlack16(),
+          labelText: 'รหัสผ่าน :',
+          errorStyle: MyStyle().normalRed14(),
+          prefixIcon: const Icon(
+            Icons.lock_open_rounded,
+            color: MyStyle.dark,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: MyStyle.dark),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: MyStyle.light),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          suffixIcon: IconButton(
+            onPressed: () => setState(() => statusPassword = !statusPassword),
+            icon: statusPassword
+                ? Icon(Icons.visibility_rounded,
+                    size: 20.sp, color: MyStyle.primary)
+                : Icon(Icons.visibility_off_rounded,
+                    size: 20.sp, color: MyStyle.primary),
           ),
         ),
-      ],
+      ),
     );
   }
 
-  Row buildButton(BuildContext context) {
+  Widget buildButton(BuildContext context) {
+    return SizedBox(
+      width: 80.w,
+      height: 5.h,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(primary: MyStyle.bluePrimary),
+        onPressed: () {
+          if (formKey.currentState!.validate()) {
+            EasyLoading.show(status: 'loading...');
+            Provider.of<UserProvider>(context, listen: false)
+                .authenEmailFirebase(
+                    context, phoneController.text, passwordController.text);
+          }
+        },
+        child: Text('เข้าสู่ระบบ', style: MyStyle().normalWhite16()),
+      ),
+    );
+  }
+
+  Widget buildPhone(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -199,30 +199,8 @@ class _LoginPhoneState extends State<LoginPhone> {
           height: 5.h,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(primary: MyStyle.bluePrimary),
-            onPressed: () async {
-              if (formKey.currentState!.validate()) {
-                processCheckPhone();
-              }
-            },
-            child: Text('เข้าสู่ระบบ', style: MyStyle().normalWhite16()),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Row buildPhone(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: 80.w,
-          height: 5.h,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(primary: MyStyle.bluePrimary),
-            onPressed: () {
-              Navigator.pushNamed(context, RoutePage.routeLoginToken);
-            },
+            onPressed: () =>
+                Navigator.pushNamed(context, RoutePage.routeLoginToken),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -244,15 +222,5 @@ class _LoginPhoneState extends State<LoginPhone> {
     );
   }
 
-  Future processCheckPhone() async {
-    bool status = await Provider.of<UserProvider>(context, listen: false)
-        .checkPhonetoEmail(phoneController.text);
-    if (status) {
-      Provider.of<UserProvider>(context, listen: false)
-          .authenFirebase(context, passwordController.text);
-    } else {
-      DialogAlert().doubleDialog(context, 'เบอร์โทรศัพท์นี้ไม่มีอยู่ในระบบ',
-          'กรุณาสมัครสมาชิกก่อนจึงเข้าใช้งาน');
-    }
-  }
+  Future processCheckPhone() async {}
 }

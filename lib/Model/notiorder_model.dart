@@ -3,14 +3,14 @@ import 'dart:convert';
 
 class NotiOrderModel {
   final int notiorderId;
-  final int notiorderOrderId;
+  final int orderId;
   final String notiorderName;
   final String notiorderStatus;
   final DateTime created;
   final DateTime updated;
   NotiOrderModel({
     required this.notiorderId,
-    required this.notiorderOrderId,
+    required this.orderId,
     required this.notiorderName,
     required this.notiorderStatus,
     required this.created,
@@ -19,7 +19,7 @@ class NotiOrderModel {
 
   NotiOrderModel copyWith({
     int? notiorderId,
-    int? notiorderOrderId,
+    int? orderId,
     String? notiorderName,
     String? notiorderStatus,
     DateTime? created,
@@ -27,7 +27,7 @@ class NotiOrderModel {
   }) {
     return NotiOrderModel(
       notiorderId: notiorderId ?? this.notiorderId,
-      notiorderOrderId: notiorderOrderId ?? this.notiorderOrderId,
+      orderId: orderId ?? this.orderId,
       notiorderName: notiorderName ?? this.notiorderName,
       notiorderStatus: notiorderStatus ?? this.notiorderStatus,
       created: created ?? this.created,
@@ -36,9 +36,9 @@ class NotiOrderModel {
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    return {
       'notiorderId': notiorderId,
-      'notiorderOrderId': notiorderOrderId,
+      'orderId': orderId,
       'notiorderName': notiorderName,
       'notiorderStatus': notiorderStatus,
       'created': created.millisecondsSinceEpoch,
@@ -48,45 +48,44 @@ class NotiOrderModel {
 
   factory NotiOrderModel.fromMap(Map<String, dynamic> map) {
     return NotiOrderModel(
-      notiorderId: map['notiorderId'] as int,
-      notiorderOrderId: map['notiorderOrderId'] as int,
-      notiorderName: map['notiorderName'] as String,
-      notiorderStatus: map['notiorderStatus'] as String,
-      created: DateTime.fromMillisecondsSinceEpoch(map['created'] as int),
-      updated: DateTime.fromMillisecondsSinceEpoch(map['updated'] as int),
+      notiorderId: map['notiorderId']?.toInt() ?? 0,
+      orderId: map['orderId']?.toInt() ?? 0,
+      notiorderName: map['notiorderName'] ?? '',
+      notiorderStatus: map['notiorderStatus'] ?? '',
+      created: DateTime.fromMillisecondsSinceEpoch(map['created']),
+      updated: DateTime.fromMillisecondsSinceEpoch(map['updated']),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory NotiOrderModel.fromJson(String source) =>
-      NotiOrderModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory NotiOrderModel.fromJson(String source) => NotiOrderModel.fromMap(json.decode(source));
 
   @override
   String toString() {
-    return 'NotiOrderModel(notiorderId: $notiorderId, notiorderOrderId: $notiorderOrderId, notiorderName: $notiorderName, notiorderStatus: $notiorderStatus, created: $created, updated: $updated)';
+    return 'NotiOrderModel(notiorderId: $notiorderId, orderId: $orderId, notiorderName: $notiorderName, notiorderStatus: $notiorderStatus, created: $created, updated: $updated)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-
+  
     return other is NotiOrderModel &&
-        other.notiorderId == notiorderId &&
-        other.notiorderOrderId == notiorderOrderId &&
-        other.notiorderName == notiorderName &&
-        other.notiorderStatus == notiorderStatus &&
-        other.created == created &&
-        other.updated == updated;
+      other.notiorderId == notiorderId &&
+      other.orderId == orderId &&
+      other.notiorderName == notiorderName &&
+      other.notiorderStatus == notiorderStatus &&
+      other.created == created &&
+      other.updated == updated;
   }
 
   @override
   int get hashCode {
     return notiorderId.hashCode ^
-        notiorderOrderId.hashCode ^
-        notiorderName.hashCode ^
-        notiorderStatus.hashCode ^
-        created.hashCode ^
-        updated.hashCode;
+      orderId.hashCode ^
+      notiorderName.hashCode ^
+      notiorderStatus.hashCode ^
+      created.hashCode ^
+      updated.hashCode;
   }
 }

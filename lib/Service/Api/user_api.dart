@@ -12,10 +12,11 @@ class UserApi {
     required String firstname,
     required String lastname,
     required DateTime birth,
+    required String image,
     required DateTime time,
   }) async {
     final url = Uri.parse(
-        '${RouteApi.domainApiUser}editUserWhereId.php?id=$id&firstname=$firstname&lastname=$lastname&birth=$birth&updated=$time');
+        '${RouteApi.domainApiUser}editUserWhereId.php?id=$id&firstname=$firstname&lastname=$lastname&birth=$birth&image=$image&updated=$time');
     try {
       http.Response response = await http.get(url);
       if (response.statusCode == 200 && response.body.toString() == 'true') {
@@ -38,21 +39,6 @@ class UserApi {
           result.add(ConvertModel().user(item));
         }
         return result;
-      } else {
-        return null;
-      }
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future getOnlyLocationWhereToken() async {
-    final url = Uri.parse(
-        '${RouteApi.domainApiUser}getOnlyLocationWhereToken.php?token=${MyVariable.accountUid}');
-    try {
-      http.Response response = await http.get(url);
-      if (response.statusCode == 200 && response.body.toString() != 'null') {
-        return json.decode(response.body)["userLocation"];
       } else {
         return null;
       }

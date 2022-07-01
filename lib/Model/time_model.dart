@@ -4,19 +4,15 @@ import 'dart:convert';
 class TimeModel {
   final int timeId;
   final int shopId;
-  final String timeWeekdayOpen;
-  final String timeWeekdayClose;
-  final String timeWeekendOpen;
-  final String timeWeekendClose;
+  final String timeOpen;
+  final String timeClose;
   final String timeStatus;
   final String timeChoose;
   TimeModel({
     required this.timeId,
     required this.shopId,
-    required this.timeWeekdayOpen,
-    required this.timeWeekdayClose,
-    required this.timeWeekendOpen,
-    required this.timeWeekendClose,
+    required this.timeOpen,
+    required this.timeClose,
     required this.timeStatus,
     required this.timeChoose,
   });
@@ -24,33 +20,27 @@ class TimeModel {
   TimeModel copyWith({
     int? timeId,
     int? shopId,
-    String? timeWeekdayOpen,
-    String? timeWeekdayClose,
-    String? timeWeekendOpen,
-    String? timeWeekendClose,
+    String? timeOpen,
+    String? timeClose,
     String? timeStatus,
     String? timeChoose,
   }) {
     return TimeModel(
       timeId: timeId ?? this.timeId,
       shopId: shopId ?? this.shopId,
-      timeWeekdayOpen: timeWeekdayOpen ?? this.timeWeekdayOpen,
-      timeWeekdayClose: timeWeekdayClose ?? this.timeWeekdayClose,
-      timeWeekendOpen: timeWeekendOpen ?? this.timeWeekendOpen,
-      timeWeekendClose: timeWeekendClose ?? this.timeWeekendClose,
+      timeOpen: timeOpen ?? this.timeOpen,
+      timeClose: timeClose ?? this.timeClose,
       timeStatus: timeStatus ?? this.timeStatus,
       timeChoose: timeChoose ?? this.timeChoose,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    return {
       'timeId': timeId,
       'shopId': shopId,
-      'timeWeekdayOpen': timeWeekdayOpen,
-      'timeWeekdayClose': timeWeekdayClose,
-      'timeWeekendOpen': timeWeekendOpen,
-      'timeWeekendClose': timeWeekendClose,
+      'timeOpen': timeOpen,
+      'timeClose': timeClose,
       'timeStatus': timeStatus,
       'timeChoose': timeChoose,
     };
@@ -58,51 +48,44 @@ class TimeModel {
 
   factory TimeModel.fromMap(Map<String, dynamic> map) {
     return TimeModel(
-      timeId: map['timeId'] as int,
-      shopId: map['shopId'] as int,
-      timeWeekdayOpen: map['timeWeekdayOpen'] as String,
-      timeWeekdayClose: map['timeWeekdayClose'] as String,
-      timeWeekendOpen: map['timeWeekendOpen'] as String,
-      timeWeekendClose: map['timeWeekendClose'] as String,
-      timeStatus: map['timeStatus'] as String,
-      timeChoose: map['timeChoose'] as String,
+      timeId: map['timeId']?.toInt() ?? 0,
+      shopId: map['shopId']?.toInt() ?? 0,
+      timeOpen: map['timeOpen'] ?? '',
+      timeClose: map['timeClose'] ?? '',
+      timeStatus: map['timeStatus'] ?? '',
+      timeChoose: map['timeChoose'] ?? '',
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory TimeModel.fromJson(String source) =>
-      TimeModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory TimeModel.fromJson(String source) => TimeModel.fromMap(json.decode(source));
 
   @override
   String toString() {
-    return 'TimeModel(timeId: $timeId, shopId: $shopId, timeWeekdayOpen: $timeWeekdayOpen, timeWeekdayClose: $timeWeekdayClose, timeWeekendOpen: $timeWeekendOpen, timeWeekendClose: $timeWeekendClose, timeStatus: $timeStatus, timeChoose: $timeChoose)';
+    return 'TimeModel(timeId: $timeId, shopId: $shopId, timeOpen: $timeOpen, timeClose: $timeClose, timeStatus: $timeStatus, timeChoose: $timeChoose)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-
+  
     return other is TimeModel &&
-        other.timeId == timeId &&
-        other.shopId == shopId &&
-        other.timeWeekdayOpen == timeWeekdayOpen &&
-        other.timeWeekdayClose == timeWeekdayClose &&
-        other.timeWeekendOpen == timeWeekendOpen &&
-        other.timeWeekendClose == timeWeekendClose &&
-        other.timeStatus == timeStatus &&
-        other.timeChoose == timeChoose;
+      other.timeId == timeId &&
+      other.shopId == shopId &&
+      other.timeOpen == timeOpen &&
+      other.timeClose == timeClose &&
+      other.timeStatus == timeStatus &&
+      other.timeChoose == timeChoose;
   }
 
   @override
   int get hashCode {
     return timeId.hashCode ^
-        shopId.hashCode ^
-        timeWeekdayOpen.hashCode ^
-        timeWeekdayClose.hashCode ^
-        timeWeekendOpen.hashCode ^
-        timeWeekendClose.hashCode ^
-        timeStatus.hashCode ^
-        timeChoose.hashCode;
+      shopId.hashCode ^
+      timeOpen.hashCode ^
+      timeClose.hashCode ^
+      timeStatus.hashCode ^
+      timeChoose.hashCode;
   }
 }

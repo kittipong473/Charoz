@@ -7,25 +7,13 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class MaintenancePage extends StatefulWidget {
-  final int status;
-  const MaintenancePage({Key? key, required this.status}) : super(key: key);
+  const MaintenancePage({Key? key}) : super(key: key);
 
   @override
   _MaintenancePageState createState() => _MaintenancePageState();
 }
 
 class _MaintenancePageState extends State<MaintenancePage> {
-  @override
-  void initState() {
-    super.initState();
-    getData();
-  }
-
-  void getData() {
-    Provider.of<ConfigProvider>(context, listen: false)
-        .getMaintenance(widget.status);
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(

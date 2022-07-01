@@ -3,10 +3,10 @@ import 'dart:convert';
 
 class OrderListModel {
   final int orderId;
-  final int orderShopId;
-  final int orderCustomerId;
-  final int orderRiderId;
-  final String orderProductIds;
+  final int shopId;
+  final int customerId;
+  final int riderId;
+  final String productIds;
   final String orderProductAmounts;
   final double orderTotal;
   final String orderPaymentType;
@@ -16,10 +16,10 @@ class OrderListModel {
   final DateTime updated;
   OrderListModel({
     required this.orderId,
-    required this.orderShopId,
-    required this.orderCustomerId,
-    required this.orderRiderId,
-    required this.orderProductIds,
+    required this.shopId,
+    required this.customerId,
+    required this.riderId,
+    required this.productIds,
     required this.orderProductAmounts,
     required this.orderTotal,
     required this.orderPaymentType,
@@ -31,10 +31,10 @@ class OrderListModel {
 
   OrderListModel copyWith({
     int? orderId,
-    int? orderShopId,
-    int? orderCustomerId,
-    int? orderRiderId,
-    String? orderProductIds,
+    int? shopId,
+    int? customerId,
+    int? riderId,
+    String? productIds,
     String? orderProductAmounts,
     double? orderTotal,
     String? orderPaymentType,
@@ -45,10 +45,10 @@ class OrderListModel {
   }) {
     return OrderListModel(
       orderId: orderId ?? this.orderId,
-      orderShopId: orderShopId ?? this.orderShopId,
-      orderCustomerId: orderCustomerId ?? this.orderCustomerId,
-      orderRiderId: orderRiderId ?? this.orderRiderId,
-      orderProductIds: orderProductIds ?? this.orderProductIds,
+      shopId: shopId ?? this.shopId,
+      customerId: customerId ?? this.customerId,
+      riderId: riderId ?? this.riderId,
+      productIds: productIds ?? this.productIds,
       orderProductAmounts: orderProductAmounts ?? this.orderProductAmounts,
       orderTotal: orderTotal ?? this.orderTotal,
       orderPaymentType: orderPaymentType ?? this.orderPaymentType,
@@ -60,12 +60,12 @@ class OrderListModel {
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    return {
       'orderId': orderId,
-      'orderShopId': orderShopId,
-      'orderCustomerId': orderCustomerId,
-      'orderRiderId': orderRiderId,
-      'orderProductIds': orderProductIds,
+      'shopId': shopId,
+      'customerId': customerId,
+      'riderId': riderId,
+      'productIds': productIds,
       'orderProductAmounts': orderProductAmounts,
       'orderTotal': orderTotal,
       'orderPaymentType': orderPaymentType,
@@ -78,63 +78,62 @@ class OrderListModel {
 
   factory OrderListModel.fromMap(Map<String, dynamic> map) {
     return OrderListModel(
-      orderId: map['orderId'] as int,
-      orderShopId: map['orderShopId'] as int,
-      orderCustomerId: map['orderCustomerId'] as int,
-      orderRiderId: map['orderRiderId'] as int,
-      orderProductIds: map['orderProductIds'] as String,
-      orderProductAmounts: map['orderProductAmounts'] as String,
-      orderTotal: map['orderTotal'] as double,
-      orderPaymentType: map['orderPaymentType'] as String,
-      orderReceiveType: map['orderReceiveType'] as String,
-      orderStatus: map['orderStatus'] as String,
-      created: DateTime.fromMillisecondsSinceEpoch(map['created'] as int),
-      updated: DateTime.fromMillisecondsSinceEpoch(map['updated'] as int),
+      orderId: map['orderId']?.toInt() ?? 0,
+      shopId: map['shopId']?.toInt() ?? 0,
+      customerId: map['customerId']?.toInt() ?? 0,
+      riderId: map['riderId']?.toInt() ?? 0,
+      productIds: map['productIds'] ?? '',
+      orderProductAmounts: map['orderProductAmounts'] ?? '',
+      orderTotal: map['orderTotal']?.toDouble() ?? 0.0,
+      orderPaymentType: map['orderPaymentType'] ?? '',
+      orderReceiveType: map['orderReceiveType'] ?? '',
+      orderStatus: map['orderStatus'] ?? '',
+      created: DateTime.fromMillisecondsSinceEpoch(map['created']),
+      updated: DateTime.fromMillisecondsSinceEpoch(map['updated']),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory OrderListModel.fromJson(String source) =>
-      OrderListModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory OrderListModel.fromJson(String source) => OrderListModel.fromMap(json.decode(source));
 
   @override
   String toString() {
-    return 'OrderList(orderId: $orderId, orderShopId: $orderShopId, orderCustomerId: $orderCustomerId, orderRiderId: $orderRiderId, orderProductIds: $orderProductIds, orderProductAmounts: $orderProductAmounts, orderTotal: $orderTotal, orderPaymentType: $orderPaymentType, orderReceiveType: $orderReceiveType, orderStatus: $orderStatus, created: $created, updated: $updated)';
+    return 'OrderListModel(orderId: $orderId, shopId: $shopId, customerId: $customerId, riderId: $riderId, productIds: $productIds, orderProductAmounts: $orderProductAmounts, orderTotal: $orderTotal, orderPaymentType: $orderPaymentType, orderReceiveType: $orderReceiveType, orderStatus: $orderStatus, created: $created, updated: $updated)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-
+  
     return other is OrderListModel &&
-        other.orderId == orderId &&
-        other.orderShopId == orderShopId &&
-        other.orderCustomerId == orderCustomerId &&
-        other.orderRiderId == orderRiderId &&
-        other.orderProductIds == orderProductIds &&
-        other.orderProductAmounts == orderProductAmounts &&
-        other.orderTotal == orderTotal &&
-        other.orderPaymentType == orderPaymentType &&
-        other.orderReceiveType == orderReceiveType &&
-        other.orderStatus == orderStatus &&
-        other.created == created &&
-        other.updated == updated;
+      other.orderId == orderId &&
+      other.shopId == shopId &&
+      other.customerId == customerId &&
+      other.riderId == riderId &&
+      other.productIds == productIds &&
+      other.orderProductAmounts == orderProductAmounts &&
+      other.orderTotal == orderTotal &&
+      other.orderPaymentType == orderPaymentType &&
+      other.orderReceiveType == orderReceiveType &&
+      other.orderStatus == orderStatus &&
+      other.created == created &&
+      other.updated == updated;
   }
 
   @override
   int get hashCode {
     return orderId.hashCode ^
-        orderShopId.hashCode ^
-        orderCustomerId.hashCode ^
-        orderRiderId.hashCode ^
-        orderProductIds.hashCode ^
-        orderProductAmounts.hashCode ^
-        orderTotal.hashCode ^
-        orderPaymentType.hashCode ^
-        orderReceiveType.hashCode ^
-        orderStatus.hashCode ^
-        created.hashCode ^
-        updated.hashCode;
+      shopId.hashCode ^
+      customerId.hashCode ^
+      riderId.hashCode ^
+      productIds.hashCode ^
+      orderProductAmounts.hashCode ^
+      orderTotal.hashCode ^
+      orderPaymentType.hashCode ^
+      orderReceiveType.hashCode ^
+      orderStatus.hashCode ^
+      created.hashCode ^
+      updated.hashCode;
   }
 }

@@ -1,15 +1,14 @@
-import 'package:animations/animations.dart';
+import 'package:charoz/Component/Modal/address_modal.dart';
 import 'package:charoz/Provider/address_provider.dart';
-import 'package:charoz/Provider/user_provider.dart';
-import 'package:charoz/Component/Address/edit_location.dart';
 import 'package:charoz/Model/address_model.dart';
 import 'package:charoz/Service/Api/address_api.dart';
-import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
-import 'package:charoz/Utilty/Constant/my_variable.dart';
+import 'package:charoz/Utilty/Function/dialog_alert.dart';
+import 'package:charoz/Utilty/Function/dialog_detail.dart';
 import 'package:charoz/Utilty/Function/show_toast.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -23,12 +22,13 @@ class LocationList extends StatefulWidget {
 class _LocationListState extends State<LocationList> {
   @override
   void initState() {
-    super.initState();
     getData();
+    super.initState();
   }
 
   void getData() {
-    Provider.of<AddressProvider>(context, listen: false).getAllAddress();
+    Provider.of<AddressProvider>(context, listen: false)
+        .getAllAddressWhereUser();
     Provider.of<AddressProvider>(context, listen: false)
         .getCurrentAddressWhereId();
   }
@@ -42,32 +42,35 @@ class _LocationListState extends State<LocationList> {
         body: Consumer<AddressProvider>(
           builder: (_, provider, __) => Stack(
             children: [
-              if (provider.addressList.isEmpty) ...[
+              if (provider.addressList == null) ...[
                 ScreenWidget().showEmptyData(
                     'ยังไม่มีข้อมูลที่อยู่', 'กรุณาเพิ่มข้อมูลที่อยู่')
               ] else ...[
                 Positioned.fill(
-                  top: 7.h,
-                  child: Column(
-                    children: [
-                      if (provider.address == null) ...[
-                        buildCurrentEmpty(),
-                      ] else ...[
-                        buildCurrentLocation(provider.address),
-                      ],
-                      Container(
-                        width: 100.w,
-                        height: 75.h,
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: ListView.builder(
-                          padding: const EdgeInsets.only(top: 0),
-                          shrinkWrap: true,
-                          itemCount: provider.addressList.length,
-                          itemBuilder: (context, index) => buildAddressItem(
-                              provider.addressList[index], index),
+                  top: 10.h,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          width: 100.w,
+                          height: 80.h,
+                          child: ListView.builder(
+                            padding: const EdgeInsets.only(top: 0),
+                            shrinkWrap: true,
+                            itemCount: provider.addressList.length,
+                            itemBuilder: (context, index) => Slidable(
+                              startActionPane: buildLeftSlidable(
+                                  provider.addressList[index], index),
+                              endActionPane: buildRightSlidable(
+                                  provider.addressList[index], index),
+                              child: buildAddressItem(
+                                  provider.addressList[index], index),
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -77,194 +80,87 @@ class _LocationListState extends State<LocationList> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          backgroundColor: MyStyle.primary,
-          child: const Icon(Icons.add_rounded),
-          onPressed: () =>
-              Navigator.pushNamed(context, RoutePage.routeAddLocation)
-                  .then((value) => getData()),
-        ),
-      ),
-    );
-  }
-
-  Widget buildCurrentLocation(AddressModel address) {
-    return Container(
-      margin: const EdgeInsets.all(20),
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        color: Colors.green.shade100,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: ListTile(
-        leading: Icon(
-          Icons.location_city_rounded,
-          size: 25.sp,
-          color: MyStyle.bluePrimary,
-        ),
-        title: Text(
-          'ที่อยู่ปัจจุบัน : ${address.addressName}',
-          style: MyStyle().boldBlack16(),
-        ),
-        subtitle: Text(
-          address.addressDescription,
-          style: MyStyle().normalBlack14(),
-        ),
-      ),
-    );
-  }
-
-  Widget buildCurrentEmpty() {
-    return Container(
-      margin: const EdgeInsets.all(20),
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        color: Colors.green.shade100,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: ListTile(
-        leading: Icon(
-          Icons.location_city_rounded,
-          size: 25.sp,
-          color: MyStyle.bluePrimary,
-        ),
-        title: Text(
-          'ที่อยู่ปัจจุบัน : ยังไม่ได้เลือก',
-          style: MyStyle().boldBlack16(),
-        ),
-        subtitle: Text(
-          'กรุณาเลือกที่อยู่ปัจจุบัน',
-          style: MyStyle().normalBlack14(),
-        ),
+            backgroundColor: MyStyle.primary,
+            child: const Icon(Icons.add_rounded),
+            onPressed: () => AddressModal().openModalAddAddress(context)),
       ),
     );
   }
 
   Widget buildAddressItem(AddressModel address, int index) {
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 10),
+      margin: EdgeInsets.symmetric(vertical: 1.h),
       elevation: 5.0,
-      child: InkWell(
-        onTap: () => dialogManageAddress(address),
-        child: Padding(
-          padding: MyVariable.largeDevice
-              ? const EdgeInsets.all(20)
-              : const EdgeInsets.all(15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(
-                Icons.pin_drop_rounded,
-                color: MyStyle.bluePrimary,
-                size: 25.sp,
-              ),
-              Column(
-                children: [
-                  Text(
-                    address.addressName,
-                    style: MyStyle().boldBlue16(),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        address.addressDescription,
-                        style: MyStyle().normalBlack14(),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Icon(
-                Icons.edit_rounded,
-                size: 20.sp,
-                color: MyStyle.primary,
-              ),
-            ],
-          ),
+      child: Padding(
+        padding: EdgeInsets.all(15.sp),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Icon(
+              Icons.pin_drop_rounded,
+              color: MyStyle.bluePrimary,
+              size: 25.sp,
+            ),
+            Column(
+              children: [
+                Text(address.addressName, style: MyStyle().normalBlue16()),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                        address.addressName == 'คอนโดถนอมมิตร'
+                            ? 'ตึกหมายเลข ${address.addressDetail}'
+                            : address.addressDetail,
+                        style: MyStyle().normalBlack14()),
+                  ],
+                ),
+              ],
+            ),
+            Icon(Icons.compare_arrows_rounded,
+                size: 20.sp, color: MyStyle.primary),
+          ],
         ),
       ),
     );
   }
 
-  void dialogManageAddress(AddressModel address) {
-    showModal(
-      configuration: const FadeScaleTransitionConfiguration(
-        transitionDuration: Duration(milliseconds: 500),
-        reverseTransitionDuration: Duration(milliseconds: 500),
+  ActionPane buildLeftSlidable(AddressModel address, int index) {
+    return ActionPane(motion: const DrawerMotion(), children: [
+      SlidableAction(
+        onPressed: (context) => AddressModal().openModalEditAddress(context, address),
+        borderRadius: BorderRadius.circular(10),
+        backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
+        icon: Icons.edit_rounded,
+        label: 'Edit',
+        autoClose: true,
+        flex: 1,
       ),
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => SimpleDialog(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'จัดการที่อยู่ ${address.addressName}',
-                style: MyStyle().boldBlue18(),
-              ),
-            ],
-          ),
-          children: [
-            SizedBox(
-              width: 40.w,
-              height: 5.h,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: MyStyle.primary),
-                onPressed: () {
-                  AddressApi()
-                      .deleteAddressWhereId(id: address.addressId)
-                      .then((value) {
-                    ShowToast().toast('ลบที่อยู่ ${address.addressName}');
-                    Navigator.pop(context);
-                    getData();
-                  });
-                },
-                child: Text(
-                  'ใช้เป็นที่อยู่ปัจจุบัน',
-                  style: MyStyle().boldWhite16(),
-                ),
-              ),
-            ),
-            SizedBox(height: 2.h),
-            SizedBox(
-              width: 40.w,
-              height: 5.h,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: Colors.green),
-                onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => EditLocation(address: address))),
-                child: Text(
-                  'แก้ไขที่อยู่',
-                  style: MyStyle().boldWhite16(),
-                ),
-              ),
-            ),
-            SizedBox(height: 2.h),
-            SizedBox(
-              width: 40.w,
-              height: 5.h,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: Colors.red),
-                onPressed: () {
-                  AddressApi()
-                      .deleteAddressWhereId(id: address.addressId)
-                      .then((value) {
-                    ShowToast().toast('ลบที่อยู่ ${address.addressName}');
-                    Navigator.pop(context);
-                    getData();
-                  });
-                },
-                child: Text(
-                  'ลบที่อยู่',
-                  style: MyStyle().boldWhite16(),
-                ),
-              ),
-            ),
-          ],
-        ),
+    ]);
+  }
+
+  ActionPane buildRightSlidable(AddressModel address, int index) {
+    return ActionPane(motion: const ScrollMotion(), children: [
+      SlidableAction(
+        onPressed: (context) async {
+          bool status =
+              await AddressApi().deleteAddressWhereId(id: address.addressId);
+          if (status) {
+            Provider.of<AddressProvider>(context, listen: false)
+                .deleteAddressWhereId(address.addressId);
+            ShowToast().toast('ลบที่อยู่เรียบร้อยแล้ว');
+          } else {
+            DialogAlert().doubleDialog(
+                context, 'ลบที่อยู่ล้มเหลว', 'กรุณาลองใหม่อีกครั้งในภายหลัง');
+          }
+        },
+        borderRadius: BorderRadius.circular(10),
+        backgroundColor: Colors.red,
+        foregroundColor: Colors.white,
+        icon: Icons.delete_rounded,
+        label: 'Delete',
+        autoClose: true,
       ),
-    );
+    ]);
   }
 }

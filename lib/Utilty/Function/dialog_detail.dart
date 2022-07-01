@@ -1,14 +1,20 @@
 import 'package:animations/animations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:charoz/Component/Address/edit_location.dart';
+import 'package:charoz/Model/address_model.dart';
 import 'package:charoz/Model/noti_model.dart';
 import 'package:charoz/Model/user_model.dart';
+import 'package:charoz/Provider/address_provider.dart';
+import 'package:charoz/Service/Api/address_api.dart';
 import 'package:charoz/Service/Route/route_api.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
+import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:charoz/Utilty/Widget/show_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:charoz/Component/Product/edit_product.dart';
 import 'package:charoz/Model/product_model.dart';
@@ -162,7 +168,7 @@ class DialogDetail {
                 Lottie.asset(MyImage.gifScoreRate, width: 30.sp, height: 30.sp),
               ],
             ),
-            Text('ราคา : ${product.productPrice} ฿',
+            Text('ราคา : ${product.productPrice.toStringAsFixed(0)} ฿',
                 style: MyStyle().normalBlue18()),
             Text('ประเภท : ${product.productType}',
                 style: MyStyle().normalBlue18()),
@@ -416,6 +422,54 @@ class DialogDetail {
                 child: Text(
                   'ดูข้อมูลที่อยู่',
                   style: MyStyle().boldGreen16(),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void dialogManageAddress(BuildContext context, AddressModel address) {
+    showModal(
+      configuration: const FadeScaleTransitionConfiguration(
+        transitionDuration: Duration(milliseconds: 500),
+        reverseTransitionDuration: Duration(milliseconds: 500),
+      ),
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text('จัดการที่อยู่', style: MyStyle().normalPrimary18()),
+            SizedBox(height: 3.h),
+            Text('ประเภทที่อยู่ : ${address.addressName}',
+                style: MyStyle().normalBlack16()),
+            SizedBox(height: 1.h),
+            Text(
+              'ข้อมูลที่อยู่ : ${address.addressDetail}',
+              style: MyStyle().normalBlack16(),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              TextButton(
+                onPressed: () {},
+                child: Text('แก้ไขข้อมูล',
+                    style: MyStyle().boldGreen16()),
+              ),
+              TextButton(
+                onPressed: () async {
+                  
+                },
+                child: Text(
+                  'ลบข้อมูล',
+                  style: MyStyle().boldRed16(),
                 ),
               ),
             ],

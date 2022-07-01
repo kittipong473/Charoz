@@ -1,7 +1,7 @@
 class RouteApi {
   static String domainApiAddress =
       'https://kittipongkdev.com/charoz/api/address/';
-  static String domainApiConfig = 'https://kittipongkdev.com/charoz/api/home/';
+  static String domainApiConfig = 'https://kittipongkdev.com/charoz/api/config/';
   static String domainApiNoti = 'https://kittipongkdev.com/charoz/api/noti/';
   static String domainApiProduct =
       'https://kittipongkdev.com/charoz/api/product/';
@@ -10,6 +10,7 @@ class RouteApi {
 
   static String domainBanner = 'https://kittipongkdev.com/charoz/banner/';
   static String domainProduct = 'https://kittipongkdev.com/charoz/product/';
-  static String domainPromo = 'https://kittipongkdev.com/charoz/promotion/';
-  static String domainVideo = 'https://kittipongkdev.com/charoz/video/';
+  static String domainNoti = 'https://kittipongkdev.com/charoz/noti/';
+  static String domainShop = 'https://kittipongkdev.com/charoz/shop/';
+  static String domainUser = 'https://kittipongkdev.com/charoz/user/';
 }

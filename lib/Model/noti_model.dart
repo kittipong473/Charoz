@@ -3,6 +3,7 @@ import 'dart:convert';
 
 class NotiModel {
   final int notiId;
+  final int userId;
   final String notiType;
   final String notiName;
   final String notiDetail;
@@ -12,6 +13,7 @@ class NotiModel {
   final int notiStatus;
   NotiModel({
     required this.notiId,
+    required this.userId,
     required this.notiType,
     required this.notiName,
     required this.notiDetail,
@@ -23,6 +25,7 @@ class NotiModel {
 
   NotiModel copyWith({
     int? notiId,
+    int? userId,
     String? notiType,
     String? notiName,
     String? notiDetail,
@@ -33,6 +36,7 @@ class NotiModel {
   }) {
     return NotiModel(
       notiId: notiId ?? this.notiId,
+      userId: userId ?? this.userId,
       notiType: notiType ?? this.notiType,
       notiName: notiName ?? this.notiName,
       notiDetail: notiDetail ?? this.notiDetail,
@@ -44,8 +48,9 @@ class NotiModel {
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    return {
       'notiId': notiId,
+      'userId': userId,
       'notiType': notiType,
       'notiName': notiName,
       'notiDetail': notiDetail,
@@ -58,51 +63,53 @@ class NotiModel {
 
   factory NotiModel.fromMap(Map<String, dynamic> map) {
     return NotiModel(
-      notiId: map['notiId'] as int,
-      notiType: map['notiType'] as String,
-      notiName: map['notiName'] as String,
-      notiDetail: map['notiDetail'] as String,
-      notiImage: map['notiImage'] as String,
-      notiStart: DateTime.fromMillisecondsSinceEpoch(map['notiStart'] as int),
-      notiEnd: DateTime.fromMillisecondsSinceEpoch(map['notiEnd'] as int),
-      notiStatus: map['notiStatus'] as int,
+      notiId: map['notiId']?.toInt() ?? 0,
+      userId: map['userId']?.toInt() ?? 0,
+      notiType: map['notiType'] ?? '',
+      notiName: map['notiName'] ?? '',
+      notiDetail: map['notiDetail'] ?? '',
+      notiImage: map['notiImage'] ?? '',
+      notiStart: DateTime.fromMillisecondsSinceEpoch(map['notiStart']),
+      notiEnd: DateTime.fromMillisecondsSinceEpoch(map['notiEnd']),
+      notiStatus: map['notiStatus']?.toInt() ?? 0,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory NotiModel.fromJson(String source) =>
-      NotiModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory NotiModel.fromJson(String source) => NotiModel.fromMap(json.decode(source));
 
   @override
   String toString() {
-    return 'NotiModel(notiId: $notiId, notiType: $notiType, notiName: $notiName, notiDetail: $notiDetail, notiImage: $notiImage, notiStart: $notiStart, notiEnd: $notiEnd, notiStatus: $notiStatus)';
+    return 'NotiModel(notiId: $notiId, userId: $userId, notiType: $notiType, notiName: $notiName, notiDetail: $notiDetail, notiImage: $notiImage, notiStart: $notiStart, notiEnd: $notiEnd, notiStatus: $notiStatus)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-
+  
     return other is NotiModel &&
-        other.notiId == notiId &&
-        other.notiType == notiType &&
-        other.notiName == notiName &&
-        other.notiDetail == notiDetail &&
-        other.notiImage == notiImage &&
-        other.notiStart == notiStart &&
-        other.notiEnd == notiEnd &&
-        other.notiStatus == notiStatus;
+      other.notiId == notiId &&
+      other.userId == userId &&
+      other.notiType == notiType &&
+      other.notiName == notiName &&
+      other.notiDetail == notiDetail &&
+      other.notiImage == notiImage &&
+      other.notiStart == notiStart &&
+      other.notiEnd == notiEnd &&
+      other.notiStatus == notiStatus;
   }
 
   @override
   int get hashCode {
     return notiId.hashCode ^
-        notiType.hashCode ^
-        notiName.hashCode ^
-        notiDetail.hashCode ^
-        notiImage.hashCode ^
-        notiStart.hashCode ^
-        notiEnd.hashCode ^
-        notiStatus.hashCode;
+      userId.hashCode ^
+      notiType.hashCode ^
+      notiName.hashCode ^
+      notiDetail.hashCode ^
+      notiImage.hashCode ^
+      notiStart.hashCode ^
+      notiEnd.hashCode ^
+      notiStatus.hashCode;
   }
 }

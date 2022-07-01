@@ -1,3 +1,7 @@
+import 'package:charoz/Component/Shop/edit_shop_admin.dart';
+import 'package:charoz/Component/Shop/edit_shop_saler.dart';
+import 'package:charoz/Model/shop_model.dart';
+import 'package:charoz/Model/time_model.dart';
 import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Constant/my_variable.dart';
@@ -68,6 +72,26 @@ class ScreenWidget {
     );
   }
 
+  Widget modalTitle(String title) {
+    return Positioned(
+      top: 0,
+      child: Container(
+        width: 100.w,
+        height: 4.h,
+        padding: EdgeInsets.only(top: 1.h),
+        decoration: const BoxDecoration(
+          color: MyStyle.primary,
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(30),
+            bottomRight: Radius.circular(30),
+          ),
+        ),
+        child: Text(title,
+            style: MyStyle().boldWhite16(), textAlign: TextAlign.center),
+      ),
+    );
+  }
+
   Positioned backPage(BuildContext context) {
     return Positioned(
       top: 2.h,
@@ -80,52 +104,36 @@ class ScreenWidget {
     );
   }
 
-  // Positioned editShop(BuildContext context, ShopModel shop, TimeModel time) {
-  //   return Positioned(
-  //     top: MyVariable.largeDevice ? 60 : 20,
-  //     right: MyVariable.largeDevice ? 30 : 10,
-  //     child: IconButton(
-  //       onPressed: () {
-  //         if (MyVariable.role == "saler") {
-  //           Navigator.push(
-  //             context,
-  //             MaterialPageRoute(
-  //               builder: (context) => EditShopSaler(
-  //                 shopId: shop.shopId,
-  //                 shopName: shop.shopName,
-  //                 shopAnnounce: shop.shopAnnounce,
-  //                 shopDetail: shop.shopDetail,
-  //                 timeType: time.timeChoose,
-  //                 timeWeekdayOpen: time.timeWeekdayOpen,
-  //                 timeWeekdayClose: time.timeWeekdayClose,
-  //                 timeWeekendOpen: time.timeWeekendOpen,
-  //                 timeWeekendClose: time.timeWeekendClose,
-  //                 shopVideo: shop.shopVideo,
-  //               ),
-  //             ),
-  //           );
-  //         } else if (MyVariable.role == "admin") {
-  //           Navigator.push(
-  //             context,
-  //             MaterialPageRoute(
-  //               builder: (context) => EditShopAdmin(
-  //                 id: shop.shopId,
-  //                 address: shop.shopAddress,
-  //                 lat: shop.shopLat,
-  //                 lng: shop.shopLng,
-  //               ),
-  //             ),
-  //           );
-  //         }
-  //       },
-  //       icon: Icon(
-  //         Icons.edit_location_alt_rounded,
-  //         color: Colors.white,
-  //         size: MyVariable.largeDevice ? 30 : 20,
-  //       ),
-  //     ),
-  //   );
-  // }
+  Positioned editShop(BuildContext context, ShopModel shop, TimeModel time) {
+    return Positioned(
+      top: 2.h,
+      right: 3.w,
+      child: IconButton(
+        onPressed: () {
+          if (MyVariable.role == "saler") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EditShopSaler(shop: shop, time: time),
+              ),
+            );
+          } else if (MyVariable.role == "admin") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EditShopAdmin(shop: shop, time: time),
+              ),
+            );
+          }
+        },
+        icon: Icon(
+          Icons.edit_location_alt_rounded,
+          color: Colors.white,
+          size: MyVariable.largeDevice ? 30 : 20,
+        ),
+      ),
+    );
+  }
 
   Positioned createNoti(BuildContext context) {
     return Positioned(
@@ -143,50 +151,6 @@ class ScreenWidget {
       ),
     );
   }
-
-  // Positioned loginIcon(BuildContext context) {
-  //   return Positioned(
-  //     top: MyVariable.largeDevice ? 60 : 20,
-  //     right: MyVariable.largeDevice ? 30 : 10,
-  //     child: IconButton(
-  //       onPressed: () {
-  //         Navigator.push(
-  //           context,
-  //           MaterialPageRoute(
-  //             builder: (context) => const LoginPhone(),
-  //           ),
-  //         );
-  //       },
-  //       icon: Icon(
-  //         Icons.login_rounded,
-  //         color: Colors.white,
-  //         size: 20.sp,
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // Positioned cartIcon(BuildContext context) {
-  //   return Positioned(
-  //     top: MyVariable.largeDevice ? 60 : 20,
-  //     right: MyVariable.largeDevice ? 30 : 10,
-  //     child: IconButton(
-  //       onPressed: () {
-  //         Navigator.push(
-  //           context,
-  //           MaterialPageRoute(
-  //             builder: (context) => const OrderCart(),
-  //           ),
-  //         );
-  //       },
-  //       icon: Icon(
-  //         Icons.shopping_cart_rounded,
-  //         color: Colors.white,
-  //         size: 20.sp,
-  //       ),
-  //     ),
-  //   );
-  // }
 
   Widget showEmptyData(String title, String subtitle) {
     return Center(

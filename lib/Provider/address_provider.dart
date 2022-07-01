@@ -9,13 +9,23 @@ class AddressProvider with ChangeNotifier {
   get address => _address;
   get addressList => _addressList;
 
-  Future getAllAddress() async {
+  Future getAllAddressWhereUser() async {
     _addressList = await AddressApi().getAllAddressWhereUser();
     notifyListeners();
   }
 
   Future getCurrentAddressWhereId() async {
-    _address = await AddressApi().getAddressWhereId();
+    _address = await AddressApi().getAddressWhereUserLocation();
+    notifyListeners();
+  }
+
+  void deleteAddressWhereId(int id) {
+    _addressList!.removeWhere((item) => item.addressId == id);
+    notifyListeners();
+  }
+
+  void chooseAddress(int id) {
+    _address = _addressList!.elementAt(id);
     notifyListeners();
   }
 }
