@@ -130,3 +130,19 @@ class ProductModel {
         updated.hashCode;
   }
 }
+
+ProductModel convertProduct(dynamic item) {
+    return ProductModel(
+      productId: int.parse(item['productId']),
+      productName: item['productName'],
+      productType: item['productType'],
+      productPrice: double.parse(item['productPrice']),
+      productDetail: item['productDetail'],
+      productImage: item['productImage'],
+      productScore: double.parse(item['productScore']),
+      productStatus: int.parse(item['productStatus']),
+      productSuggest: int.parse(item['productSuggest']),
+      created: DateTime.parse(item['created']),
+      updated: DateTime.parse(item['updated']),
+    );
+  }

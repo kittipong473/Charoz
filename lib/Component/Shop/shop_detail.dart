@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:charoz/Component/Shop/Dialog/carousel_detail.dart';
 import 'package:charoz/Model/shop_model.dart';
 import 'package:charoz/Provider/shop_provider.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
-import 'package:charoz/Utilty/Constant/my_variable.dart';
-import 'package:charoz/Utilty/Function/dialog_detail.dart';
+import 'package:charoz/Utilty/global_variable.dart';
 import 'package:charoz/Utilty/Function/location_service.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
@@ -39,10 +39,9 @@ class _ShopDetailState extends State<ShopDetail> {
     setState(() {});
   }
 
-  void getData() {
-    Provider.of<ShopProvider>(context, listen: false).getShopWhereId(widget.id);
-    Provider.of<ShopProvider>(context, listen: false).getTimeWhereId(widget.id);
-    Provider.of<ShopProvider>(context, listen: false).getShopDetailImage();
+  Future getData() async {
+    await Provider.of<ShopProvider>(context, listen: false)
+        .getTimeWhereId(widget.id);
   }
 
   @override
@@ -86,7 +85,7 @@ class _ShopDetailState extends State<ShopDetail> {
                         SizedBox(height: 5.h),
                         ScreenWidget().buildTitle('รูปภาพเกี่ยวกับร้านค้า :'),
                         SizedBox(height: 1.h),
-                        buildShopImageList(provider.shopImageList),
+                        buildShopImageList(),
                         SizedBox(height: 3.h),
                       ],
                     ),
@@ -95,8 +94,8 @@ class _ShopDetailState extends State<ShopDetail> {
               ),
               ScreenWidget().appBarTitle('ข้อมูลร้านค้า'),
               ScreenWidget().backPage(context),
-              if (MyVariable.role == 'admin' ||
-                  MyVariable.role == 'manager') ...[
+              if (GlobalVariable.role == 'admin' ||
+                  GlobalVariable.role == 'manager') ...[
                 ScreenWidget()
                     .editShop(context, provider.shop!, provider.time!),
               ],
@@ -133,7 +132,7 @@ class _ShopDetailState extends State<ShopDetail> {
     return SizedBox(
       width: 80.w,
       child: Text(
-        '${MyFunction().convertShopTime(open)} น. - ${MyFunction().convertShopTime(close)} น.',
+        '${MyFunction().convertToOpenClose(open)} น. - ${MyFunction().convertToOpenClose(close)} น.',
         style: MyStyle().normalPrimary18(),
         textAlign: TextAlign.center,
       ),
@@ -194,18 +193,18 @@ class _ShopDetailState extends State<ShopDetail> {
     };
   }
 
-  Widget buildShopImageList(List shopImageList) {
+  Widget buildShopImageList() {
     return CarouselSlider.builder(
       options: CarouselOptions(height: 30.h, autoPlay: true),
-      itemCount: shopImageList.length,
+      itemCount: GlobalVariable.carouselShopImage.length,
       itemBuilder: (context, index, realIndex) =>
-          buildShopImageItem(shopImageList[index], index),
+          buildShopImageItem(GlobalVariable.carouselShopImage[index], index),
     );
   }
 
   Widget buildShopImageItem(String shopimage, int index) {
     return InkWell(
-      onTap: () => DialogDetail().dialogShop(context, shopimage),
+      onTap: () => CarouselDetail().dialogShop(context, shopimage),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 15),
         child: ClipRRect(

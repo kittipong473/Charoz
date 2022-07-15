@@ -1,9 +1,8 @@
+import 'package:charoz/Component/User/Dialog/manage_user.dart';
 import 'package:charoz/Model/user_model.dart';
 import 'package:charoz/Provider/user_provider.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
-import 'package:charoz/Utilty/Constant/my_variable.dart';
-import 'package:charoz/Utilty/Function/dialog_detail.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:charoz/Utilty/Widget/show_image.dart';
 import 'package:charoz/Utilty/Widget/show_progress.dart';
@@ -11,19 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class UserList extends StatefulWidget {
+class UserList extends StatelessWidget {
   const UserList({Key? key}) : super(key: key);
-
-  @override
-  _UserListState createState() => _UserListState();
-}
-
-class _UserListState extends State<UserList> {
-  @override
-  void initState() {
-    Provider.of<UserProvider>(context, listen: false).getAllUser();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +40,7 @@ class _UserListState extends State<UserList> {
                                       maxCrossAxisExtent: 160),
                               itemBuilder: (context, index) {
                                 return buildUserItem(
-                                    provider.userList[index], index);
+                                    context, provider.userList[index], index);
                               },
                             ),
                     ),
@@ -67,13 +55,13 @@ class _UserListState extends State<UserList> {
     );
   }
 
-  Widget buildUserItem(UserModel user, int index) {
+  Widget buildUserItem(BuildContext context, UserModel user, int index) {
     return Card(
       color: Colors.white,
       elevation: 5,
       margin: const EdgeInsets.all(10),
       child: InkWell(
-        onTap: () => DialogDetail().dialogUserDetail(context, user),
+        onTap: () => ManageUser().dialogManageUser(context, user),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -83,7 +71,7 @@ class _UserListState extends State<UserList> {
               height: 25.w,
               child: user.userImage == 'null'
                   ? Image.asset(MyImage.person)
-                  : ShowImage().userImage(user.userImage),
+                  : ShowImage().showUser(user.userImage),
             ),
             Text(user.userPhone, style: MyStyle().normalPrimary14()),
             Text(user.userFirstName, style: MyStyle().normalBlack14()),

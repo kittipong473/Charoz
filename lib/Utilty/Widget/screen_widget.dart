@@ -1,10 +1,10 @@
-import 'package:charoz/Component/Shop/edit_shop_admin.dart';
-import 'package:charoz/Component/Shop/edit_shop_saler.dart';
+import 'package:charoz/Component/Notification/Modal/add_noti.dart';
+import 'package:charoz/Component/Shop/Modal/edit_shop_admin.dart';
+import 'package:charoz/Component/Shop/Modal/edit_shop_manager.dart';
 import 'package:charoz/Model/shop_model.dart';
 import 'package:charoz/Model/time_model.dart';
-import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
-import 'package:charoz/Utilty/Constant/my_variable.dart';
+import 'package:charoz/Utilty/global_variable.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -49,29 +49,6 @@ class ScreenWidget {
     );
   }
 
-  Widget buildTitle(String title) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Text(title, style: MyStyle().boldBlack18()),
-      ],
-    );
-  }
-
-  Widget buildTitlePadding(String title) {
-    return Padding(
-      padding: MyVariable.largeDevice
-          ? const EdgeInsets.symmetric(horizontal: 40)
-          : const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text(title, style: MyStyle().boldBlack18()),
-        ],
-      ),
-    );
-  }
-
   Widget modalTitle(String title) {
     return Positioned(
       top: 0,
@@ -88,6 +65,27 @@ class ScreenWidget {
         ),
         child: Text(title,
             style: MyStyle().boldWhite16(), textAlign: TextAlign.center),
+      ),
+    );
+  }
+
+  Widget buildTitle(String title) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(title, style: MyStyle().boldBlack18()),
+      ],
+    );
+  }
+
+  Widget buildTitlePadding(String title) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 5.w),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(title, style: MyStyle().boldBlack18()),
+        ],
       ),
     );
   }
@@ -110,26 +108,16 @@ class ScreenWidget {
       right: 3.w,
       child: IconButton(
         onPressed: () {
-          if (MyVariable.role == "saler") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => EditShopSaler(shop: shop, time: time),
-              ),
-            );
-          } else if (MyVariable.role == "admin") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => EditShopAdmin(shop: shop, time: time),
-              ),
-            );
+          if (GlobalVariable.role == "admin") {
+            EditShopAdmin().openModalEditShopAdmin(context, shop, time);
+          } else if (GlobalVariable.role == "manager") {
+            EditShopManager().openModalEditShopManager(context, shop, time);
           }
         },
         icon: Icon(
           Icons.edit_location_alt_rounded,
           color: Colors.white,
-          size: MyVariable.largeDevice ? 30 : 20,
+          size: 20.sp,
         ),
       ),
     );
@@ -140,13 +128,11 @@ class ScreenWidget {
       top: 2.h,
       right: 3.w,
       child: IconButton(
-        onPressed: () {
-          Navigator.pushNamed(context, RoutePage.routeManageNoti);
-        },
+        onPressed: () => AddNoti().openModalAdNoti(context),
         icon: Icon(
           Icons.notification_add_rounded,
           color: Colors.white,
-          size: MyVariable.largeDevice ? 30 : 20,
+          size: 20.sp,
         ),
       ),
     );
@@ -165,10 +151,19 @@ class ScreenWidget {
           SizedBox(height: 3.h),
           Text(
             subtitle,
-            style: MyStyle().boldPrimary20(),
+            style: MyStyle().boldPrimary18(),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildSpacer() {
+    return Container(
+      color: Colors.grey,
+      width: 100.w,
+      height: 0.2.h,
     );
   }
 

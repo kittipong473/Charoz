@@ -3,6 +3,7 @@ import 'dart:convert';
 
 class ShopModel {
   final int shopId;
+  final int managerId;
   final String shopName;
   final String shopAnnounce;
   final String shopDetail;
@@ -14,6 +15,7 @@ class ShopModel {
   final DateTime updated;
   ShopModel({
     required this.shopId,
+    required this.managerId,
     required this.shopName,
     required this.shopAnnounce,
     required this.shopDetail,
@@ -27,6 +29,7 @@ class ShopModel {
 
   ShopModel copyWith({
     int? shopId,
+    int? managerId,
     String? shopName,
     String? shopAnnounce,
     String? shopDetail,
@@ -39,6 +42,7 @@ class ShopModel {
   }) {
     return ShopModel(
       shopId: shopId ?? this.shopId,
+      managerId: managerId ?? this.managerId,
       shopName: shopName ?? this.shopName,
       shopAnnounce: shopAnnounce ?? this.shopAnnounce,
       shopDetail: shopDetail ?? this.shopDetail,
@@ -54,6 +58,7 @@ class ShopModel {
   Map<String, dynamic> toMap() {
     return {
       'shopId': shopId,
+      'managerId': managerId,
       'shopName': shopName,
       'shopAnnounce': shopAnnounce,
       'shopDetail': shopDetail,
@@ -69,6 +74,7 @@ class ShopModel {
   factory ShopModel.fromMap(Map<String, dynamic> map) {
     return ShopModel(
       shopId: map['shopId']?.toInt() ?? 0,
+      managerId: map['managerId']?.toInt() ?? 0,
       shopName: map['shopName'] ?? '',
       shopAnnounce: map['shopAnnounce'] ?? '',
       shopDetail: map['shopDetail'] ?? '',
@@ -83,41 +89,60 @@ class ShopModel {
 
   String toJson() => json.encode(toMap());
 
-  factory ShopModel.fromJson(String source) => ShopModel.fromMap(json.decode(source));
+  factory ShopModel.fromJson(String source) =>
+      ShopModel.fromMap(json.decode(source));
 
   @override
   String toString() {
-    return 'ShopModel(shopId: $shopId, shopName: $shopName, shopAnnounce: $shopAnnounce, shopDetail: $shopDetail, shopAddress: $shopAddress, shopLat: $shopLat, shopLng: $shopLng, shopImage: $shopImage, created: $created, updated: $updated)';
+    return 'ShopModel(shopId: $shopId, managerId: $managerId, shopName: $shopName, shopAnnounce: $shopAnnounce, shopDetail: $shopDetail, shopAddress: $shopAddress, shopLat: $shopLat, shopLng: $shopLng, shopImage: $shopImage, created: $created, updated: $updated)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is ShopModel &&
-      other.shopId == shopId &&
-      other.shopName == shopName &&
-      other.shopAnnounce == shopAnnounce &&
-      other.shopDetail == shopDetail &&
-      other.shopAddress == shopAddress &&
-      other.shopLat == shopLat &&
-      other.shopLng == shopLng &&
-      other.shopImage == shopImage &&
-      other.created == created &&
-      other.updated == updated;
+        other.shopId == shopId &&
+        other.managerId == managerId &&
+        other.shopName == shopName &&
+        other.shopAnnounce == shopAnnounce &&
+        other.shopDetail == shopDetail &&
+        other.shopAddress == shopAddress &&
+        other.shopLat == shopLat &&
+        other.shopLng == shopLng &&
+        other.shopImage == shopImage &&
+        other.created == created &&
+        other.updated == updated;
   }
 
   @override
   int get hashCode {
     return shopId.hashCode ^
-      shopName.hashCode ^
-      shopAnnounce.hashCode ^
-      shopDetail.hashCode ^
-      shopAddress.hashCode ^
-      shopLat.hashCode ^
-      shopLng.hashCode ^
-      shopImage.hashCode ^
-      created.hashCode ^
-      updated.hashCode;
+        managerId.hashCode ^
+        shopName.hashCode ^
+        shopAnnounce.hashCode ^
+        shopDetail.hashCode ^
+        shopAddress.hashCode ^
+        shopLat.hashCode ^
+        shopLng.hashCode ^
+        shopImage.hashCode ^
+        created.hashCode ^
+        updated.hashCode;
   }
+}
+
+ShopModel convertShop(dynamic item) {
+  return ShopModel(
+    shopId: int.parse(item['shopId']),
+    managerId: int.parse(item['managerId']),
+    shopName: item['shopName'],
+    shopAnnounce: item['shopAnnounce'],
+    shopDetail: item['shopDetail'],
+    shopAddress: item['shopAddress'],
+    shopLat: double.parse(item['shopLat']),
+    shopLng: double.parse(item['shopLng']),
+    shopImage: item['shopImage'],
+    created: DateTime.parse(item['created']),
+    updated: DateTime.parse(item['updated']),
+  );
 }

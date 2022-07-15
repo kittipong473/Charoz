@@ -12,7 +12,7 @@ class UserModel {
   final String userRole;
   final String userEmailToken;
   final String userPhoneToken;
-  final String userGoogleToken;
+  final String userPinCode;
   UserModel({
     required this.userId,
     required this.userFirstName,
@@ -24,7 +24,7 @@ class UserModel {
     required this.userRole,
     required this.userEmailToken,
     required this.userPhoneToken,
-    required this.userGoogleToken,
+    required this.userPinCode,
   });
 
   UserModel copyWith({
@@ -38,7 +38,7 @@ class UserModel {
     String? userRole,
     String? userEmailToken,
     String? userPhoneToken,
-    String? userGoogleToken,
+    String? userPinCode,
   }) {
     return UserModel(
       userId: userId ?? this.userId,
@@ -51,7 +51,7 @@ class UserModel {
       userRole: userRole ?? this.userRole,
       userEmailToken: userEmailToken ?? this.userEmailToken,
       userPhoneToken: userPhoneToken ?? this.userPhoneToken,
-      userGoogleToken: userGoogleToken ?? this.userGoogleToken,
+      userPinCode: userPinCode ?? this.userPinCode,
     );
   }
 
@@ -67,7 +67,7 @@ class UserModel {
       'userRole': userRole,
       'userEmailToken': userEmailToken,
       'userPhoneToken': userPhoneToken,
-      'userGoogleToken': userGoogleToken,
+      'userPinCode': userPinCode,
     };
   }
 
@@ -83,49 +83,66 @@ class UserModel {
       userRole: map['userRole'] ?? '',
       userEmailToken: map['userEmailToken'] ?? '',
       userPhoneToken: map['userPhoneToken'] ?? '',
-      userGoogleToken: map['userGoogleToken'] ?? '',
+      userPinCode: map['userPinCode'] ?? '',
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory UserModel.fromJson(String source) => UserModel.fromMap(json.decode(source));
+  factory UserModel.fromJson(String source) =>
+      UserModel.fromMap(json.decode(source));
 
   @override
   String toString() {
-    return 'UserModel(userId: $userId, userFirstName: $userFirstName, userLastName: $userLastName, userBirth: $userBirth, userEmail: $userEmail, userPhone: $userPhone, userImage: $userImage, userRole: $userRole, userEmailToken: $userEmailToken, userPhoneToken: $userPhoneToken, userGoogleToken: $userGoogleToken)';
+    return 'UserModel(userId: $userId, userFirstName: $userFirstName, userLastName: $userLastName, userBirth: $userBirth, userEmail: $userEmail, userPhone: $userPhone, userImage: $userImage, userRole: $userRole, userEmailToken: $userEmailToken, userPhoneToken: $userPhoneToken, userPinCode: $userPinCode)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is UserModel &&
-      other.userId == userId &&
-      other.userFirstName == userFirstName &&
-      other.userLastName == userLastName &&
-      other.userBirth == userBirth &&
-      other.userEmail == userEmail &&
-      other.userPhone == userPhone &&
-      other.userImage == userImage &&
-      other.userRole == userRole &&
-      other.userEmailToken == userEmailToken &&
-      other.userPhoneToken == userPhoneToken &&
-      other.userGoogleToken == userGoogleToken;
+        other.userId == userId &&
+        other.userFirstName == userFirstName &&
+        other.userLastName == userLastName &&
+        other.userBirth == userBirth &&
+        other.userEmail == userEmail &&
+        other.userPhone == userPhone &&
+        other.userImage == userImage &&
+        other.userRole == userRole &&
+        other.userEmailToken == userEmailToken &&
+        other.userPhoneToken == userPhoneToken &&
+        other.userPinCode == userPinCode;
   }
 
   @override
   int get hashCode {
     return userId.hashCode ^
-      userFirstName.hashCode ^
-      userLastName.hashCode ^
-      userBirth.hashCode ^
-      userEmail.hashCode ^
-      userPhone.hashCode ^
-      userImage.hashCode ^
-      userRole.hashCode ^
-      userEmailToken.hashCode ^
-      userPhoneToken.hashCode ^
-      userGoogleToken.hashCode;
+        userFirstName.hashCode ^
+        userLastName.hashCode ^
+        userBirth.hashCode ^
+        userEmail.hashCode ^
+        userPhone.hashCode ^
+        userImage.hashCode ^
+        userRole.hashCode ^
+        userEmailToken.hashCode ^
+        userPhoneToken.hashCode ^
+        userPinCode.hashCode;
   }
+}
+
+UserModel convertUser(dynamic item) {
+  return UserModel(
+    userId: int.parse(item['userId']),
+    userFirstName: item['userFirstName'],
+    userLastName: item['userLastName'],
+    userBirth: DateTime.parse(item['userBirth']),
+    userEmail: item['userEmail'],
+    userPhone: item['userPhone'],
+    userImage: item['userImage'],
+    userRole: item['userRole'],
+    userEmailToken: item['userEmailToken'],
+    userPhoneToken: item['userPhoneToken'],
+    userPinCode: item['userPinCode'],
+  );
 }

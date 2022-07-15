@@ -1,6 +1,23 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class MyFunction {
+  void toast(String title) {
+    Fluttertoast.showToast(
+      msg: title,
+      toastLength: Toast.LENGTH_SHORT,
+      timeInSecForIosWeb: 2,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.black45,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+  
   String cutWord10(String name) {
     String result = name;
     if (result.length > 15) {
@@ -8,6 +25,19 @@ class MyFunction {
       result = '$result...';
     }
     return result;
+  }
+
+  Future<File> chooseImage(ImageSource source) async {
+    try {
+      var result = await ImagePicker().pickImage(
+        source: source,
+        maxWidth: 800,
+        maxHeight: 600,
+      );
+      return File(result!.path);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   String authenAlert(String code) {
@@ -32,16 +62,20 @@ class MyFunction {
     return result;
   }
 
-  String convertShopTime(String time) {
-    DateTime convert = DateTime.parse("2022-05-01T$time.000Z");
+  String convertToOpenClose(String time) {
+    DateTime convert = DateTime.parse("2022-01-01T$time.000Z");
     return DateFormat('HH:mm').format(convert);
   }
 
-  String convertNotiTime(DateTime time) {
+  String convertToDate(DateTime time) {
     return DateFormat('dd-MM-yyyy').format(time);
   }
 
-  String convertBirthTime(DateTime time) {
-    return DateFormat('dd-MM-yyyy').format(time);
+  String convertToTIme(DateTime time) {
+    return DateFormat('HH:mm').format(time);
+  }
+
+  String convertToDateTime(DateTime time) {
+    return DateFormat('dd-MMM-yyyy HH:mm').format(time);
   }
 }

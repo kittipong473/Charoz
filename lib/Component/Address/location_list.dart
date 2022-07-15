@@ -1,37 +1,19 @@
-import 'package:charoz/Component/Modal/address_modal.dart';
+import 'package:charoz/Component/Address/Modal/add_location.dart';
+import 'package:charoz/Component/Address/Modal/edit_location.dart';
 import 'package:charoz/Provider/address_provider.dart';
 import 'package:charoz/Model/address_model.dart';
-import 'package:charoz/Service/Api/address_api.dart';
+import 'package:charoz/Service/Api/PHP/address_api.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
-import 'package:charoz/Utilty/Function/dialog_detail.dart';
-import 'package:charoz/Utilty/Function/show_toast.dart';
+import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class LocationList extends StatefulWidget {
+class LocationList extends StatelessWidget {
   const LocationList({Key? key}) : super(key: key);
-
-  @override
-  State<LocationList> createState() => _LocationListState();
-}
-
-class _LocationListState extends State<LocationList> {
-  @override
-  void initState() {
-    getData();
-    super.initState();
-  }
-
-  void getData() {
-    Provider.of<AddressProvider>(context, listen: false)
-        .getAllAddressWhereUser();
-    Provider.of<AddressProvider>(context, listen: false)
-        .getCurrentAddressWhereId();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +64,7 @@ class _LocationListState extends State<LocationList> {
         floatingActionButton: FloatingActionButton(
             backgroundColor: MyStyle.primary,
             child: const Icon(Icons.add_rounded),
-            onPressed: () => AddressModal().openModalAddAddress(context)),
+            onPressed: () => AddLocation().openModalAddAddress(context)),
       ),
     );
   }
@@ -127,7 +109,8 @@ class _LocationListState extends State<LocationList> {
   ActionPane buildLeftSlidable(AddressModel address, int index) {
     return ActionPane(motion: const DrawerMotion(), children: [
       SlidableAction(
-        onPressed: (context) => AddressModal().openModalEditAddress(context, address),
+        onPressed: (context) =>
+            EditLocation().openModalEditAddress(context, address),
         borderRadius: BorderRadius.circular(10),
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
@@ -148,10 +131,9 @@ class _LocationListState extends State<LocationList> {
           if (status) {
             Provider.of<AddressProvider>(context, listen: false)
                 .deleteAddressWhereId(address.addressId);
-            ShowToast().toast('ลบที่อยู่เรียบร้อยแล้ว');
+            MyFunction().toast('ลบที่อยู่เรียบร้อยแล้ว');
           } else {
-            DialogAlert().doubleDialog(
-                context, 'ลบที่อยู่ล้มเหลว', 'กรุณาลองใหม่อีกครั้งในภายหลัง');
+            DialogAlert().deleteFailedDialog(context);
           }
         },
         borderRadius: BorderRadius.circular(10),

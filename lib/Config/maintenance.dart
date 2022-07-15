@@ -6,14 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class MaintenancePage extends StatefulWidget {
+class MaintenancePage extends StatelessWidget {
   const MaintenancePage({Key? key}) : super(key: key);
 
-  @override
-  _MaintenancePageState createState() => _MaintenancePageState();
-}
-
-class _MaintenancePageState extends State<MaintenancePage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -24,7 +19,7 @@ class _MaintenancePageState extends State<MaintenancePage> {
           builder: (context, provider, child) => provider.maintain == null
               ? const ShowProgress()
               : Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
                   child: Center(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,

@@ -1,10 +1,10 @@
-import 'package:charoz/Component/User/edit_user.dart';
+import 'package:charoz/Component/User/Modal/edit_user.dart';
 import 'package:charoz/Model/user_model.dart';
 import 'package:charoz/Provider/user_provider.dart';
 import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
-import 'package:charoz/Utilty/Constant/my_variable.dart';
+import 'package:charoz/Utilty/global_variable.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:charoz/Utilty/Widget/show_image.dart';
@@ -12,14 +12,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class UserProfile extends StatefulWidget {
+class UserProfile extends StatelessWidget {
   const UserProfile({Key? key}) : super(key: key);
 
-  @override
-  _UserProfileState createState() => _UserProfileState();
-}
-
-class _UserProfileState extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -47,12 +42,12 @@ class _UserProfileState extends State<UserProfile> {
                         buildPhone(provider.user!.userPhone),
                         SizedBox(height: 3.h),
                         buildBirth(MyFunction()
-                            .convertBirthTime(provider.user!.userBirth)),
+                            .convertToDate(provider.user!.userBirth)),
                         SizedBox(height: 3.h),
                         buildRole(provider.user!.userRole),
                         SizedBox(height: 5.h),
                         buildButton(context, provider.user),
-                        if (MyVariable.role == 'customer') ...[
+                        if (GlobalVariable.role == 'customer') ...[
                           SizedBox(height: 5.h),
                           buildUserLocation(context),
                         ],
@@ -76,7 +71,7 @@ class _UserProfileState extends State<UserProfile> {
             width: 30.w,
             height: 30.w,
           )
-        : ShowImage().userImage(image);
+        : ShowImage().showUser(image);
   }
 
   Widget buildFirstName(String fname) {
@@ -184,10 +179,7 @@ class _UserProfileState extends State<UserProfile> {
           height: 5.h,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(primary: Colors.green),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => EditUser(user: user)),
-            ),
+            onPressed: () => EditUser().openModalEditUser(context, user),
             child: Text('แก้ไขข้อมูล', style: MyStyle().normalWhite16()),
           ),
         ),

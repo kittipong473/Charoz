@@ -5,48 +5,22 @@ import 'package:charoz/Utilty/Widget/show_progress.dart';
 import 'package:flutter/material.dart';
 
 class ShowImage {
-  Widget bannerImage(String path) {
-    return CachedNetworkImage(
-      fit: BoxFit.cover,
-      imageUrl: '${RouteApi.domainBanner}$path',
-      placeholder: (context, url) => const ShowProgress(),
-      errorWidget: (context, url, error) => Image.asset(MyImage.error),
+  Widget showImage(String url) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(5),
+      child: CachedNetworkImage(
+        fit: BoxFit.cover,
+        imageUrl: url,
+        placeholder: (context, url) => const ShowProgress(),
+        errorWidget: (context, url, error) => Image.asset(MyImage.error),
+      ),
     );
   }
 
-  Widget notiImage(String path) {
-    return CachedNetworkImage(
-      fit: BoxFit.fill,
-      imageUrl: '${RouteApi.domainNoti}$path',
-      placeholder: (context, url) => const ShowProgress(),
-      errorWidget: (context, url, error) => Image.asset(MyImage.error),
-    );
-  }
-
-  Widget productImage(String path) {
-    return CachedNetworkImage(
-      fit: BoxFit.cover,
-      imageUrl: '${RouteApi.domainProduct}$path',
-      placeholder: (context, url) => const ShowProgress(),
-      errorWidget: (context, url, error) => Image.asset(MyImage.error),
-    );
-  }
-
-  Widget shopImage(String path) {
-    return CachedNetworkImage(
-      fit: BoxFit.cover,
-      imageUrl: '${RouteApi.domainShop}$path',
-      placeholder: (context, url) => const ShowProgress(),
-      errorWidget: (context, url, error) => Image.asset(MyImage.error),
-    );
-  }
-
-  Widget userImage(String path) {
-    return CachedNetworkImage(
-      fit: BoxFit.fill,
-      imageUrl: '${RouteApi.domainShop}$path',
-      placeholder: (context, url) => const ShowProgress(),
-      errorWidget: (context, url, error) => Image.asset(MyImage.person),
-    );
-  }
+  Widget showBanner(String path) => showImage('${RouteApi.domainBanner}$path');
+  Widget showNoti(String path) => showImage('${RouteApi.domainNoti}$path');
+  Widget showProduct(String path) =>
+      showImage('${RouteApi.domainProduct}$path');
+  Widget showShop(String path) => showImage('${RouteApi.domainShop}$path');
+  Widget showUser(String path) => showImage('${RouteApi.domainUser}$path');
 }

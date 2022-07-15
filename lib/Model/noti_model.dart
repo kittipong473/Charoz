@@ -77,7 +77,8 @@ class NotiModel {
 
   String toJson() => json.encode(toMap());
 
-  factory NotiModel.fromJson(String source) => NotiModel.fromMap(json.decode(source));
+  factory NotiModel.fromJson(String source) =>
+      NotiModel.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -87,29 +88,43 @@ class NotiModel {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is NotiModel &&
-      other.notiId == notiId &&
-      other.userId == userId &&
-      other.notiType == notiType &&
-      other.notiName == notiName &&
-      other.notiDetail == notiDetail &&
-      other.notiImage == notiImage &&
-      other.notiStart == notiStart &&
-      other.notiEnd == notiEnd &&
-      other.notiStatus == notiStatus;
+        other.notiId == notiId &&
+        other.userId == userId &&
+        other.notiType == notiType &&
+        other.notiName == notiName &&
+        other.notiDetail == notiDetail &&
+        other.notiImage == notiImage &&
+        other.notiStart == notiStart &&
+        other.notiEnd == notiEnd &&
+        other.notiStatus == notiStatus;
   }
 
   @override
   int get hashCode {
     return notiId.hashCode ^
-      userId.hashCode ^
-      notiType.hashCode ^
-      notiName.hashCode ^
-      notiDetail.hashCode ^
-      notiImage.hashCode ^
-      notiStart.hashCode ^
-      notiEnd.hashCode ^
-      notiStatus.hashCode;
+        userId.hashCode ^
+        notiType.hashCode ^
+        notiName.hashCode ^
+        notiDetail.hashCode ^
+        notiImage.hashCode ^
+        notiStart.hashCode ^
+        notiEnd.hashCode ^
+        notiStatus.hashCode;
   }
+}
+
+NotiModel convertNoti(dynamic item) {
+  return NotiModel(
+    notiId: int.parse(item['notiId']),
+    userId: int.parse(item['userId']),
+    notiType: item['notiType'],
+    notiName: item['notiName'],
+    notiDetail: item['notiDetail'],
+    notiImage: item['notiImage'],
+    notiStart: DateTime.parse(item['notiStart']),
+    notiEnd: DateTime.parse(item['notiEnd']),
+    notiStatus: int.parse(item['notiStatus']),
+  );
 }

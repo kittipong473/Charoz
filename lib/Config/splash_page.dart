@@ -1,7 +1,9 @@
 import 'package:charoz/Provider/config_provider.dart';
 import 'package:charoz/Provider/user_provider.dart';
+import 'package:charoz/Service/Api/PHP/config_api.dart';
 import 'package:charoz/Service/Route/route_page.dart';
-import 'package:charoz/Utilty/Constant/my_variable.dart';
+import 'package:charoz/Utilty/Function/load_data.dart';
+import 'package:charoz/Utilty/global_variable.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
@@ -25,15 +27,11 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future loadData() async {
-    if (MyVariable.accountUid != "") {
-      await Provider.of<UserProvider>(context, listen: false)
-          .getUserWhereToken();
-    } else {
-      MyVariable.login = false;
-    }
+    await checkLoginStatus();
+    await LoadData().getDataByRole(context);
 
-    // String maintenance = await ConfigApi().getOnlyStatusWhereShop(shopid: 1);
-    int maintenance = 2;
+    int maintenance = await ConfigApi().getOnlyStatusWhereShop(shopid: 1);
+    // int maintenance = 1;
 
     if (maintenance == 0 || maintenance == 1) {
       Provider.of<ConfigProvider>(context, listen: false)
@@ -43,6 +41,8 @@ class _SplashPageState extends State<SplashPage> {
             context, RoutePage.routeMaintenancePage, (route) => false);
       });
     } else if (maintenance == 2) {
+      Provider.of<UserProvider>(context, listen: false)
+          .checkUserPinSetting(context);
       Future.delayed(Duration.zero, () {
         Navigator.pushNamedAndRemoveUntil(
             context, RoutePage.routePageNavigation, (route) => false);
@@ -50,6 +50,15 @@ class _SplashPageState extends State<SplashPage> {
     } else {
       DialogAlert().doubleDialog(
           context, 'เซิฟเวอร์มีปัญหา', 'กรุณาเข้าใช้งานในภายหลัง');
+    }
+  }
+
+  Future checkLoginStatus() async {
+    if (GlobalVariable.accountUid != "") {
+      await Provider.of<UserProvider>(context, listen: false)
+          .getUserWhereToken();
+    } else {
+      GlobalVariable.login = false;
     }
   }
 

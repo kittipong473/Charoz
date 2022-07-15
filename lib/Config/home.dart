@@ -1,18 +1,19 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:charoz/Component/Product/Dialog/product_detail.dart';
+import 'package:charoz/Component/Shop/Dialog/carousel_detail.dart';
 import 'package:charoz/Model/banner_model.dart';
 import 'package:charoz/Provider/config_provider.dart';
 import 'package:charoz/Model/product_model.dart';
-import 'package:charoz/Provider/order_provider.dart';
+import 'package:charoz/Provider/product_provider.dart';
 import 'package:charoz/Provider/shop_provider.dart';
 import 'package:charoz/Service/Route/route_page.dart';
-import 'package:charoz/Utilty/Function/dialog_detail.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
-import 'package:charoz/Utilty/Constant/my_variable.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:charoz/Utilty/Widget/show_image.dart';
 import 'package:charoz/Utilty/Widget/show_progress.dart';
+import 'package:charoz/Utilty/global_variable.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -40,11 +41,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   Future getData() async {
-    Provider.of<ConfigProvider>(context, listen: false).getAllBanner();
-    Provider.of<ShopProvider>(context, listen: false).getShopWhereId(1);
-    await Provider.of<ShopProvider>(context, listen: false).getTimeWhereId(1);
-    if (mounted) Provider.of<ShopProvider>(context, listen: false).getTimeStatus();
-    Provider.of<OrderProvider>(context, listen: false).getProductSuggest();
+    await Provider.of<ProductProvider>(context, listen: false)
+        .getProductSuggest();
   }
 
   // void getVideo() {
@@ -83,7 +81,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
-        body: Consumer3<ShopProvider, ConfigProvider, OrderProvider>(
+        body: Consumer3<ShopProvider, ConfigProvider, ProductProvider>(
           builder: (_, sprovider, cprovider, oprovider, __) =>
               sprovider.shop == null ||
                       sprovider.shopStatus == null ||
@@ -157,16 +155,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   Widget buildCarouselItem(BannerModel banner, int index) {
     return InkWell(
-      onTap: () => DialogDetail().dialogCarousel(context, banner.bannerUrl),
+      onTap: () => CarouselDetail().dialogCarousel(context, banner.bannerUrl),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 10),
-        width: MyVariable.largeDevice ? 70.w : 100.w,
+        margin: EdgeInsets.symmetric(horizontal: 3.w),
+        width: GlobalVariable.largeDevice ? 70.w : 100.w,
         decoration: BoxDecoration(
             color: Colors.grey, borderRadius: BorderRadius.circular(20)),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: ShowImage().bannerImage(banner.bannerUrl),
-        ),
+        child: ShowImage().showBanner(banner.bannerUrl),
       ),
     );
   }
@@ -182,7 +177,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           //         ? const ShowProgress()
           //         : VideoPlayer(videoPlayerController!)
           //     :
-          ShowImage().shopImage(path),
+          ShowImage().showShop(path),
     );
   }
 
@@ -208,7 +203,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       elevation: 5,
       margin: const EdgeInsets.all(10),
       child: InkWell(
-        onTap: () => DialogDetail().dialogProduct(context, product),
+        onTap: () => ProductDetail().dialogProduct(context, product),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -219,10 +214,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: ShowImage().productImage(product.productImage),
-                    ),
+                    child: ShowImage().showProduct(product.productImage),
                   ),
                   Positioned(
                     top: 5,
@@ -260,16 +252,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            chip(MyVariable.productTypes[0], Icons.fastfood_rounded, 0),
-            chip(MyVariable.productTypes[1], Icons.rice_bowl_rounded, 1),
+            chip(GlobalVariable.productTypes[0], Icons.fastfood_rounded, 0),
+            chip(GlobalVariable.productTypes[1], Icons.rice_bowl_rounded, 1),
           ],
         ),
         SizedBox(height: 2.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            chip(MyVariable.productTypes[2], Icons.nightlife_rounded, 2),
-            chip(MyVariable.productTypes[3], Icons.icecream_rounded, 3),
+            chip(GlobalVariable.productTypes[2], Icons.nightlife_rounded, 2),
+            chip(GlobalVariable.productTypes[3], Icons.icecream_rounded, 3),
           ],
         ),
       ],
@@ -290,8 +282,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ),
       onPressed: () {
         setState(() {
-          MyVariable.indexPageNavigation = 1;
-          MyVariable.indexProductChip = index;
+          GlobalVariable.indexPageNavigation = 1;
+          GlobalVariable.indexProductChip = index;
         });
         Navigator.pushNamedAndRemoveUntil(
             context, RoutePage.routePageNavigation, (route) => false);
@@ -308,7 +300,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           SizedBox(
-            width: MyVariable.largeDevice ? 70.w : 60.w,
+            width: GlobalVariable.largeDevice ? 70.w : 60.w,
             child: Text(detail, style: MyStyle().normalPurple18()),
           ),
           Icon(Icons.description_rounded,
@@ -328,7 +320,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         children: [
           Icon(Icons.campaign_rounded, color: Colors.red.shade700, size: 35.sp),
           SizedBox(
-            width: MyVariable.largeDevice ? 70.w : 60.w,
+            width: GlobalVariable.largeDevice ? 70.w : 60.w,
             child: Text(announce, style: MyStyle().normalRed18()),
           ),
         ],

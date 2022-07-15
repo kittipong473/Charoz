@@ -47,7 +47,8 @@ class FavouriteModel {
 
   String toJson() => json.encode(toMap());
 
-  factory FavouriteModel.fromJson(String source) => FavouriteModel.fromMap(json.decode(source));
+  factory FavouriteModel.fromJson(String source) =>
+      FavouriteModel.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -57,19 +58,28 @@ class FavouriteModel {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is FavouriteModel &&
-      other.favouriteId == favouriteId &&
-      other.userId == userId &&
-      other.favouriteProducts == favouriteProducts &&
-      other.created == created;
+        other.favouriteId == favouriteId &&
+        other.userId == userId &&
+        other.favouriteProducts == favouriteProducts &&
+        other.created == created;
   }
 
   @override
   int get hashCode {
     return favouriteId.hashCode ^
-      userId.hashCode ^
-      favouriteProducts.hashCode ^
-      created.hashCode;
+        userId.hashCode ^
+        favouriteProducts.hashCode ^
+        created.hashCode;
   }
+}
+
+FavouriteModel convertFavourite(dynamic item) {
+  return FavouriteModel(
+    favouriteId: int.parse(item['favouriteId']),
+    userId: int.parse(item['userId']),
+    favouriteProducts: item['favouriteProducts'],
+    created: DateTime.parse(item['created']),
+  );
 }

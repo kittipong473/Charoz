@@ -71,7 +71,8 @@ class AddressModel {
 
   String toJson() => json.encode(toMap());
 
-  factory AddressModel.fromJson(String source) => AddressModel.fromMap(json.decode(source));
+  factory AddressModel.fromJson(String source) =>
+      AddressModel.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -81,27 +82,40 @@ class AddressModel {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is AddressModel &&
-      other.addressId == addressId &&
-      other.userId == userId &&
-      other.addressName == addressName &&
-      other.addressDetail == addressDetail &&
-      other.addressLat == addressLat &&
-      other.addressLng == addressLng &&
-      other.created == created &&
-      other.updated == updated;
+        other.addressId == addressId &&
+        other.userId == userId &&
+        other.addressName == addressName &&
+        other.addressDetail == addressDetail &&
+        other.addressLat == addressLat &&
+        other.addressLng == addressLng &&
+        other.created == created &&
+        other.updated == updated;
   }
 
   @override
   int get hashCode {
     return addressId.hashCode ^
-      userId.hashCode ^
-      addressName.hashCode ^
-      addressDetail.hashCode ^
-      addressLat.hashCode ^
-      addressLng.hashCode ^
-      created.hashCode ^
-      updated.hashCode;
+        userId.hashCode ^
+        addressName.hashCode ^
+        addressDetail.hashCode ^
+        addressLat.hashCode ^
+        addressLng.hashCode ^
+        created.hashCode ^
+        updated.hashCode;
   }
+}
+
+AddressModel convertAddress(dynamic item) {
+  return AddressModel(
+    addressId: int.parse(item['addressId']),
+    userId: int.parse(item['userId']),
+    addressName: item['addressName'],
+    addressDetail: item['addressDetail'],
+    addressLat: double.parse(item['addressLat']),
+    addressLng: double.parse(item['addressLng']),
+    created: DateTime.parse(item['created']),
+    updated: DateTime.parse(item['updated']),
+  );
 }

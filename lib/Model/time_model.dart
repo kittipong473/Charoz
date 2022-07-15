@@ -59,7 +59,8 @@ class TimeModel {
 
   String toJson() => json.encode(toMap());
 
-  factory TimeModel.fromJson(String source) => TimeModel.fromMap(json.decode(source));
+  factory TimeModel.fromJson(String source) =>
+      TimeModel.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -69,23 +70,34 @@ class TimeModel {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is TimeModel &&
-      other.timeId == timeId &&
-      other.shopId == shopId &&
-      other.timeOpen == timeOpen &&
-      other.timeClose == timeClose &&
-      other.timeStatus == timeStatus &&
-      other.timeChoose == timeChoose;
+        other.timeId == timeId &&
+        other.shopId == shopId &&
+        other.timeOpen == timeOpen &&
+        other.timeClose == timeClose &&
+        other.timeStatus == timeStatus &&
+        other.timeChoose == timeChoose;
   }
 
   @override
   int get hashCode {
     return timeId.hashCode ^
-      shopId.hashCode ^
-      timeOpen.hashCode ^
-      timeClose.hashCode ^
-      timeStatus.hashCode ^
-      timeChoose.hashCode;
+        shopId.hashCode ^
+        timeOpen.hashCode ^
+        timeClose.hashCode ^
+        timeStatus.hashCode ^
+        timeChoose.hashCode;
   }
+}
+
+TimeModel convertTime(dynamic item) {
+  return TimeModel(
+    timeId: int.parse(item['timeId']),
+    shopId: int.parse(item['shopId']),
+    timeOpen: item['timeOpen'],
+    timeClose: item['timeClose'],
+    timeStatus: item['timeStatus'],
+    timeChoose: item['timeChoose'],
+  );
 }

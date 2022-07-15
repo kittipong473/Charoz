@@ -1,11 +1,10 @@
-import 'package:charoz/Component/Modal/product_modal.dart';
+import 'package:charoz/Component/Product/Modal/add_product.dart';
+import 'package:charoz/Component/Product/Dialog/product_detail.dart';
 import 'package:charoz/Model/product_model.dart';
-import 'package:charoz/Provider/order_provider.dart';
-import 'package:charoz/Service/Route/route_page.dart';
+import 'package:charoz/Provider/product_provider.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
-import 'package:charoz/Utilty/Constant/my_variable.dart';
-import 'package:charoz/Utilty/Function/dialog_detail.dart';
+import 'package:charoz/Utilty/global_variable.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:charoz/Utilty/Widget/search_product.dart';
@@ -30,14 +29,13 @@ class _ProductListState extends State<ProductList> {
   @override
   void initState() {
     getData();
-    Provider.of<OrderProvider>(context, listen: false).getAllProduct();
     scrollController.addListener(listenScrolling);
     super.initState();
   }
 
   Future getData() async {
-    Provider.of<OrderProvider>(context, listen: false).getAllProductWhereType(
-        MyVariable.productTypes[MyVariable.indexProductChip]);
+    Provider.of<ProductProvider>(context, listen: false).getAllProductWhereType(
+        GlobalVariable.productTypes[GlobalVariable.indexProductChip]);
   }
 
   void listenScrolling() {
@@ -79,11 +77,11 @@ class _ProductListState extends State<ProductList> {
             buildSearch(),
           ],
         ),
-        floatingActionButton: MyVariable.role == 'manager'
+        floatingActionButton: GlobalVariable.role == 'manager'
             ? FloatingActionButton(
                 backgroundColor: MyStyle.bluePrimary,
                 child: const Icon(Icons.add_rounded, color: Colors.white),
-                onPressed: () => ProductModal().openModalAddProduct(context),
+                onPressed: () => AddProduct().openModalAddProduct(context),
               )
             : FloatingActionButton(
                 backgroundColor: MyStyle.bluePrimary,
@@ -118,10 +116,10 @@ class _ProductListState extends State<ProductList> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              chip(MyVariable.productTypes[0], 0),
-              chip(MyVariable.productTypes[1], 1),
-              chip(MyVariable.productTypes[2], 2),
-              chip(MyVariable.productTypes[3], 3),
+              chip(GlobalVariable.productTypes[0], 0),
+              chip(GlobalVariable.productTypes[1], 1),
+              chip(GlobalVariable.productTypes[2], 2),
+              chip(GlobalVariable.productTypes[3], 3),
             ],
           ),
         ],
@@ -131,17 +129,17 @@ class _ProductListState extends State<ProductList> {
 
   Widget chip(String title, int index) {
     return ActionChip(
-      backgroundColor: MyVariable.indexProductChip == index
+      backgroundColor: GlobalVariable.indexProductChip == index
           ? MyStyle.primary
           : Colors.grey.shade300,
       label: Text(
         title,
-        style: MyVariable.indexProductChip == index
+        style: GlobalVariable.indexProductChip == index
             ? MyStyle().normalWhite16()
             : MyStyle().normalBlack16(),
       ),
       onPressed: () {
-        setState(() => MyVariable.indexProductChip = index);
+        setState(() => GlobalVariable.indexProductChip = index);
         getData();
       },
     );
@@ -175,10 +173,10 @@ class _ProductListState extends State<ProductList> {
     return SizedBox(
       width: 100.w,
       height: 70.h,
-      child: Consumer<OrderProvider>(
+      child: Consumer<ProductProvider>(
         builder: (_, provider, __) => provider.productList == null
             ? ScreenWidget().showEmptyData(
-                'ไม่มีรายการ ${MyVariable.productTypes[MyVariable.indexProductChip]} ในขณะนี้',
+                'ไม่มีรายการ ${GlobalVariable.productTypes[GlobalVariable.indexProductChip]} ในขณะนี้',
                 'กรุณารอรายการได้ในภายหลัง')
             : GridView.builder(
                 shrinkWrap: true,
@@ -200,13 +198,13 @@ class _ProductListState extends State<ProductList> {
       elevation: 5,
       margin: const EdgeInsets.all(10),
       child: InkWell(
-        onTap: () => DialogDetail().dialogProduct(context, product),
+        onTap: () => ProductDetail().dialogProduct(context, product),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              width: MyVariable.largeDevice ? 25.w : 30.w,
+              width: GlobalVariable.largeDevice ? 25.w : 30.w,
               height: 12.h,
               child: SizedBox(
                 width: 30.w,
@@ -214,12 +212,9 @@ class _ProductListState extends State<ProductList> {
                 child: Stack(
                   children: [
                     Positioned.fill(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: ShowImage().productImage(product.productImage),
-                      ),
+                      child: ShowImage().showProduct(product.productImage),
                     ),
-                    if (product.productSuggest == 0) ...[
+                    if (product.productSuggest == 1) ...[
                       Positioned(
                         top: 5,
                         right: 5,

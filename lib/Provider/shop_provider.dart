@@ -1,7 +1,6 @@
 import 'package:charoz/Model/shop_model.dart';
 import 'package:charoz/Model/time_model.dart';
-import 'package:charoz/Service/Api/shop_api.dart';
-import 'package:charoz/Utilty/Constant/my_image.dart';
+import 'package:charoz/Service/Api/PHP/shop_api.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
@@ -10,24 +9,12 @@ class ShopProvider with ChangeNotifier {
   String? _shopStatus;
   ShopModel? _shop;
   TimeModel? _time;
-
-  List<String>? _shopImageList;
   List<ShopModel>? _shopList;
 
   get shopStatus => _shopStatus;
   get shop => _shop;
   get time => _time;
-  get shopImageList => _shopImageList;
   get shopList => _shopList;
-
-  void getShopDetailImage() {
-    _shopImageList = [MyImage.showshop2, MyImage.showshop3, MyImage.showshop4];
-  }
-
-  Future getShopWhereId(int id) async {
-    _shop = await ShopApi().getShopWhereId(id: id);
-    notifyListeners();
-  }
 
   Future getAllShop() async {
     _shopList = await ShopApi().getAllShop();
@@ -37,6 +24,10 @@ class ShopProvider with ChangeNotifier {
   Future getTimeWhereId(int id) async {
     _time = await ShopApi().getTimeWhereId(id: id);
     notifyListeners();
+  }
+
+  void selectShopWhereId(int id) {
+    _shop ??= _shopList!.firstWhere((element) => element.shopId == id);
   }
 
   void getTimeStatus() {

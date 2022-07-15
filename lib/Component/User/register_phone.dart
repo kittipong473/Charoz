@@ -1,19 +1,19 @@
-import 'package:charoz/Service/Api/user_api.dart';
+import 'package:charoz/Service/Api/PHP/user_api.dart';
 import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
-import 'package:charoz/Utilty/Constant/my_variable.dart';
-import 'package:charoz/Utilty/Function/show_toast.dart';
+import 'package:charoz/Utilty/global_variable.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class RegisterPhone extends StatefulWidget {
   final String phone;
-  final String tokenP;
-  const RegisterPhone({Key? key, required this.phone, required this.tokenP})
+  final String token;
+  const RegisterPhone({Key? key, required this.phone, required this.token})
       : super(key: key);
 
   @override
@@ -33,7 +33,6 @@ class _RegisterPhoneState extends State<RegisterPhone> {
   TextEditingController birthController = TextEditingController();
   DateTime? birthValue;
   bool duplicate = false;
-  bool load = false;
 
   @override
   void initState() {
@@ -42,7 +41,7 @@ class _RegisterPhoneState extends State<RegisterPhone> {
   }
 
   Future signOutPhone() async {
-    await MyVariable.auth.signOut();
+    await GlobalVariable.auth.signOut();
   }
 
   @override
@@ -59,7 +58,7 @@ class _RegisterPhoneState extends State<RegisterPhone> {
               Positioned.fill(
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: MyVariable.largeDevice
+                    padding: GlobalVariable.largeDevice
                         ? const EdgeInsets.symmetric(horizontal: 40)
                         : const EdgeInsets.symmetric(horizontal: 20),
                     child: Form(
@@ -339,12 +338,12 @@ class _RegisterPhoneState extends State<RegisterPhone> {
                 icon: statusPassword1
                     ? Icon(
                         Icons.visibility_rounded,
-                        size: MyVariable.largeDevice ? 35 : 25,
+                        size: GlobalVariable.largeDevice ? 35 : 25,
                         color: MyStyle.primary,
                       )
                     : Icon(
                         Icons.visibility_off_rounded,
-                        size: MyVariable.largeDevice ? 35 : 25,
+                        size: GlobalVariable.largeDevice ? 35 : 25,
                         color: MyStyle.primary,
                       ),
               ),
@@ -355,7 +354,7 @@ class _RegisterPhoneState extends State<RegisterPhone> {
     );
   }
 
-  Row buildPassword2() {
+  Widget buildPassword2() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -401,12 +400,12 @@ class _RegisterPhoneState extends State<RegisterPhone> {
                 icon: statusPassword2
                     ? Icon(
                         Icons.visibility_rounded,
-                        size: MyVariable.largeDevice ? 35 : 25,
+                        size: 20.sp,
                         color: MyStyle.primary,
                       )
                     : Icon(
                         Icons.visibility_off_rounded,
-                        size: MyVariable.largeDevice ? 35 : 25,
+                        size: 20.sp,
                         color: MyStyle.primary,
                       ),
               ),
@@ -470,34 +469,16 @@ class _RegisterPhoneState extends State<RegisterPhone> {
       children: [
         SizedBox(
           width: 85.w,
-          height: MyVariable.largeDevice ? 60 : 40,
+          height: GlobalVariable.largeDevice ? 60 : 40,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(primary: MyStyle.bluePrimary),
             onPressed: () {
-              if (load) return;
-              setState(() => load = true);
+              EasyLoading.show(status: 'loading...');
               if (formKey.currentState!.validate()) {
                 buildCheckRegister();
-              } else {
-                setState(() => load = false);
               }
             },
-            child: load
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const CircularProgressIndicator(color: Colors.white),
-                      SizedBox(width: 2.w),
-                      Text(
-                        'Please Wait...',
-                        style: MyStyle().boldWhite18(),
-                      ),
-                    ],
-                  )
-                : Text(
-                    'สมัครสมาชิก',
-                    style: MyStyle().boldWhite18(),
-                  ),
+            child: Text('สมัครสมาชิก', style: MyStyle().boldWhite18()),
           ),
         ),
       ],
@@ -508,15 +489,15 @@ class _RegisterPhoneState extends State<RegisterPhone> {
     bool status =
         await UserApi().checkUserWhereEmail(email: emailController.text);
     if (password1Controller.text != password2Controller.text) {
-      setState(() => load = false);
+      EasyLoading.dismiss();
       DialogAlert().doubleDialog(
           context, 'รหัสผ่านไม่ตรงกัน', 'กรุณาใส่รหัสผ่านทั้ง 2 ช่องให้ตรงกัน');
     } else if (allow == false) {
-      setState(() => load = false);
+      EasyLoading.dismiss();
       DialogAlert().doubleDialog(context, 'ยังไม่ได้ยอมรับข้อกำหนด',
           'กรุณายอมรับเงื่อนไขการให้บริการ');
     } else if (status == false) {
-      setState(() => load = false);
+      EasyLoading.dismiss();
       DialogAlert().doubleDialog(
           context, 'อีเมลล์ถูกใช้งานแล้ว', 'กรุณาใช้อีเมลล์อื่นในการสมัคร');
     } else {
@@ -531,33 +512,32 @@ class _RegisterPhoneState extends State<RegisterPhone> {
     String lastname = lastNameController.text;
     String phone = widget.phone;
     String role = 'customer';
-    String tokenP = widget.tokenP;
-    await MyVariable.auth
+    String tokenP = widget.token;
+    await GlobalVariable.auth
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((value) async {
-      String tokenE = value.user!.uid;
+      String token = value.user!.uid;
       bool status = await UserApi().insertUser(
         firstname: firstname,
         lastname: lastname,
         birth: birthValue!,
         email: email,
         phone: phone,
-        role: role,
-        tokenE: tokenE,
-        tokenP: tokenP,
-        tokenG: 'null',
+        role: 'customer',
+        token: token,
       );
       if (status) {
-        MyVariable.login = true;
-        MyVariable.indexPageNavigation = 0;
-        MyVariable.role = role;
-        ShowToast().toast('ยินดีต้อนรับสู่ Application');
-        load = false;
+        await GlobalVariable.auth.signOut();
+        EasyLoading.dismiss();
+        MyFunction()
+            .toast('สมัครสมาชิกสำเร็จ สามารถ Login เข้าใช้งานระบบได้เลย');
         Navigator.pushNamedAndRemoveUntil(
             context, RoutePage.routePageNavigation, (route) => false);
+      } else {
+        DialogAlert().addFailedDialog(context);
       }
     }).catchError((e) {
-      setState(() => load = false);
+      EasyLoading.dismiss();
       DialogAlert().singleDialog(context, MyFunction().authenAlert(e.code));
     });
   }

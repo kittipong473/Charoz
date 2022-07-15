@@ -74,3 +74,12 @@ class BannerModel {
         created.hashCode;
   }
 }
+
+BannerModel convertBanner(dynamic item) {
+  return BannerModel(
+    bannerId: int.parse(item['bannerId']),
+    bannerName: item['bannerName'],
+    bannerUrl: item['bannerUrl'],
+    created: DateTime.parse(item['created']),
+  );
+}

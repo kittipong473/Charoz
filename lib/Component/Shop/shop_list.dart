@@ -4,30 +4,15 @@ import 'package:charoz/Provider/shop_provider.dart';
 import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
-import 'package:charoz/Utilty/Constant/my_variable.dart';
+import 'package:charoz/Utilty/global_variable.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:charoz/Utilty/Widget/show_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class ShopList extends StatefulWidget {
+class ShopList extends StatelessWidget {
   const ShopList({Key? key}) : super(key: key);
-
-  @override
-  _ShopListState createState() => _ShopListState();
-}
-
-class _ShopListState extends State<ShopList> {
-  @override
-  void initState() {
-    super.initState();
-    getData();
-  }
-
-  void getData() {
-    Provider.of<ShopProvider>(context, listen: false).getAllShop();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +34,8 @@ class _ShopListState extends State<ShopList> {
                           child: ListView.builder(
                             itemCount: sprovider.shopList.length,
                             padding: const EdgeInsets.symmetric(horizontal: 20),
-                            itemBuilder: (context, index) =>
-                                buildShopItem(sprovider.shopList[index], index),
+                            itemBuilder: (context, index) => buildShopItem(
+                                context, sprovider.shopList[index], index),
                           ),
                         ),
                       ),
@@ -63,7 +48,7 @@ class _ShopListState extends State<ShopList> {
     );
   }
 
-  Widget buildShopItem(ShopModel shop, int index) {
+  Widget buildShopItem(BuildContext context, ShopModel shop, int index) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 10),
       elevation: 5.0,
@@ -75,15 +60,15 @@ class _ShopListState extends State<ShopList> {
                   builder: (context) => ShopDetail(id: shop.shopId)));
         },
         child: Padding(
-          padding: MyVariable.largeDevice
+          padding: GlobalVariable.largeDevice
               ? const EdgeInsets.all(20)
               : const EdgeInsets.all(10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(
-                width: MyVariable.largeDevice ? 120 : 80,
-                height: MyVariable.largeDevice ? 120 : 80,
+                width: GlobalVariable.largeDevice ? 120 : 80,
+                height: GlobalVariable.largeDevice ? 120 : 80,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: Image.asset(MyImage.shop),
@@ -94,7 +79,7 @@ class _ShopListState extends State<ShopList> {
                 style: MyStyle().boldBlack16(),
               ),
               Icon(
-                MyVariable.login
+                GlobalVariable.login
                     ? Icons.edit_rounded
                     : Icons.arrow_forward_ios_rounded,
                 size: 25.sp,

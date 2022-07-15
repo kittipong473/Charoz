@@ -1,8 +1,12 @@
+import 'package:charoz/Component/Notification/Dialog/noti_detail.dart';
+import 'package:charoz/Component/Order/List/order_list_customer.dart';
+import 'package:charoz/Component/Order/List/order_list_manager.dart';
+import 'package:charoz/Component/Order/List/order_list_rider.dart';
 import 'package:charoz/Model/noti_model.dart';
 import 'package:charoz/Provider/noti_provider.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
-import 'package:charoz/Utilty/Constant/my_variable.dart';
-import 'package:charoz/Utilty/Function/dialog_detail.dart';
+import 'package:charoz/Utilty/Widget/show_progress.dart';
+import 'package:charoz/Utilty/global_variable.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +29,7 @@ class _NotiListState extends State<NotiList> {
 
   Future getData() async {
     Provider.of<NotiProvider>(context, listen: false)
-        .getAllNotiWhereType(widget.notiList[MyVariable.indexNotiChip]);
+        .getAllNotiWhereType(widget.notiList[GlobalVariable.indexNotiChip]);
   }
 
   @override
@@ -43,13 +47,26 @@ class _NotiListState extends State<NotiList> {
                 child: Column(
                   children: [
                     buildChip(),
-                    buildNotiList(),
+                    if (GlobalVariable.indexNotiChip == 0) ...[
+                      if (GlobalVariable.role == 'customer') ...[
+                        const OrderListCustomer(),
+                      ] else if (GlobalVariable.role == 'manager') ...[
+                        const OrderListManager(),
+                      ] else if (GlobalVariable.role == 'rider') ...[
+                        const OrderListRider(),
+                      ] else ...[
+                        buildNotiList(),
+                      ],
+                    ] else ...[
+                      buildNotiList(),
+                    ],
                   ],
                 ),
               ),
             ),
             ScreenWidget().appBarTitle('การแจ้งเตือน'),
-            if (MyVariable.role == 'admin' || MyVariable.role == 'manager') ...[
+            if (GlobalVariable.role == 'admin' ||
+                GlobalVariable.role == 'manager') ...[
               ScreenWidget().createNoti(context),
             ],
           ],
@@ -74,17 +91,17 @@ class _NotiListState extends State<NotiList> {
 
   Widget chip(String title, int index) {
     return ActionChip(
-      backgroundColor: MyVariable.indexNotiChip == index
+      backgroundColor: GlobalVariable.indexNotiChip == index
           ? MyStyle.primary
           : Colors.grey.shade300,
       label: Text(
         title,
-        style: MyVariable.indexNotiChip == index
+        style: GlobalVariable.indexNotiChip == index
             ? MyStyle().normalWhite16()
             : MyStyle().normalBlack16(),
       ),
       onPressed: () {
-        setState(() => MyVariable.indexNotiChip = index);
+        setState(() => GlobalVariable.indexNotiChip = index);
         getData();
       },
     );
@@ -95,19 +112,19 @@ class _NotiListState extends State<NotiList> {
       width: 100.w,
       height: 70.h,
       child: Consumer<NotiProvider>(
-        builder: (_, provider, __) => provider.notificateList == null
+        builder: (_, provider, __) => provider.notiList == null
             ? Center(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'ยังไม่มี ${widget.notiList[MyVariable.indexNotiChip]} ในขณะนี้',
+                      'ยังไม่มี ${widget.notiList[GlobalVariable.indexNotiChip]} ในขณะนี้',
                       style: MyStyle().normalPrimary18(),
                     ),
                     SizedBox(height: 3.h),
                     Text(
-                      'กรุณารอรายการ ${widget.notiList[MyVariable.indexNotiChip]} ได้ในภายหลัง',
+                      'กรุณารอรายการ ${widget.notiList[GlobalVariable.indexNotiChip]} ได้ในภายหลัง',
                       style: MyStyle().normalPrimary18(),
                     ),
                   ],
@@ -116,9 +133,9 @@ class _NotiListState extends State<NotiList> {
             : ListView.builder(
                 shrinkWrap: true,
                 padding: const EdgeInsets.only(top: 0),
-                itemCount: provider.notificateList.length,
+                itemCount: provider.notiList.length,
                 itemBuilder: (context, index) {
-                  return buildNotiItem(provider.notificateList[index], index);
+                  return buildNotiItem(provider.notiList[index], index);
                 },
               ),
       ),
@@ -127,12 +144,12 @@ class _NotiListState extends State<NotiList> {
 
   Widget buildNotiItem(NotiModel noti, int index) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      margin: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
       elevation: 5.0,
       child: InkWell(
-        onTap: () => DialogDetail().dialogNoti(context, noti),
+        onTap: () => NotiDetail().dialogNoti(context, noti),
         child: Padding(
-          padding: const EdgeInsets.all(10),
+          padding: EdgeInsets.all(10.sp),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -145,5 +162,37 @@ class _NotiListState extends State<NotiList> {
         ),
       ),
     );
+  }
+
+  Color checkOrderStatusColor(String type, String status) {
+    if (type == GlobalVariable.orderReceiveTypeList[0]) {
+      if (status == GlobalVariable.orderStatusReceiveList[0]) {
+        return Colors.yellow.shade100;
+      } else if (status == GlobalVariable.orderStatusReceiveList[1]) {
+        return Colors.purple.shade100;
+      } else if (status == GlobalVariable.orderStatusReceiveList[2]) {
+        return Colors.green.shade100;
+      } else if (status == GlobalVariable.orderStatusReceiveList[4]) {
+        return Colors.red.shade100;
+      } else {
+        return Colors.white;
+      }
+    } else if (type == GlobalVariable.orderReceiveTypeList[1]) {
+      if (status == GlobalVariable.orderStatusDeliveryList[0] ||
+          status == GlobalVariable.orderStatusDeliveryList[1]) {
+        return Colors.yellow.shade100;
+      } else if (status == GlobalVariable.orderStatusDeliveryList[2]) {
+        return Colors.purple.shade100;
+      } else if (status == GlobalVariable.orderStatusDeliveryList[3]) {
+        return Colors.green.shade100;
+      } else if (status == GlobalVariable.orderStatusDeliveryList[5] ||
+          status == GlobalVariable.orderStatusDeliveryList[6]) {
+        return Colors.red.shade100;
+      } else {
+        return Colors.white;
+      }
+    } else {
+      return Colors.white;
+    }
   }
 }

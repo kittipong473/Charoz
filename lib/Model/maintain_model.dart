@@ -74,3 +74,12 @@ class MaintainModel {
         maintainStatus.hashCode;
   }
 }
+
+MaintainModel convertMaintain(dynamic item) {
+  return MaintainModel(
+    maintainId: int.parse(item['maintainId']),
+    maintainName: item['maintainName'],
+    maintainDetail: item['maintainDetail'],
+    maintainStatus: int.parse(item['maintainStatus']),
+  );
+}

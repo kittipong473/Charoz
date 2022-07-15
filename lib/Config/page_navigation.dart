@@ -1,17 +1,19 @@
 import 'package:charoz/Component/Notification/noti_list.dart';
-import 'package:charoz/Component/Order/rider_order_detail.dart';
+import 'package:charoz/Component/Order/List/order_list_manager.dart';
+import 'package:charoz/Component/Order/List/order_list_rider.dart';
+import 'package:charoz/Component/Rider/rider_order_detail.dart';
 import 'package:charoz/Config/home.dart';
 import 'package:charoz/Provider/config_provider.dart';
-import 'package:charoz/Component/Order/manager_order_list.dart';
 import 'package:charoz/Component/Order/order_cart.dart';
-import 'package:charoz/Component/Order/rider_order_list.dart';
 import 'package:charoz/Component/Product/product_list.dart';
 import 'package:charoz/Component/Shop/shop_list.dart';
-import 'package:charoz/Component/User/login_phone.dart';
+import 'package:charoz/Component/User/login.dart';
 import 'package:charoz/Component/User/user_detail.dart';
 import 'package:charoz/Component/User/user_list.dart';
+import 'package:charoz/Provider/user_provider.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
-import 'package:charoz/Utilty/Constant/my_variable.dart';
+import 'package:charoz/Utilty/Function/dialog_alert.dart';
+import 'package:charoz/Utilty/global_variable.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,8 +33,8 @@ class _PageNavigationState extends State<PageNavigation> {
 
   @override
   void initState() {
-    getBottomNavigationBar();
     super.initState();
+    getBottomNavigationBar();
   }
 
   @override
@@ -42,7 +44,7 @@ class _PageNavigationState extends State<PageNavigation> {
       child: Consumer<ConfigProvider>(
         builder: (context, hprovider, child) => Scaffold(
           extendBody: true,
-          body: screens![MyVariable.indexPageNavigation],
+          body: screens![GlobalVariable.indexPageNavigation],
           bottomNavigationBar: Theme(
             data: Theme.of(context).copyWith(
               iconTheme: const IconThemeData(color: Colors.white),
@@ -55,9 +57,9 @@ class _PageNavigationState extends State<PageNavigation> {
               height: 6.h,
               animationCurve: Curves.easeInOut,
               animationDuration: const Duration(milliseconds: 300),
-              index: MyVariable.indexPageNavigation,
+              index: GlobalVariable.indexPageNavigation,
               onTap: (index) =>
-                  setState(() => MyVariable.indexPageNavigation = index),
+                  setState(() => GlobalVariable.indexPageNavigation = index),
               items: icons!,
             ),
           ),
@@ -67,11 +69,11 @@ class _PageNavigationState extends State<PageNavigation> {
   }
 
   void getBottomNavigationBar() {
-    if (MyVariable.role == 'admin') {
+    if (GlobalVariable.role == 'admin') {
       screens = [
-        NotiList(notiList: MyVariable.notisAdmin),
+        NotiList(notiList: GlobalVariable.notisAdmin),
         const UserList(),
-        const ManagerOrderList(),
+        const OrderListManager(),
         const ShopList(),
         const UserProfile(),
       ];
@@ -82,11 +84,11 @@ class _PageNavigationState extends State<PageNavigation> {
         getIcon(Icons.store_mall_directory_rounded),
         getIcon(Icons.menu_rounded),
       ];
-    } else if (MyVariable.role == 'manager') {
+    } else if (GlobalVariable.role == 'manager') {
       screens = [
-        NotiList(notiList: MyVariable.notisManager),
+        NotiList(notiList: GlobalVariable.notisManager),
         const ProductList(),
-        const ManagerOrderList(),
+        const OrderListManager(),
         const ShopList(),
         const UserProfile(),
       ];
@@ -97,11 +99,11 @@ class _PageNavigationState extends State<PageNavigation> {
         getIcon(Icons.store_mall_directory_rounded),
         getIcon(Icons.menu_rounded),
       ];
-    } else if (MyVariable.role == 'rider') {
+    } else if (GlobalVariable.role == 'rider') {
       screens = [
-        NotiList(notiList: MyVariable.notisRider),
+        NotiList(notiList: GlobalVariable.notisRider),
         const RiderOrderDetail(),
-        const RiderOrderList(),
+        const OrderListRider(),
         const ShopList(),
         const UserProfile(),
       ];
@@ -112,12 +114,12 @@ class _PageNavigationState extends State<PageNavigation> {
         getIcon(Icons.store_mall_directory_rounded),
         getIcon(Icons.menu_rounded),
       ];
-    } else if (MyVariable.role == 'customer') {
+    } else if (GlobalVariable.role == 'customer') {
       screens = [
         const Home(),
         const ProductList(),
         const OrderCart(),
-        NotiList(notiList: MyVariable.notisCustomer),
+        NotiList(notiList: GlobalVariable.notisCustomer),
         const UserProfile(),
       ];
       icons = [
@@ -132,8 +134,8 @@ class _PageNavigationState extends State<PageNavigation> {
         const Home(),
         const ProductList(),
         const ShopList(),
-        NotiList(notiList: MyVariable.notisUser),
-        const LoginPhone(),
+        NotiList(notiList: GlobalVariable.notisUser),
+        const Login(),
       ];
       icons = [
         getIcon(Icons.home_rounded),

@@ -1,27 +1,20 @@
 import 'package:charoz/Model/noti_model.dart';
-import 'package:charoz/Service/Api/noti_api.dart';
+import 'package:charoz/Service/Api/PHP/noti_api.dart';
 import 'package:flutter/cupertino.dart';
 
 class NotiProvider with ChangeNotifier {
   NotiModel? _noti;
-  List<NotiModel>? _notificateList;
-  List<NotiModel>? _notiOrderList;
+  List<NotiModel>? _notiList;
 
   get noti => _noti;
-  get notificateList => _notificateList;
-  get notiOrderList => _notiOrderList;
-
-  Future getAllNoti() async {
-    notifyListeners();
-  }
+  get notiList => _notiList;
 
   Future getAllNotiWhereType(String type) async {
-    _notificateList = await NotiApi().getAllNotiWhereType(type: type);
+    _notiList = await NotiApi().getAllNotiWhereType(type: type);
     notifyListeners();
   }
 
-  Future getNotiWhereId(int id) async {
-    _noti = await NotiApi().getNotiWhereId(id: id);
-    notifyListeners();
+  void selectAddressWhereId(int id) {
+    _noti = _notiList!.firstWhere((element) => element.notiId == id);
   }
 }

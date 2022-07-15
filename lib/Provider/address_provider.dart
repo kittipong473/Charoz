@@ -1,5 +1,6 @@
 import 'package:charoz/Model/address_model.dart';
-import 'package:charoz/Service/Api/address_api.dart';
+import 'package:charoz/Service/Api/PHP/address_api.dart';
+import 'package:charoz/Utilty/global_variable.dart';
 import 'package:flutter/foundation.dart';
 
 class AddressProvider with ChangeNotifier {
@@ -14,18 +15,22 @@ class AddressProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future getCurrentAddressWhereId() async {
-    _address = await AddressApi().getAddressWhereUserLocation();
-    notifyListeners();
-  }
-
   void deleteAddressWhereId(int id) {
     _addressList!.removeWhere((item) => item.addressId == id);
     notifyListeners();
   }
 
-  void chooseAddress(int id) {
-    _address = _addressList!.elementAt(id);
+  void getAddress() {
+    _address = _addressList!
+        .firstWhere((element) => element.userId == GlobalVariable.userTokenId);
+  }
+
+  void selectAddressWhereId(int id) {
+    _address = _addressList!.firstWhere((element) => element.addressId == id);
     notifyListeners();
+  }
+
+  void getAddressWhereId(int id) {
+    _address = _addressList!.firstWhere((element) => element.addressId == id);
   }
 }

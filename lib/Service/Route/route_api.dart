@@ -1,13 +1,17 @@
 class RouteApi {
+  // Api Domain
   static String domainApiAddress =
       'https://kittipongkdev.com/charoz/api/address/';
   static String domainApiConfig = 'https://kittipongkdev.com/charoz/api/config/';
   static String domainApiNoti = 'https://kittipongkdev.com/charoz/api/noti/';
   static String domainApiProduct =
       'https://kittipongkdev.com/charoz/api/product/';
+  static String domainApiOrder =
+      'https://kittipongkdev.com/charoz/api/order/';
   static String domainApiShop = 'https://kittipongkdev.com/charoz/api/shop/';
   static String domainApiUser = 'https://kittipongkdev.com/charoz/api/user/';
 
+  // Image Domain
   static String domainBanner = 'https://kittipongkdev.com/charoz/banner/';
   static String domainProduct = 'https://kittipongkdev.com/charoz/product/';
   static String domainNoti = 'https://kittipongkdev.com/charoz/noti/';
