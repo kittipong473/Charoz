@@ -10,13 +10,13 @@ import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:charoz/Utilty/Widget/dropdown_menu.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:charoz/Utilty/Widget/show_image.dart';
+import 'package:charoz/Utilty/my_variable.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 TextEditingController shopController = TextEditingController();
 TextEditingController riderController = TextEditingController();
-List<String> receiveTypes = ['จัดส่งตามที่อยู่', 'มารับที่ร้านค้า'];
 String? chooseType;
 double total = 0;
 
@@ -29,7 +29,7 @@ class OrderCart extends StatelessWidget {
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
-        resizeToAvoidBottomInset: false,
+        appBar: ScreenWidget().appBarTheme('ตะกร้าของคุณ'),
         body: Consumer<OrderProvider>(
           builder: (_, oprovider, __) => GestureDetector(
             onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
@@ -37,16 +37,16 @@ class OrderCart extends StatelessWidget {
             child: Stack(
               children: [
                 Positioned.fill(
+                  top: 2.h,
                   child: SingleChildScrollView(
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 5.w),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SizedBox(height: 8.h),
                           ScreenWidget().buildTitle('รายการอาหาร'),
                           SizedBox(height: 2.h),
-                          if (oprovider.orderProductIds.isEmpty) ...[
+                          if (oprovider.productidList.isEmpty) ...[
                             buildEmptyOrder(),
                           ] else ...[
                             buildOrderList(oprovider),
@@ -60,14 +60,13 @@ class OrderCart extends StatelessWidget {
                           SizedBox(height: 2.h),
                           buildType(),
                           SizedBox(height: 3.h),
-                          buildButton(context, oprovider.orderProductIds),
+                          buildButton(context, oprovider.productidList),
                           SizedBox(height: 2.h),
                         ],
                       ),
                     ),
                   ),
                 ),
-                ScreenWidget().appBarTitle('ตะกร้าของคุณ'),
               ],
             ),
           ),
@@ -79,7 +78,7 @@ class OrderCart extends StatelessWidget {
   Widget buildEmptyOrder() {
     return SizedBox(
       width: 100.w,
-      height: 32.h,
+      height: 20.h,
       child: ScreenWidget().showEmptyData(
           'ไม่มีสินค้าในตะกร้า', 'กรุณาเพิ่มสินค้าในตะกร้าเพื่อสั่งอาหาร'),
     );
@@ -88,27 +87,23 @@ class OrderCart extends StatelessWidget {
   Widget buildOrderList(OrderProvider oprovider) {
     total = 0;
     List<String> productIdList =
-        MyFunction().convertToList(oprovider.orderProductIds.toString());
+        MyFunction().convertToList(oprovider.productidList.toString());
     List<String> productAmountList =
-        MyFunction().convertToList(oprovider.orderProductAmounts.toString());
-    return SizedBox(
-      width: 100.w,
-      height: 32.h,
-      child: Consumer<ProductProvider>(
-        builder: (_, pprovider, __) => ListView.separated(
-            separatorBuilder: (context, index) => const Divider(),
-            shrinkWrap: true,
-            padding: const EdgeInsets.only(top: 0),
-            itemCount: productIdList.length,
-            itemBuilder: (context, index) {
-              Provider.of<ProductProvider>(context, listen: false)
-                  .selectProductWhereId(int.parse(productIdList[index]));
-              total += pprovider.product.productPrice *
-                  int.parse(productAmountList[index]);
-              return buildOrderItem(context, pprovider.product,
-                  int.parse(productAmountList[index]), index);
-            }),
-      ),
+        MyFunction().convertToList(oprovider.productamountList.toString());
+    return Consumer<ProductProvider>(
+      builder: (_, pprovider, __) => ListView.separated(
+          separatorBuilder: (context, index) => const Divider(),
+          shrinkWrap: true,
+          padding: const EdgeInsets.only(top: 0),
+          itemCount: productIdList.length,
+          itemBuilder: (context, index) {
+            Provider.of<ProductProvider>(context, listen: false)
+                .selectProductWhereId(productIdList[index]);
+            total += pprovider.product.price *
+                int.parse(productAmountList[index]);
+            return buildOrderItem(context, pprovider.product,
+                int.parse(productAmountList[index]), index);
+          }),
     );
   }
 
@@ -124,13 +119,12 @@ class OrderCart extends StatelessWidget {
               SizedBox(
                 width: 15.w,
                 height: 15.w,
-                child: ShowImage().showProduct(product.productImage),
+                child: ShowImage().showImage(product.image),
               ),
               SizedBox(width: 3.w),
               SizedBox(
                 width: 30.w,
-                child:
-                    Text(product.productName, style: MyStyle().boldPrimary16()),
+                child: Text(product.name, style: MyStyle().boldPrimary16()),
               ),
             ],
           ),
@@ -140,7 +134,7 @@ class OrderCart extends StatelessWidget {
           child: Column(
             children: [
               Text('จำนวน : $amount', style: MyStyle().normalBlack16()),
-              Text('${(product.productPrice * amount).toStringAsFixed(0)} ฿',
+              Text('${(product.price * amount).toStringAsFixed(0)} ฿',
                   style: MyStyle().normalBlack16()),
             ],
           ),
@@ -148,15 +142,12 @@ class OrderCart extends StatelessWidget {
         InkWell(
           onTap: () {
             Provider.of<OrderProvider>(context, listen: false)
-                .removeOrderWhereId(product.productId, amount);
-            total -= product.productPrice * amount;
-            MyFunction().toast('ลบ ${product.productName} ออกจากตะกร้า');
+                .removeOrderWhereId(product.id, amount);
+            total -= product.price * amount;
+            MyFunction().toast('ลบ ${product.name} ออกจากตะกร้า');
           },
-          child: Icon(
-            Icons.delete_outline_rounded,
-            size: 25.sp,
-            color: Colors.red,
-          ),
+          child: Icon(Icons.delete_outline_rounded,
+              size: 20.sp, color: Colors.red),
         ),
       ],
     );
@@ -179,11 +170,11 @@ class OrderCart extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(address.addressName, style: MyStyle().boldBlue16()),
+                    Text(address.name, style: MyStyle().boldBlue16()),
                     Text(
-                        address.addressName == 'คอนโดถนอมมิตร'
-                            ? 'ตึกหมายเลข ${address.addressDetail}'
-                            : address.addressDetail,
+                        address.name == 'คอนโดถนอมมิตร'
+                            ? 'ตึกหมายเลข ${address.detail}'
+                            : address.detail,
                         style: MyStyle().normalBlack14()),
                   ],
                 ),
@@ -273,7 +264,7 @@ class OrderCart extends StatelessWidget {
                   color: MyStyle.primary),
               isExpanded: true,
               value: chooseType,
-              items: receiveTypes.map(DropDownMenu().dropdownItem).toList(),
+              items: MyVariable.orderReceiveTypeList.map(DropDownMenu().dropdownItem).toList(),
               onChanged: (value) =>
                   setState(() => chooseType = value as String),
             ),
@@ -293,7 +284,7 @@ class OrderCart extends StatelessWidget {
           if (orderProducts.isEmpty) {
             DialogAlert().singleDialog(context, 'ยังไม่มีสินค้าในตะกร้า');
           } else if (chooseType == null) {
-            DialogAlert().singleDialog(context, 'กรุณาเลือกประเภท');
+            DialogAlert().singleDialog(context, 'กรุณาเลือกประเภทการรับสินค้า');
           } else {
             Provider.of<OrderProvider>(context, listen: false).addDetailOrder(
               shopController.text.isEmpty ? 'null' : shopController.text,

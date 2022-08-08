@@ -5,7 +5,7 @@ import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
-import 'package:charoz/Utilty/global_variable.dart';
+import 'package:charoz/Utilty/my_variable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -35,39 +35,39 @@ class _RegisterTokenState extends State<RegisterToken> {
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
-        body: GestureDetector(
-          onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-          behavior: HitTestBehavior.opaque,
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5.w),
-                  child: Form(
-                    key: formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(height: 10.h),
-                        buildImage(),
-                        SizedBox(height: 5.h),
-                        ScreenWidget()
-                            .buildTitle('เบอร์โทรศัพท์สำหรับการส่ง otp'),
-                        SizedBox(height: 3.h),
-                        buildPhone(),
-                        SizedBox(height: 3.h),
-                        buildOtpField(),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              ScreenWidget().appBarTitle('สมัครสมาชิกด้วยเบอร์โทรศัพท์'),
-              ScreenWidget().backPage(context),
-              buildButton(),
-            ],
-          ),
-        ),
+        // body: GestureDetector(
+        //   onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+        //   behavior: HitTestBehavior.opaque,
+        //   child: Stack(
+        //     children: [
+        //       Positioned.fill(
+        //         child: Padding(
+        //           padding: EdgeInsets.symmetric(horizontal: 5.w),
+        //           child: Form(
+        //             key: formKey,
+        //             child: Column(
+        //               crossAxisAlignment: CrossAxisAlignment.center,
+        //               children: [
+        //                 SizedBox(height: 10.h),
+        //                 buildImage(),
+        //                 SizedBox(height: 5.h),
+        //                 ScreenWidget()
+        //                     .buildTitle('เบอร์โทรศัพท์สำหรับการส่ง otp'),
+        //                 SizedBox(height: 3.h),
+        //                 buildPhone(),
+        //                 SizedBox(height: 3.h),
+        //                 buildOtpField(),
+        //               ],
+        //             ),
+        //           ),
+        //         ),
+        //       ),
+        //       ScreenWidget().appBarTitle('สมัครสมาชิกด้วยเบอร์โทรศัพท์'),
+        //       ScreenWidget().backPage(context),
+        //       buildButton(),
+        //     ],
+        //   ),
+        // ),
       ),
     );
   }
@@ -180,7 +180,7 @@ class _RegisterTokenState extends State<RegisterToken> {
                     // otpVisible = true;
                     // EasyLoading.dismiss();
                     // setState(() {
-                      
+
                     // });
                   }
                 }
@@ -196,12 +196,10 @@ class _RegisterTokenState extends State<RegisterToken> {
   }
 
   Future requestOTP() async {
-    await GlobalVariable.auth.verifyPhoneNumber(
+    await MyVariable.auth.verifyPhoneNumber(
       phoneNumber: "+66" + phoneController.text,
       verificationCompleted: (PhoneAuthCredential credential) async {
-        await GlobalVariable.auth
-            .signInWithCredential(credential)
-            .then((value) {
+        await MyVariable.auth.signInWithCredential(credential).then((value) {
           MyFunction().toast('ยืนยัน OTP สำเร็จ');
         });
       },
@@ -221,26 +219,24 @@ class _RegisterTokenState extends State<RegisterToken> {
   Future authenTokenFirebase() async {
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: verificationID!, smsCode: otpController.text);
-    await GlobalVariable.auth
-        .signInWithCredential(credential)
-        .then((value) async {
-      bool status = await Provider.of<UserProvider>(context, listen: false)
+    await MyVariable.auth.signInWithCredential(credential).then((value) async {
+      String? email = await Provider.of<UserProvider>(context, listen: false)
           .checkPhoneAndGetUser(phoneController.text);
-      if (status) {
+      if (email != null) {
         EasyLoading.dismiss();
         DialogAlert().doubleDialog(context, 'เบอร์โทรนี้มีอยู่ในระบบแล้ว',
             'กรุณาลองเบอร์โทรอื่นหรือแจ้งผู้ดูแลระบบ');
       } else {
         EasyLoading.dismiss();
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => RegisterPhone(
-              phone: phoneController.text,
-              token: value.user!.uid,
-            ),
-          ),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => RegisterPhone(
+        //       phone: phoneController.text,
+        //       token: value.user!.uid,
+        //     ),
+        //   ),
+        // );
       }
     });
   }

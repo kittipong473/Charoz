@@ -1,77 +1,79 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class NotiModel {
-  final int notiId;
-  final int userId;
-  final String notiType;
-  final String notiName;
-  final String notiDetail;
-  final String notiImage;
-  final DateTime notiStart;
-  final DateTime notiEnd;
-  final int notiStatus;
+  final String id;
+  final String userid;
+  final String type;
+  final String name;
+  final String detail;
+  final String image;
+  final DateTime start;
+  final DateTime end;
+  final int status;
   NotiModel({
-    required this.notiId,
-    required this.userId,
-    required this.notiType,
-    required this.notiName,
-    required this.notiDetail,
-    required this.notiImage,
-    required this.notiStart,
-    required this.notiEnd,
-    required this.notiStatus,
+    required this.id,
+    required this.userid,
+    required this.type,
+    required this.name,
+    required this.detail,
+    required this.image,
+    required this.start,
+    required this.end,
+    required this.status,
   });
 
   NotiModel copyWith({
-    int? notiId,
-    int? userId,
-    String? notiType,
-    String? notiName,
-    String? notiDetail,
-    String? notiImage,
-    DateTime? notiStart,
-    DateTime? notiEnd,
-    int? notiStatus,
+    String? id,
+    String? userid,
+    String? type,
+    String? name,
+    String? detail,
+    String? image,
+    DateTime? start,
+    DateTime? end,
+    int? status,
   }) {
     return NotiModel(
-      notiId: notiId ?? this.notiId,
-      userId: userId ?? this.userId,
-      notiType: notiType ?? this.notiType,
-      notiName: notiName ?? this.notiName,
-      notiDetail: notiDetail ?? this.notiDetail,
-      notiImage: notiImage ?? this.notiImage,
-      notiStart: notiStart ?? this.notiStart,
-      notiEnd: notiEnd ?? this.notiEnd,
-      notiStatus: notiStatus ?? this.notiStatus,
+      id: id ?? this.id,
+      userid: userid ?? this.userid,
+      type: type ?? this.type,
+      name: name ?? this.name,
+      detail: detail ?? this.detail,
+      image: image ?? this.image,
+      start: start ?? this.start,
+      end: end ?? this.end,
+      status: status ?? this.status,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'notiId': notiId,
-      'userId': userId,
-      'notiType': notiType,
-      'notiName': notiName,
-      'notiDetail': notiDetail,
-      'notiImage': notiImage,
-      'notiStart': notiStart.millisecondsSinceEpoch,
-      'notiEnd': notiEnd.millisecondsSinceEpoch,
-      'notiStatus': notiStatus,
+      'id': id,
+      'userid': userid,
+      'type': type,
+      'name': name,
+      'detail': detail,
+      'image': image,
+      'start': start.millisecondsSinceEpoch,
+      'end': end.millisecondsSinceEpoch,
+      'status': status,
     };
   }
 
   factory NotiModel.fromMap(Map<String, dynamic> map) {
     return NotiModel(
-      notiId: map['notiId']?.toInt() ?? 0,
-      userId: map['userId']?.toInt() ?? 0,
-      notiType: map['notiType'] ?? '',
-      notiName: map['notiName'] ?? '',
-      notiDetail: map['notiDetail'] ?? '',
-      notiImage: map['notiImage'] ?? '',
-      notiStart: DateTime.fromMillisecondsSinceEpoch(map['notiStart']),
-      notiEnd: DateTime.fromMillisecondsSinceEpoch(map['notiEnd']),
-      notiStatus: map['notiStatus']?.toInt() ?? 0,
+      id: map['id'] ?? '',
+      userid: map['userid'] ?? '',
+      type: map['type'] ?? '',
+      name: map['name'] ?? '',
+      detail: map['detail'] ?? '',
+      image: map['image'] ?? '',
+      start: DateTime.fromMillisecondsSinceEpoch(map['start']),
+      end: DateTime.fromMillisecondsSinceEpoch(map['end']),
+      status: map['status']?.toInt() ?? 0,
     );
   }
 
@@ -82,7 +84,7 @@ class NotiModel {
 
   @override
   String toString() {
-    return 'NotiModel(notiId: $notiId, userId: $userId, notiType: $notiType, notiName: $notiName, notiDetail: $notiDetail, notiImage: $notiImage, notiStart: $notiStart, notiEnd: $notiEnd, notiStatus: $notiStatus)';
+    return 'NotiModel(id: $id, userid: $userid, type: $type, name: $name, detail: $detail, image: $image, start: $start, end: $end, status: $status)';
   }
 
   @override
@@ -90,41 +92,41 @@ class NotiModel {
     if (identical(this, other)) return true;
 
     return other is NotiModel &&
-        other.notiId == notiId &&
-        other.userId == userId &&
-        other.notiType == notiType &&
-        other.notiName == notiName &&
-        other.notiDetail == notiDetail &&
-        other.notiImage == notiImage &&
-        other.notiStart == notiStart &&
-        other.notiEnd == notiEnd &&
-        other.notiStatus == notiStatus;
+        other.id == id &&
+        other.userid == userid &&
+        other.type == type &&
+        other.name == name &&
+        other.detail == detail &&
+        other.image == image &&
+        other.start == start &&
+        other.end == end &&
+        other.status == status;
   }
 
   @override
   int get hashCode {
-    return notiId.hashCode ^
-        userId.hashCode ^
-        notiType.hashCode ^
-        notiName.hashCode ^
-        notiDetail.hashCode ^
-        notiImage.hashCode ^
-        notiStart.hashCode ^
-        notiEnd.hashCode ^
-        notiStatus.hashCode;
+    return id.hashCode ^
+        userid.hashCode ^
+        type.hashCode ^
+        name.hashCode ^
+        detail.hashCode ^
+        image.hashCode ^
+        start.hashCode ^
+        end.hashCode ^
+        status.hashCode;
   }
 }
 
 NotiModel convertNoti(dynamic item) {
   return NotiModel(
-    notiId: int.parse(item['notiId']),
-    userId: int.parse(item['userId']),
-    notiType: item['notiType'],
-    notiName: item['notiName'],
-    notiDetail: item['notiDetail'],
-    notiImage: item['notiImage'],
-    notiStart: DateTime.parse(item['notiStart']),
-    notiEnd: DateTime.parse(item['notiEnd']),
-    notiStatus: int.parse(item['notiStatus']),
+    id: item.id,
+    userid: item['userid'],
+    type: item['type'],
+    name: item['name'],
+    detail: item['detail'],
+    image: item['image'],
+    start:(item['start'] as Timestamp).toDate(),
+    end: (item['end'] as Timestamp).toDate(),
+    status: item['status'],
   );
 }

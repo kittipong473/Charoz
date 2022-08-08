@@ -1,12 +1,14 @@
+import 'package:charoz/Model/SubModel/sub_address_model.dart';
 import 'package:charoz/Model/address_model.dart';
 import 'package:charoz/Provider/address_provider.dart';
-import 'package:charoz/Service/Api/PHP/address_api.dart';
+import 'package:charoz/Service/Database/Firebase/address_crud.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
-import 'package:charoz/Utilty/global_variable.dart';
+import 'package:charoz/Utilty/my_variable.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Widget/dropdown_menu.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
@@ -15,24 +17,21 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 class EditLocation {
   final formKey = GlobalKey<FormState>();
   TextEditingController descController = TextEditingController();
-  TextEditingController latController = TextEditingController();
-  TextEditingController lngController = TextEditingController();
   String? chooseAddress;
   String? chooseNumber;
 
   Future<dynamic> openModalEditAddress(context, AddressModel address) {
-    chooseAddress = address.addressName;
+    chooseAddress = address.name;
     if (chooseAddress == 'คอนโดถนอมมิตร') {
-      chooseNumber = address.addressDetail;
+      chooseNumber = address.detail;
     } else {
-      descController.text = address.addressDetail;
+      descController.text = address.detail;
     }
     return showModalBottomSheet(
-        context: context,
-        builder: (context) => modalEditAddress(address.addressId));
+        context: context, builder: (_) => modalEditAddress(address.id));
   }
 
-  Widget modalEditAddress(int id) {
+  Widget modalEditAddress(String id) {
     return SizedBox(
       width: 100.w,
       height: 50.h,
@@ -93,7 +92,7 @@ class EditLocation {
                 color: MyStyle.primary),
             isExpanded: true,
             value: chooseAddress,
-            items: GlobalVariable.locationTypes
+            items: MyVariable.locationTypes
                 .map(DropDownMenu().dropdownItem)
                 .toList(),
             onChanged: (value) =>
@@ -125,7 +124,7 @@ class EditLocation {
             ),
             isExpanded: true,
             value: chooseNumber,
-            items: GlobalVariable.buildingNumbers
+            items: MyVariable.buildingNumbers
                 .map(DropDownMenu().dropdownItem)
                 .toList(),
             onChanged: (value) {
@@ -165,7 +164,7 @@ class EditLocation {
     );
   }
 
-  Positioned buildEditButton(BuildContext context, int id) {
+  Positioned buildEditButton(BuildContext context, String id) {
     return Positioned(
       bottom: 2.h,
       left: 5.w,
@@ -195,19 +194,22 @@ class EditLocation {
     );
   }
 
-  Future processEdit(BuildContext context, int id) async {
-    bool status = await AddressApi().editAddressWhereId(
-      id: id,
-      name: chooseAddress!,
-      desc: descController.text.isEmpty ? chooseNumber! : descController.text,
-      lat: 0,
-      lng: 0,
-      time: DateTime.now(),
+  Future processEdit(BuildContext context, String id) async {
+    bool status = await AddressCRUD().updateAddress(
+      id,
+      SubAddressModel(
+        userid: MyVariable.userTokenId,
+        name: chooseAddress!,
+        detail: descController.text,
+        lat: 0,
+        lng: 0,
+        time: Timestamp.fromDate(DateTime.now()),
+      ),
     );
 
     if (status) {
       Provider.of<AddressProvider>(context, listen: false)
-          .getAllAddressWhereUser();
+          .readAddressList();
       EasyLoading.dismiss();
       MyFunction().toast('เพิ่มข้อมูลที่อยู่เรียบร้อย');
       Navigator.pop(context);

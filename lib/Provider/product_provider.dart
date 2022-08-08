@@ -1,5 +1,5 @@
 import 'package:charoz/Model/product_model.dart';
-import 'package:charoz/Service/Api/PHP/product_api.dart';
+import 'package:charoz/Service/Database/Firebase/product_crud.dart';
 import 'package:flutter/foundation.dart';
 
 class ProductProvider with ChangeNotifier {
@@ -11,33 +11,43 @@ class ProductProvider with ChangeNotifier {
   get productAlls => _productAlls;
   get productList => _productList;
 
-  Future getAllProduct() async {
-    _productAlls = await ProductApi().getAllProduct();
+  Future readProductAllList() async {
+    _productAlls = await ProductCRUD().readProductAllList();
     notifyListeners();
   }
 
-  Future getProductSuggest() async {
+  Future readProductSuggestList() async {
     if (_productList != null) {
-      _productList!.clear();
+      if (_productList!.isNotEmpty) {
+        _productList!.clear();
+      }
     }
-    _productList = await ProductApi().getAllProductWhereSuggest();
+    _productList = await ProductCRUD().readProductSuggestList();
     notifyListeners();
   }
 
-  Future getAllProductWhereType(String type) async {
+  Future readProductTypeList(String type) async {
     if (_productList != null) {
-      _productList!.clear();
+      if (_productList!.isNotEmpty) {
+        _productList!.clear();
+      }
     }
-    _productList = await ProductApi().getAllProductWhereType(type);
+    _productList = await ProductCRUD().readProductTypeList(type);
     notifyListeners();
   }
 
-  void selectProductWhereId(int id) {
-    _product = _productAlls!.firstWhere((element) => element.productId == id);
+  void selectProductWhereId(String id) {
+    _product = _productAlls!.firstWhere((element) => element.id == id);
   }
 
-  void deleteProductWhereId(int id) {
-    _productList!.removeWhere((item) => item.productId == id);
+  void deleteProductWhereId(String id) {
+    _productList!.removeWhere((item) => item.id == id);
     notifyListeners();
+  }
+
+  void clearProductData() {
+    _product = null;
+    _productList = null;
+    _productAlls = null;
   }
 }

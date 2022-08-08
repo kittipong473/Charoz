@@ -1,148 +1,158 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class ShopModel {
-  final int shopId;
-  final int managerId;
-  final String shopName;
-  final String shopAnnounce;
-  final String shopDetail;
-  final String shopAddress;
-  final double shopLat;
-  final double shopLng;
-  final String shopImage;
-  final DateTime created;
-  final DateTime updated;
+  final String id;
+  final String managerid;
+  final String name;
+  final String announce;
+  final String detail;
+  final String address;
+  final String phone;
+  final double lat;
+  final double lng;
+  final String image;
+  final int freight;
+  final DateTime time;
   ShopModel({
-    required this.shopId,
-    required this.managerId,
-    required this.shopName,
-    required this.shopAnnounce,
-    required this.shopDetail,
-    required this.shopAddress,
-    required this.shopLat,
-    required this.shopLng,
-    required this.shopImage,
-    required this.created,
-    required this.updated,
+    required this.id,
+    required this.managerid,
+    required this.name,
+    required this.announce,
+    required this.detail,
+    required this.address,
+    required this.phone,
+    required this.lat,
+    required this.lng,
+    required this.image,
+    required this.freight,
+    required this.time,
   });
 
   ShopModel copyWith({
-    int? shopId,
-    int? managerId,
-    String? shopName,
-    String? shopAnnounce,
-    String? shopDetail,
-    String? shopAddress,
-    double? shopLat,
-    double? shopLng,
-    String? shopImage,
-    DateTime? created,
-    DateTime? updated,
+    String? id,
+    String? managerid,
+    String? name,
+    String? announce,
+    String? detail,
+    String? address,
+    String? phone,
+    double? lat,
+    double? lng,
+    String? image,
+    int? freight,
+    DateTime? time,
   }) {
     return ShopModel(
-      shopId: shopId ?? this.shopId,
-      managerId: managerId ?? this.managerId,
-      shopName: shopName ?? this.shopName,
-      shopAnnounce: shopAnnounce ?? this.shopAnnounce,
-      shopDetail: shopDetail ?? this.shopDetail,
-      shopAddress: shopAddress ?? this.shopAddress,
-      shopLat: shopLat ?? this.shopLat,
-      shopLng: shopLng ?? this.shopLng,
-      shopImage: shopImage ?? this.shopImage,
-      created: created ?? this.created,
-      updated: updated ?? this.updated,
+      id: id ?? this.id,
+      managerid: managerid ?? this.managerid,
+      name: name ?? this.name,
+      announce: announce ?? this.announce,
+      detail: detail ?? this.detail,
+      address: address ?? this.address,
+      phone: phone ?? this.phone,
+      lat: lat ?? this.lat,
+      lng: lng ?? this.lng,
+      image: image ?? this.image,
+      freight: freight ?? this.freight,
+      time: time ?? this.time,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'shopId': shopId,
-      'managerId': managerId,
-      'shopName': shopName,
-      'shopAnnounce': shopAnnounce,
-      'shopDetail': shopDetail,
-      'shopAddress': shopAddress,
-      'shopLat': shopLat,
-      'shopLng': shopLng,
-      'shopImage': shopImage,
-      'created': created.millisecondsSinceEpoch,
-      'updated': updated.millisecondsSinceEpoch,
+      'id': id,
+      'managerid': managerid,
+      'name': name,
+      'announce': announce,
+      'detail': detail,
+      'address': address,
+      'phone': phone,
+      'lat': lat,
+      'lng': lng,
+      'image': image,
+      'freight': freight,
+      'time': time.millisecondsSinceEpoch,
     };
   }
 
   factory ShopModel.fromMap(Map<String, dynamic> map) {
     return ShopModel(
-      shopId: map['shopId']?.toInt() ?? 0,
-      managerId: map['managerId']?.toInt() ?? 0,
-      shopName: map['shopName'] ?? '',
-      shopAnnounce: map['shopAnnounce'] ?? '',
-      shopDetail: map['shopDetail'] ?? '',
-      shopAddress: map['shopAddress'] ?? '',
-      shopLat: map['shopLat']?.toDouble() ?? 0.0,
-      shopLng: map['shopLng']?.toDouble() ?? 0.0,
-      shopImage: map['shopImage'] ?? '',
-      created: DateTime.fromMillisecondsSinceEpoch(map['created']),
-      updated: DateTime.fromMillisecondsSinceEpoch(map['updated']),
+      id: map['id'] ?? '',
+      managerid: map['managerid'] ?? '',
+      name: map['name'] ?? '',
+      announce: map['announce'] ?? '',
+      detail: map['detail'] ?? '',
+      address: map['address'] ?? '',
+      phone: map['phone'] ?? '',
+      lat: map['lat']?.toDouble() ?? 0.0,
+      lng: map['lng']?.toDouble() ?? 0.0,
+      image: map['image'] ?? '',
+      freight: map['freight']?.toInt() ?? 0,
+      time: DateTime.fromMillisecondsSinceEpoch(map['time']),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory ShopModel.fromJson(String source) =>
-      ShopModel.fromMap(json.decode(source));
+  factory ShopModel.fromJson(String source) => ShopModel.fromMap(json.decode(source));
 
   @override
   String toString() {
-    return 'ShopModel(shopId: $shopId, managerId: $managerId, shopName: $shopName, shopAnnounce: $shopAnnounce, shopDetail: $shopDetail, shopAddress: $shopAddress, shopLat: $shopLat, shopLng: $shopLng, shopImage: $shopImage, created: $created, updated: $updated)';
+    return 'ShopModel(id: $id, managerid: $managerid, name: $name, announce: $announce, detail: $detail, address: $address, phone: $phone, lat: $lat, lng: $lng, image: $image, freight: $freight, time: $time)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-
+  
     return other is ShopModel &&
-        other.shopId == shopId &&
-        other.managerId == managerId &&
-        other.shopName == shopName &&
-        other.shopAnnounce == shopAnnounce &&
-        other.shopDetail == shopDetail &&
-        other.shopAddress == shopAddress &&
-        other.shopLat == shopLat &&
-        other.shopLng == shopLng &&
-        other.shopImage == shopImage &&
-        other.created == created &&
-        other.updated == updated;
+      other.id == id &&
+      other.managerid == managerid &&
+      other.name == name &&
+      other.announce == announce &&
+      other.detail == detail &&
+      other.address == address &&
+      other.phone == phone &&
+      other.lat == lat &&
+      other.lng == lng &&
+      other.image == image &&
+      other.freight == freight &&
+      other.time == time;
   }
 
   @override
   int get hashCode {
-    return shopId.hashCode ^
-        managerId.hashCode ^
-        shopName.hashCode ^
-        shopAnnounce.hashCode ^
-        shopDetail.hashCode ^
-        shopAddress.hashCode ^
-        shopLat.hashCode ^
-        shopLng.hashCode ^
-        shopImage.hashCode ^
-        created.hashCode ^
-        updated.hashCode;
+    return id.hashCode ^
+      managerid.hashCode ^
+      name.hashCode ^
+      announce.hashCode ^
+      detail.hashCode ^
+      address.hashCode ^
+      phone.hashCode ^
+      lat.hashCode ^
+      lng.hashCode ^
+      image.hashCode ^
+      freight.hashCode ^
+      time.hashCode;
   }
 }
 
 ShopModel convertShop(dynamic item) {
   return ShopModel(
-    shopId: int.parse(item['shopId']),
-    managerId: int.parse(item['managerId']),
-    shopName: item['shopName'],
-    shopAnnounce: item['shopAnnounce'],
-    shopDetail: item['shopDetail'],
-    shopAddress: item['shopAddress'],
-    shopLat: double.parse(item['shopLat']),
-    shopLng: double.parse(item['shopLng']),
-    shopImage: item['shopImage'],
-    created: DateTime.parse(item['created']),
-    updated: DateTime.parse(item['updated']),
+    id: item.id,
+    managerid: item['managerid'],
+    name: item['name'],
+    announce: item['announce'],
+    detail: item['detail'],
+    address: item['address'],
+    phone: item['phone'],
+    lat: item['lat'],
+    lng: item['lng'],
+    image: item['image'],
+    freight: item['freight'],
+    time: (item['time'] as Timestamp).toDate(),
   );
 }

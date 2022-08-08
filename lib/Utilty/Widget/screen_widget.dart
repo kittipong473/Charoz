@@ -4,11 +4,30 @@ import 'package:charoz/Component/Shop/Modal/edit_shop_manager.dart';
 import 'package:charoz/Model/shop_model.dart';
 import 'package:charoz/Model/time_model.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
-import 'package:charoz/Utilty/global_variable.dart';
+import 'package:charoz/Utilty/my_variable.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ScreenWidget {
+  AppBar appBarTheme(String title) {
+    return AppBar(
+      title: Text(title, style: MyStyle().boldBlue18()),
+      backgroundColor: MyStyle.light,
+      centerTitle: true,
+      toolbarHeight: 5.h,
+      elevation: 10,
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.orange.shade200, Colors.orange.shade800],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+      ),
+    );
+  }
+
   Positioned appBarTitle(String title) {
     return Positioned(
       top: 0,
@@ -108,9 +127,9 @@ class ScreenWidget {
       right: 3.w,
       child: IconButton(
         onPressed: () {
-          if (GlobalVariable.role == "admin") {
+          if (MyVariable.role == "admin") {
             EditShopAdmin().openModalEditShopAdmin(context, shop, time);
-          } else if (GlobalVariable.role == "manager") {
+          } else if (MyVariable.role == "manager") {
             EditShopManager().openModalEditShopManager(context, shop, time);
           }
         },
@@ -151,7 +170,7 @@ class ScreenWidget {
           SizedBox(height: 3.h),
           Text(
             subtitle,
-            style: MyStyle().boldPrimary18(),
+            style: MyStyle().normalPrimary18(),
             textAlign: TextAlign.center,
           ),
         ],
@@ -161,6 +180,7 @@ class ScreenWidget {
 
   Widget buildSpacer() {
     return Container(
+      margin: EdgeInsets.symmetric(vertical: 2.h),
       color: Colors.grey,
       width: 100.w,
       height: 0.2.h,

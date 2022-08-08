@@ -1,9 +1,10 @@
-import 'package:charoz/Component/Security/code_setting.dart';
-import 'package:charoz/Component/Security/code_verify.dart';
+import 'package:charoz/Provider/user_provider.dart';
 import 'package:charoz/Service/Route/route_page.dart';
+import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
-import 'package:charoz/Utilty/global_variable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class DialogAlert {
@@ -220,82 +221,96 @@ class DialogAlert {
     );
   }
 
-  void checkLogin(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => SimpleDialog(
-        title: ListTile(
-          leading:
-              Icon(Icons.info_outlined, color: MyStyle.primary, size: 30.sp),
-          title: Text(
-            'คุณยังไม่ได้เข้าสู่ระบบ',
-            style: MyStyle().boldPrimary16(),
-            textAlign: TextAlign.center,
-          ),
-          subtitle: Text(
-            'กรุณาเข้าสู่ระบบเพื่อใช้งาน',
-            style: MyStyle().normalBlack14(),
-            textAlign: TextAlign.center,
-          ),
-        ),
-        children: [
-          TextButton(
-            onPressed: () {
-              Navigator.pushNamedAndRemoveUntil(
-                  context, RoutePage.routePageNavigation, (route) => false);
-              GlobalVariable.indexPageNavigation = 4;
-            },
-            child: Text('เข้าสู่ระบบ', style: MyStyle().boldBlue18()),
-          ),
-        ],
-      ),
-    );
-  }
+  // void alertPinCode(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (dialogContext) => SimpleDialog(
+  //       title: ListTile(
+  //         leading:
+  //             Icon(Icons.info_outlined, color: MyStyle.primary, size: 30.sp),
+  //         title: Text(
+  //           'กำหนดรหัส Pin Code เพื่อความปลอดภัย',
+  //           style: MyStyle().boldPrimary16(),
+  //           textAlign: TextAlign.center,
+  //         ),
+  //         subtitle: Text(
+  //           'คุณต้องการตั้งรหัส pin code เมื่อเข้าใช้งาน application หรือไม่ ?',
+  //           style: MyStyle().normalBlack14(),
+  //           textAlign: TextAlign.center,
+  //         ),
+  //       ),
+  //       children: [
+  //         Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //           children: [
+  //             TextButton(
+  //               onPressed: () {
+  //                 Navigator.pop(dialogContext);
+  //                 Navigator.pushNamed(context, RoutePage.routeCodeVerify);
+  //               },
+  //               child: Text('ตั้งรหัส pin', style: MyStyle().boldGreen16()),
+  //             ),
+  //             TextButton(
+  //               onPressed: () => Navigator.pop(dialogContext),
+  //               child: Text('ไว้คราวหลัง', style: MyStyle().boldBlue16()),
+  //             ),
+  //             TextButton(
+  //               onPressed: () {
+  //                 UserApi().editPinWhereUser(code: '0');
+  //                 Navigator.pop(dialogContext);
+  //               },
+  //               child: Text('ไม่ตั้งรหัส', style: MyStyle().boldRed16()),
+  //             ),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  void alertPinCode(BuildContext context) {
+  void confirmLogout(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => SimpleDialog(
-        title: ListTile(
-          leading:
-              Icon(Icons.info_outlined, color: MyStyle.primary, size: 30.sp),
-          title: Text(
-            'กำหนดรหัส Pin Code เพื่อความปลอดภัย',
-            style: MyStyle().boldPrimary16(),
-            textAlign: TextAlign.center,
-          ),
-          subtitle: Text(
-            'คุณต้องการตั้งรหัส pin code เมื่อเข้าใช้งาน application หรือไม่ ?',
-            style: MyStyle().normalBlack14(),
-            textAlign: TextAlign.center,
-          ),
+      builder: (dialogContext) => SimpleDialog(
+        contentPadding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SvgPicture.asset(MyImage.svgWarning, width: 15.w, height: 15.w),
+            SizedBox(height: 2.h),
+            Text(
+              "คุณต้องการออกจากระบบหรือไม่ ?",
+              style: MyStyle().normalBlue16(),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Future.delayed(Duration.zero, () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const CodeSetting()),
-                    );
-                  });
-                },
-                child: Text('ตั้งรหัส pin', style: MyStyle().boldGreen16()),
+              SizedBox(
+                width: 25.w,
+                height: 4.h,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(primary: Colors.red.shade100),
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: Text('ยกเลิก', style: MyStyle().boldRed16()),
+                ),
               ),
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text('ไว้คราวหลัง', style: MyStyle().boldBlue16()),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('ไม่ตั้งรหัส', style: MyStyle().boldRed16()),
+              SizedBox(
+                width: 25.w,
+                height: 4.h,
+                child: ElevatedButton(
+                  style:
+                      ElevatedButton.styleFrom(primary: Colors.green.shade100),
+                  onPressed: () {
+                    Navigator.pop(dialogContext);
+                    EasyLoading.show(status: 'loading...');
+                    UserProvider().signOutFirebase(context);
+                  },
+                  child: Text('ยืนยัน', style: MyStyle().boldGreen16()),
+                ),
               ),
             ],
           ),

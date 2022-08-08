@@ -1,8 +1,7 @@
-import 'package:charoz/Service/Api/PHP/user_api.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
-import 'package:charoz/Utilty/global_variable.dart';
+import 'package:charoz/Utilty/my_variable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pin_code_widget/flutter_pin_code_widget.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -56,7 +55,7 @@ class CodeSetting extends StatelessWidget {
               Positioned(
                 bottom: 0,
                 child: Container(
-                  padding: GlobalVariable.largeDevice
+                  padding: MyVariable.largeDevice
                       ? EdgeInsets.symmetric(horizontal: 10.w)
                       : const EdgeInsets.symmetric(horizontal: 0),
                   width: 100.w,
@@ -66,18 +65,18 @@ class CodeSetting extends StatelessWidget {
                       if (codeSet == null) {
                         setState(() => codeSet = code);
                       } else if (codeSet == code) {
-                        bool status =
-                            await UserApi().editPinWhereUser(code: code);
-                        if (status) {
-                          Navigator.pop(context);
-                          MyFunction().toast('กำหนดรหัส pin เรียบร้อย');
-                        } else {
-                          DialogAlert().doubleDialog(
-                            context,
-                            'กำหนด pin ล้มเหลว',
-                            'กรุณาลองใหม่อีกครั้งในภายหลัง',
-                          );
-                        }
+                        // bool status =
+                        //     await UserApi().editPinWhereUser(code: code);
+                        // if (status) {
+                        //   Navigator.pop(context);
+                        //   MyFunction().toast('กำหนดรหัส pin เรียบร้อย');
+                        // } else {
+                        //   DialogAlert().doubleDialog(
+                        //     context,
+                        //     'กำหนด pin ล้มเหลว',
+                        //     'กรุณาลองใหม่อีกครั้งในภายหลัง',
+                        //   );
+                        // }
                       } else {
                         setState(() => codeSet = null);
                         DialogAlert().doubleDialog(

@@ -1,15 +1,17 @@
 import 'dart:io';
 
+import 'package:charoz/Model/SubModel/sub_product_model.dart';
 import 'package:charoz/Model/product_model.dart';
 import 'package:charoz/Provider/product_provider.dart';
-import 'package:charoz/Service/Api/PHP/product_api.dart';
+import 'package:charoz/Service/Database/Firebase/product_crud.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
-import 'package:charoz/Utilty/global_variable.dart';
+import 'package:charoz/Utilty/my_variable.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Widget/dropdown_menu.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:charoz/Utilty/Widget/show_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
@@ -21,7 +23,6 @@ class EditProduct {
   final formKey = GlobalKey<FormState>();
   TextEditingController nameController = TextEditingController();
   TextEditingController priceController = TextEditingController();
-  TextEditingController scoreController = TextEditingController();
   TextEditingController detailController = TextEditingController();
   MaskTextInputFormatter scoreFormat = MaskTextInputFormatter(mask: '#.#');
   bool suggest = false;
@@ -30,13 +31,12 @@ class EditProduct {
   String? chooseType;
 
   Future<dynamic> openModalEditProduct(context, ProductModel product) {
-    chooseType = product.productType;
-    nameController.text = product.productName;
-    priceController.text = product.productPrice.toString();
-    scoreController.text = product.productScore.toString();
-    detailController.text = product.productDetail;
-    image = product.productImage;
-    if (product.productSuggest == 1) {
+    chooseType = product.type;
+    nameController.text = product.name;
+    priceController.text = product.price.toString();
+    detailController.text = product.detail;
+    image = product.image;
+    if (product.suggest == 1) {
       suggest = true;
     } else {
       suggest = false;
@@ -44,10 +44,10 @@ class EditProduct {
     return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        builder: (context) => modalEditProduct(product.productId));
+        builder: (context) => modalEditProduct(product.id));
   }
 
-  Widget modalEditProduct(int id) {
+  Widget modalEditProduct(String id) {
     return SizedBox(
       width: 100.w,
       height: 90.h,
@@ -60,7 +60,7 @@ class EditProduct {
               Positioned.fill(
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: GlobalVariable.largeDevice
+                    padding: MyVariable.largeDevice
                         ? const EdgeInsets.symmetric(horizontal: 40)
                         : const EdgeInsets.symmetric(horizontal: 20),
                     child: Form(
@@ -73,8 +73,6 @@ class EditProduct {
                           buildName(),
                           SizedBox(height: 3.h),
                           buildPrice(),
-                          SizedBox(height: 3.h),
-                          buildScore(),
                           SizedBox(height: 3.h),
                           buildDetail(),
                           SizedBox(height: 4.h),
@@ -117,7 +115,7 @@ class EditProduct {
                 const Icon(Icons.arrow_drop_down_outlined, color: MyStyle.dark),
             isExpanded: true,
             value: chooseType,
-            items: GlobalVariable.productTypes
+            items: MyVariable.productTypes
                 .map(DropDownMenu().dropdownItem)
                 .toList(),
             onChanged: (value) => setState(() => chooseType = value as String),
@@ -196,44 +194,6 @@ class EditProduct {
     );
   }
 
-  Widget buildScore() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      width: 80.w,
-      child: TextFormField(
-        inputFormatters: [scoreFormat],
-        style: MyStyle().normalBlack16(),
-        keyboardType: TextInputType.number,
-        controller: scoreController,
-        validator: (value) {
-          if (value!.isEmpty) {
-            return 'กรุณากรอก คะแนน';
-          } else {
-            return null;
-          }
-        },
-        decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
-          labelText: 'คะแนน :',
-          hintText: 'X.X',
-          hintStyle: MyStyle().normalGrey16(),
-          prefixIcon: const Icon(
-            Icons.score_rounded,
-            color: MyStyle.dark,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget buildDetail() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -277,9 +237,8 @@ class EditProduct {
         SizedBox(
           width: 40.w,
           height: 40.w,
-          child: file == null
-              ? ShowImage().showProduct(image!)
-              : Image.file(file!),
+          child:
+              file == null ? ShowImage().showImage(image!) : Image.file(file!),
         ),
         IconButton(
           onPressed: () async {
@@ -312,7 +271,7 @@ class EditProduct {
     );
   }
 
-  Widget buildButton(BuildContext context, int id) {
+  Widget buildButton(BuildContext context, String id) {
     return SizedBox(
       width: 80.w,
       height: 5.h,
@@ -321,7 +280,7 @@ class EditProduct {
         onPressed: () {
           if (formKey.currentState!.validate()) {
             EasyLoading.show(status: 'loading...');
-            processInsert(context,id);
+            processUpdate(context, id);
           } else if (chooseType == null) {
             DialogAlert().singleDialog(context, 'กรุณาเลือก ประเภท');
           }
@@ -331,30 +290,34 @@ class EditProduct {
     );
   }
 
-  Future processInsert(BuildContext context, int id) async {
-    String chooseImage = await ProductApi().saveProductImage(image!, file);
+  Future processUpdate(BuildContext context, String id) async {
+    String chooseImage =
+        file == null ? await ProductCRUD().uploadImageProduct(file!) : '';
 
-    bool status = await ProductApi().editProductWhereId(
-      id: id,
-      name: nameController.text,
-      type: chooseType!,
-      price: double.parse(priceController.text),
-      score: double.parse(scoreController.text),
-      detail: detailController.text.isEmpty ? 'ไม่มี' : detailController.text,
-      image: chooseImage,
-      suggest: suggest ? 1 : 0,
-      time: DateTime.now(),
+    bool status = await ProductCRUD().updateProduct(
+      id,
+      SubProductModel(
+        name: nameController.text,
+        type: chooseType!,
+        price: int.parse(priceController.text),
+        detail: detailController.text.isEmpty ? 'ไม่มี' : detailController.text,
+        image: chooseImage,
+        status: 1,
+        suggest: suggest ? 1 : 0,
+        time: Timestamp.fromDate(DateTime.now()),
+      ),
     );
 
     if (status) {
-      Provider.of<ProductProvider>(context, listen: false).getAllProductWhereType(
-          GlobalVariable.productTypes[GlobalVariable.indexProductChip]);
+      Provider.of<ProductProvider>(context, listen: false).readProductAllList();
+      Provider.of<ProductProvider>(context, listen: false).readProductTypeList(
+          MyVariable.productTypes[MyVariable.indexProductChip]);
       EasyLoading.dismiss();
       MyFunction().toast('แก้ไขรายการอาหารเรียบร้อยแล้ว');
       Navigator.pop(context);
     } else {
       EasyLoading.dismiss();
-      DialogAlert().editFailedDialog(context);
+      DialogAlert().addFailedDialog(context);
     }
   }
 }

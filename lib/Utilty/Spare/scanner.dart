@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:charoz/Utilty/Widget/result.dart';
+import 'package:charoz/Utilty/Spare/result.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';

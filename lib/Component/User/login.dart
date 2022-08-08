@@ -1,8 +1,12 @@
 import 'package:charoz/Provider/user_provider.dart';
+import 'package:charoz/Service/Database/Firebase/user_crud.dart';
 import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
+import 'package:charoz/Utilty/Function/dialog_alert.dart';
+import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
+import 'package:charoz/Utilty/my_variable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -24,12 +28,14 @@ class Login extends StatelessWidget {
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
+        appBar: ScreenWidget().appBarTheme('เข้าสู่ระบบ'),
         body: GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
           behavior: HitTestBehavior.opaque,
           child: Stack(
             children: [
               Positioned.fill(
+                top: 3.h,
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 5.w),
@@ -38,29 +44,21 @@ class Login extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SizedBox(height: 10.h),
                           buildImage(),
-                          SizedBox(height: 5.h),
-                          ScreenWidget().buildTitle('เข้าสู่ระบบ'),
+                          SizedBox(height: 3.h),
+                          ScreenWidget().buildTitle('ข้อมุลทั่วไป'),
                           SizedBox(height: 3.h),
                           buildUser(),
                           SizedBox(height: 3.h),
                           buildPassword(),
-                          SizedBox(height: 3.h),
-                          buildButton(context),
                           SizedBox(height: 5.h),
-                          ScreenWidget().buildTitle('กรณียังไม่เป็นสมาชิก'),
-                          SizedBox(height: 2.h),
-                          // buildPhone(),
-                          buildRegister(context),
-                          SizedBox(height: 1.h),
+                          buildButton(context),
                         ],
                       ),
                     ),
                   ),
                 ),
               ),
-              ScreenWidget().appBarTitle('บัญชีผู้ใช้งาน'),
             ],
           ),
         ),
@@ -176,9 +174,7 @@ class Login extends StatelessWidget {
         onPressed: () {
           if (formKey.currentState!.validate()) {
             EasyLoading.show(status: 'loading...');
-            Provider.of<UserProvider>(context, listen: false)
-                .authenEmailFirebase(
-                    context, phoneController.text, passwordController.text);
+            processLogin(context);
           }
         },
         child: Text('เข้าสู่ระบบ', style: MyStyle().normalWhite16()),
@@ -186,54 +182,24 @@ class Login extends StatelessWidget {
     );
   }
 
-  Widget buildPhone(BuildContext context) {
-    return SizedBox(
-      width: 80.w,
-      height: 5.h,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(primary: MyStyle.bluePrimary),
-        onPressed: () =>
-            Navigator.pushNamed(context, RoutePage.routeRegisterToken),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.phone_rounded,
-              size: 18.sp,
-              color: Colors.white,
-            ),
-            SizedBox(width: 2.w),
-            Text(
-              'สมัครสมาชิกด้วยเบอร์โทรศัพท์',
-              style: MyStyle().normalWhite16(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildRegister(BuildContext context) {
-    return SizedBox(
-      width: 80.w,
-      height: 5.h,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(primary: MyStyle.bluePrimary),
-        onPressed: () =>
-            Navigator.pushNamed(context, RoutePage.routeRegister),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.edit_note_rounded,
-              size: 18.sp,
-              color: Colors.white,
-            ),
-            SizedBox(width: 2.w),
-            Text('สมัครสมาชิก', style: MyStyle().normalWhite16()),
-          ],
-        ),
-      ),
-    );
+  Future processLogin(BuildContext context) async {
+    String? email = await Provider.of<UserProvider>(context, listen: false)
+        .checkPhoneAndGetUser(phoneController.text);
+    if (email != null) {
+      await MyVariable.auth
+          .signInWithEmailAndPassword(
+              email: email, password: passwordController.text)
+          .then((value) async {
+        Provider.of<UserProvider>(context, listen: false)
+            .setLoginVariable(context);
+      }).catchError((e) {
+        EasyLoading.dismiss();
+        DialogAlert().singleDialog(context, MyFunction().authenAlert(e.code));
+      });
+    } else {
+      EasyLoading.dismiss();
+      DialogAlert().doubleDialog(context, 'เบอร์โทรศัพท์นี้ไม่มีอยู่ในระบบ',
+          'กรุณาสมัครสมาชิกก่อนจึงเข้าใช้งาน');
+    }
   }
 }

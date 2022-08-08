@@ -1,138 +1,81 @@
 import 'package:charoz/Component/Order/Modal/select_address.dart';
-import 'package:charoz/Component/Shop/shop_detail.dart';
-import 'package:charoz/Model/address_model.dart';
+import 'package:charoz/Model/SubModel/sub_order_model.dart';
 import 'package:charoz/Model/product_model.dart';
-import 'package:charoz/Model/shop_model.dart';
 import 'package:charoz/Provider/address_provider.dart';
 import 'package:charoz/Provider/order_provider.dart';
 import 'package:charoz/Provider/product_provider.dart';
 import 'package:charoz/Provider/shop_provider.dart';
-import 'package:charoz/Service/Api/PHP/order_api.dart';
+import 'package:charoz/Service/Database/Firebase/order_crud.dart';
 import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:charoz/Utilty/Widget/show_progress.dart';
-import 'package:charoz/Utilty/global_variable.dart';
+import 'package:charoz/Utilty/my_variable.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class ConfirmOrder extends StatefulWidget {
+class ConfirmOrder extends StatelessWidget {
   const ConfirmOrder({Key? key}) : super(key: key);
 
-  @override
-  State<ConfirmOrder> createState() => _ConfirmOrderState();
-}
-
-class _ConfirmOrderState extends State<ConfirmOrder> {
-  @override
-  void initState() {
+  Future getData(BuildContext context) async {
+    await Provider.of<AddressProvider>(context, listen: false)
+        .readAddressList();
     Provider.of<AddressProvider>(context, listen: false).getAddress();
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    getData(context);
+    EasyLoading.dismiss();
     return SafeArea(
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
-        body: Consumer3<OrderProvider, AddressProvider, ShopProvider>(
-          builder: (_, oprovider, aprovider, sprovider, __) => aprovider
-                      .address ==
-                  null
-              ? const ShowProgress()
-              : Stack(
-                  children: [
-                    Positioned.fill(
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5.w),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(height: 8.h),
-                              if (oprovider.receiveType ==
-                                  GlobalVariable.orderReceiveTypeList[0]) ...[
-                                ScreenWidget().buildTitle('ที่อยู่ของร้านค้า'),
-                                SizedBox(height: 1.h),
-                                buildShopAddress(sprovider.shop),
-                              ] else ...[
-                                ScreenWidget()
-                                    .buildTitle('ที่อยู่สำหรับจัดส่ง'),
-                                SizedBox(height: 1.h),
-                                buildUserAddress(aprovider.address),
-                              ],
-                              SizedBox(height: 2.h),
-                              ScreenWidget().buildSpacer(),
-                              SizedBox(height: 2.h),
-                              ScreenWidget().buildTitle('รายการอาหาร'),
-                              SizedBox(height: 1.h),
-                              buildOrderList(oprovider),
-                              SizedBox(height: 2.h),
-                              ScreenWidget().buildSpacer(),
-                              SizedBox(height: 2.h),
-                              buildTotal(
-                                  oprovider.receiveType, oprovider.orderTotal),
-                              SizedBox(height: 2.h),
-                              ScreenWidget().buildSpacer(),
-                              SizedBox(height: 2.h),
-                              ScreenWidget().buildTitle('หมายเหตุ'),
-                              SizedBox(height: 1.h),
-                              buildSuggest(
-                                  oprovider.detailShop, oprovider.detailRider),
-                              SizedBox(height: 3.h),
-                              buildButton(
-                                oprovider,
-                                aprovider.address.addressId,
-                                sprovider.shop.shopId,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    ScreenWidget().appBarTitle('ยืนยันออเดอร์'),
-                    ScreenWidget().backPage(context),
-                  ],
-                ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildShopAddress(ShopModel shop) {
-    return InkWell(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ShopDetail(id: shop.shopId),
-        ),
-      ),
-      child: Card(
-        elevation: 5,
-        child: Container(
-          width: 100.w,
-          padding: EdgeInsets.all(15.sp),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        body: Consumer<OrderProvider>(
+          builder: (_, oprovider, __) => Stack(
             children: [
-              Icon(Icons.store_mall_directory_rounded,
-                  size: 25.sp, color: Colors.blue),
-              SizedBox(
-                width: 50.w,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(shop.shopName, style: MyStyle().boldBlue16()),
-                    Text(shop.shopAddress, style: MyStyle().normalBlack14()),
-                  ],
+              Positioned.fill(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 8.h),
+                        if (oprovider.type ==
+                            MyVariable.orderReceiveTypeList[0]) ...[
+                          ScreenWidget().buildTitle('ที่อยู่ของร้านค้า'),
+                          SizedBox(height: 1.h),
+                          buildShopAddress(),
+                        ] else ...[
+                          ScreenWidget().buildTitle('ที่อยู่สำหรับจัดส่ง'),
+                          SizedBox(height: 1.h),
+                          buildUserAddress(context),
+                        ],
+                        ScreenWidget().buildSpacer(),
+                        ScreenWidget().buildTitle('รายการอาหาร'),
+                        SizedBox(height: 1.h),
+                        buildOrderList(),
+                        ScreenWidget().buildSpacer(),
+                        buildTotal(),
+                        ScreenWidget().buildSpacer(),
+                        ScreenWidget().buildTitle('หมายเหตุ'),
+                        SizedBox(height: 1.h),
+                        buildSuggest(),
+                        SizedBox(height: 3.h),
+                        buildButton(),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-              Icon(Icons.location_pin, size: 20.sp),
+              ScreenWidget().appBarTitle('ยืนยันออเดอร์'),
+              ScreenWidget().backPage(context),
             ],
           ),
         ),
@@ -140,7 +83,42 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
     );
   }
 
-  Widget buildUserAddress(AddressModel address) {
+  Widget buildShopAddress() {
+    return Consumer<ShopProvider>(
+      builder: (context, provider, __) => InkWell(
+        onTap: () => Navigator.pushNamed(context, RoutePage.routeShopDetail),
+        child: Card(
+          elevation: 5,
+          child: Container(
+            width: 100.w,
+            padding: EdgeInsets.all(15.sp),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(Icons.store_mall_directory_rounded,
+                    size: 25.sp, color: Colors.blue),
+                SizedBox(
+                  width: 50.w,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(provider.shop.name,
+                          style: MyStyle().boldBlue16()),
+                      Text(provider.shop.address,
+                          style: MyStyle().normalBlack14()),
+                    ],
+                  ),
+                ),
+                Icon(Icons.location_pin, size: 20.sp),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildUserAddress(BuildContext context) {
     return InkWell(
       onTap: () => SelectAddress().openModalSelectAddress(context),
       child: Card(
@@ -154,16 +132,21 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
               Icon(Icons.home_rounded, size: 25.sp, color: Colors.blue),
               SizedBox(
                 width: 50.w,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(address.addressName, style: MyStyle().boldBlue16()),
-                    Text(
-                        address.addressName == 'คอนโดถนอมมิตร'
-                            ? 'ตึกหมายเลข ${address.addressDetail}'
-                            : address.addressDetail,
-                        style: MyStyle().normalBlack14()),
-                  ],
+                child: Consumer<AddressProvider>(
+                  builder: (_, provider, __) => provider.address == null
+                      ? const ShowProgress()
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(provider.address.name,
+                                style: MyStyle().boldBlue16()),
+                            Text(
+                                provider.address.name == 'คอนโดถนอมมิตร'
+                                    ? 'ตึกหมายเลข ${provider.address.detail}'
+                                    : provider.address.detail,
+                                style: MyStyle().normalBlack14()),
+                          ],
+                        ),
                 ),
               ),
               Icon(Icons.arrow_forward_ios_rounded, size: 20.sp),
@@ -174,27 +157,25 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
     );
   }
 
-  Widget buildOrderList(OrderProvider oprovider) {
-    List<String> productIdList =
-        MyFunction().convertToList(oprovider.orderProductIds.toString());
-    List<String> productAmountList =
-        MyFunction().convertToList(oprovider.orderProductAmounts.toString());
-    return SizedBox(
-      width: 100.w,
-      height: 24.h,
-      child: Consumer<ProductProvider>(
-        builder: (_, pprovider, __) => ListView.separated(
+  Widget buildOrderList() {
+    return Consumer2<ProductProvider, OrderProvider>(
+      builder: (_, pprovider, oprovider, __) {
+        List<String> productIdList =
+            MyFunction().convertToList(oprovider.productidList.toString());
+        List<String> productAmountList =
+            MyFunction().convertToList(oprovider.productamountList.toString());
+        return ListView.separated(
             separatorBuilder: (context, index) => const Divider(),
             shrinkWrap: true,
             padding: const EdgeInsets.only(top: 0),
             itemCount: productIdList.length,
             itemBuilder: (context, index) {
               Provider.of<ProductProvider>(context, listen: false)
-                  .selectProductWhereId(int.parse(productIdList[index]));
+                  .selectProductWhereId(productIdList[index]);
               return buildOrderItem(pprovider.product,
                   int.parse(productAmountList[index]), index);
-            }),
-      ),
+            });
+      },
     );
   }
 
@@ -204,91 +185,117 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
       children: [
         SizedBox(
           width: 50.w,
-          child: Text('${index + 1}. ${product.productName} x$amount',
+          child: Text('${index + 1}. ${product.name} x$amount',
               style: MyStyle().normalBlack16()),
         ),
-        Text('${(product.productPrice * amount).toStringAsFixed(0)} ฿',
+        Text('${(product.price * amount).toStringAsFixed(0)} ฿',
             style: MyStyle().boldPrimary18()),
       ],
     );
   }
 
-  Widget buildTotal(String type, double total) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.delivery_dining_rounded, size: 20.sp),
-                SizedBox(width: 2.w),
-                Text('ค่าขนส่ง : ', style: MyStyle().boldBlack16()),
-              ],
-            ),
-            Text(
-                type == GlobalVariable.orderReceiveTypeList[1] ? '0 ฿' : '10 ฿',
-                style: MyStyle().boldPrimary18()),
-          ],
-        ),
-        SizedBox(height: 1.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.money_rounded, size: 20.sp),
-                SizedBox(width: 2.w),
-                Text('ค่าใช้จ่ายทั้งหมด : ', style: MyStyle().boldBlack16()),
-              ],
-            ),
-            Text('$total ฿', style: MyStyle().boldPrimary18()),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget buildSuggest(String shopDetail, String riderDetail) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('ถึงร้านค้า : ', style: MyStyle().boldBlack16()),
-            Text(shopDetail == 'null' ? 'ไม่มี' : shopDetail,
-                style: MyStyle().normalPrimary16()),
-          ],
-        ),
-        SizedBox(height: 1.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('ถึงคนขับ : ', style: MyStyle().boldBlack16()),
-            Text(riderDetail == 'null' ? 'ไม่มี' : riderDetail,
-                style: MyStyle().normalPrimary16()),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget buildButton(OrderProvider oprovider, int addressId, int shopId) {
-    return SizedBox(
-      width: 80.w,
-      height: 5.h,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(primary: MyStyle.bluePrimary),
-        onPressed: () => confirmDialog(oprovider, addressId, shopId),
-        child: Text('ยืนยันการสั่งอาหาร', style: MyStyle().normalWhite16()),
+  Widget buildTotal() {
+    return Consumer<OrderProvider>(
+      builder: (_, provider, __) => Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.delivery_dining_rounded, size: 20.sp),
+                  SizedBox(width: 2.w),
+                  Text('ค่าขนส่ง : ', style: MyStyle().boldBlack16()),
+                ],
+              ),
+              Text(
+                  provider.type == MyVariable.orderReceiveTypeList[0]
+                      ? '0 ฿'
+                      : '10 ฿',
+                  style: MyStyle().boldPrimary18()),
+            ],
+          ),
+          SizedBox(height: 1.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.money_rounded, size: 20.sp),
+                  SizedBox(width: 2.w),
+                  Text('ค่าใช้จ่ายทั้งหมด : ', style: MyStyle().boldBlack16()),
+                ],
+              ),
+              Text('${provider.totalPay} ฿', style: MyStyle().boldPrimary18()),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  void confirmDialog(OrderProvider oprovider, int addressId, int shopId) {
+  Widget buildSuggest() {
+    return Consumer<OrderProvider>(
+      builder: (_, provider, __) => Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('ถึงร้านค้า : ', style: MyStyle().boldBlack16()),
+              Text(
+                  provider.commentshop == 'null'
+                      ? 'ไม่มี'
+                      : provider.commentshop,
+                  style: MyStyle().normalPrimary16()),
+            ],
+          ),
+          SizedBox(height: 1.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('ถึงคนขับ : ', style: MyStyle().boldBlack16()),
+              Text(
+                  provider.commentrider == 'null'
+                      ? 'ไม่มี'
+                      : provider.commentrider,
+                  style: MyStyle().normalPrimary16()),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildButton() {
+    return SizedBox(
+      width: 80.w,
+      height: 5.h,
+      child: Consumer3<OrderProvider, AddressProvider, ShopProvider>(
+        builder: (context, oprovider, aprovider, sprovider, __) =>
+            aprovider.address == null
+                ? const ShowProgress()
+                : ElevatedButton(
+                    style:
+                        ElevatedButton.styleFrom(primary: MyStyle.bluePrimary),
+                    onPressed: () => confirmDialog(
+                      context,
+                      oprovider,
+                      aprovider.address.id,
+                      sprovider.shop.id,
+                      sprovider.shop.id,
+                    ),
+                    child: Text('ยืนยันการสั่งอาหาร',
+                        style: MyStyle().normalWhite16()),
+                  ),
+      ),
+    );
+  }
+
+  void confirmDialog(BuildContext context, OrderProvider oprovider,
+      String addressId, String shopId, String managerId) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -313,8 +320,10 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
             children: [
               TextButton(
                 onPressed: () {
+                  Navigator.pop(dialogContext);
                   EasyLoading.show(status: 'loading...');
-                  processOrder(oprovider, addressId, shopId);
+                  processOrder(
+                      context, oprovider, addressId, shopId, managerId);
                 },
                 child: Text('ยืนยัน', style: MyStyle().boldGreen18()),
               ),
@@ -329,30 +338,34 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
     );
   }
 
-  Future processOrder(
-      OrderProvider oprovider, int addressId, int shopId) async {
-    bool status = await OrderApi().insertOrder(
-      shopid: shopId,
-      customerid: GlobalVariable.userTokenId,
-      addressid: oprovider.receiveType == GlobalVariable.orderReceiveTypeList[0]
-          ? 0
-          : addressId,
-      productids: oprovider.orderProductIds.toString(),
-      amounts: oprovider.orderProductAmounts.toString(),
-      total: oprovider.orderTotal,
-      receive: oprovider.receiveType,
-      commentS: oprovider.detailShop,
-      commentR: oprovider.detailRider,
-      time: DateTime.now(),
+  Future processOrder(BuildContext context, OrderProvider oprovider,
+      String addressId, String shopId, String managerId) async {
+    bool status1 = await OrderCRUD().createOrder(
+      SubOrderModel(
+        shopid: shopId,
+        riderid: '',
+        customerid: MyVariable.userTokenId,
+        addressid: addressId,
+        productid: oprovider.productidList.toString(),
+        productamount: oprovider.productamountList.toString(),
+        charge: oprovider.type == 0 ? 0 : 10,
+        total: int.parse(oprovider.totalPay.toStringAsFixed(0)),
+        type: oprovider.type == MyVariable.orderReceiveTypeList[0] ? 0 : 1,
+        commentshop: oprovider.commentshop,
+        commentrider: oprovider.commentrider,
+        status: 0,
+        track: 0,
+        time: Timestamp.fromDate(DateTime.now()),
+      ),
     );
 
-    if (status) {
+    if (status1) {
       EasyLoading.dismiss();
       MyFunction().toast('เพิ่มรายการสั่งซื้อ สำเร็จ');
-      GlobalVariable.indexPageNavigation = 3;
       Navigator.pushNamedAndRemoveUntil(
           context, RoutePage.routePageNavigation, (route) => false);
-      Provider.of<OrderProvider>(context, listen: false).clearOrder();
+          MyVariable.indexPageNavigation = 3;
+      Provider.of<OrderProvider>(context, listen: false).clearOrderData();
     } else {
       EasyLoading.dismiss();
       DialogAlert().addFailedDialog(context);

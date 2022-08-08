@@ -3,10 +3,9 @@ import 'dart:io';
 import 'package:charoz/Model/shop_model.dart';
 import 'package:charoz/Model/time_model.dart';
 import 'package:charoz/Provider/shop_provider.dart';
-import 'package:charoz/Service/Api/PHP/shop_api.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
-import 'package:charoz/Utilty/global_variable.dart';
+import 'package:charoz/Utilty/my_variable.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Widget/dropdown_menu.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
@@ -32,20 +31,20 @@ class EditShopManager {
   String? chooseType;
   Future<dynamic> openModalEditShopManager(
       context, ShopModel shop, TimeModel time) {
-    nameController.text = shop.shopName;
-    announceController.text = shop.shopAnnounce;
-    detailController.text = shop.shopDetail;
-    openController.text = time.timeOpen;
-    closeController.text = time.timeClose;
-    image = shop.shopImage;
-    chooseType = time.timeChoose;
+    nameController.text = shop.name;
+    announceController.text = shop.announce;
+    detailController.text = shop.detail;
+    openController.text = time.open;
+    closeController.text = time.close;
+    image = shop.image;
+    chooseType = time.choose;
     return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        builder: (context) => modalEditShop(shop.shopId));
+        builder: (context) => modalEditShop(shop.id));
   }
 
-  Widget modalEditShop(int id) {
+  Widget modalEditShop(String id) {
     return SizedBox(
       width: 100.w,
       height: 90.h,
@@ -115,8 +114,9 @@ class EditShopManager {
             ),
             isExpanded: true,
             value: chooseType,
-            items:
-                GlobalVariable.timeTypes.map(DropDownMenu().dropdownItem).toList(),
+            items: MyVariable.timeTypes
+                .map(DropDownMenu().dropdownItem)
+                .toList(),
             onChanged: (value) {
               setState(() => chooseType = value as String);
             },
@@ -328,7 +328,7 @@ class EditShopManager {
           width: 50.w,
           height: 50.w,
           child:
-              file == null ? ShowImage().showShop(image!) : Image.file(file!),
+              file == null ? ShowImage().showImage(image!) : Image.file(file!),
         ),
         IconButton(
           onPressed: () async {
@@ -371,7 +371,7 @@ class EditShopManager {
     );
   }
 
-  Widget buildButton(BuildContext context, int id) {
+  Widget buildButton(BuildContext context, String id) {
     return SizedBox(
       width: 90.w,
       height: 5.h,
@@ -387,31 +387,31 @@ class EditShopManager {
     );
   }
 
-  Future processUpdate(BuildContext context, int id) async {
-    String chooseImage = await ShopApi().saveShopImage(image!, file);
+  Future processUpdate(BuildContext context, String id) async {
+  //   String chooseImage = await ShopApi().saveShopImage(image!, file);
 
-    bool status1 = await ShopApi().editShopByManager(
-      id: id,
-      name: nameController.text,
-      announce: announceController.text,
-      detail: detailController.text,
-      image: chooseImage,
-      time: DateTime.now(),
-    );
-    bool status2 = await ShopApi().editTimeWhereShop(
-      id: id,
-      type: chooseType!,
-      timeOpen: openController.text,
-      timeClose: closeController.text,
-    );
+  //   bool status1 = await ShopApi().editShopByManager(
+  //     id: id,
+  //     name: nameController.text,
+  //     announce: announceController.text,
+  //     detail: detailController.text,
+  //     image: chooseImage,
+  //     time: DateTime.now(),
+  //   );
+  //   bool status2 = await ShopApi().editTimeWhereShop(
+  //     id: id,
+  //     type: chooseType!,
+  //     timeOpen: openController.text,
+  //     timeClose: closeController.text,
+  //   );
 
-    if (status1 && status2) {
-      Provider.of<ShopProvider>(context, listen: false).selectShopWhereId(id);
-      Provider.of<ShopProvider>(context, listen: false).getTimeWhereId(id);
-      MyFunction().toast('แก้ไขร้านค้าเรียบร้อยแล้ว');
-      Navigator.pop(context);
-    } else {
-      DialogAlert().editFailedDialog(context);
-    }
+  //   if (status1 && status2) {
+  //     Provider.of<ShopProvider>(context, listen: false).getShopModel();
+  //     Provider.of<ShopProvider>(context, listen: false).getTimeModel();
+  //     MyFunction().toast('แก้ไขร้านค้าเรียบร้อยแล้ว');
+  //     Navigator.pop(context);
+  //   } else {
+  //     DialogAlert().editFailedDialog(context);
+  //   }
   }
 }

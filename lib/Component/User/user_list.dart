@@ -1,17 +1,32 @@
 import 'package:charoz/Component/User/Dialog/manage_user.dart';
 import 'package:charoz/Model/user_model.dart';
 import 'package:charoz/Provider/user_provider.dart';
+import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
-import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:charoz/Utilty/Widget/show_image.dart';
 import 'package:charoz/Utilty/Widget/show_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class UserList extends StatelessWidget {
+class UserList extends StatefulWidget {
   const UserList({Key? key}) : super(key: key);
+
+  @override
+  State<UserList> createState() => _UserListState();
+}
+
+class _UserListState extends State<UserList> {
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  Future getData() async {
+    await Provider.of<UserProvider>(context, listen: false).readUserList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +37,7 @@ class UserList extends StatelessWidget {
         body: Stack(
           children: [
             Positioned.fill(
-              top: 8.h,
+              top: 3.h,
               child: Column(
                 children: [
                   SizedBox(
@@ -32,7 +47,7 @@ class UserList extends StatelessWidget {
                       builder: (_, provider, __) => provider.userList == null
                           ? const ShowProgress()
                           : GridView.builder(
-                              padding: const EdgeInsets.only(top: 0),
+                              padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 0),
                               itemCount: provider.userList.length,
                               gridDelegate:
                                   const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -48,8 +63,16 @@ class UserList extends StatelessWidget {
                 ],
               ),
             ),
-            ScreenWidget().appBarTitle('ผู้ใช้งานทั้งหมด'),
           ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => Navigator.pushNamed(context, RoutePage.routeAddRider),
+          backgroundColor: MyStyle.bluePrimary,
+          child: Icon(
+            Icons.person_add_rounded,
+            size: 20.sp,
+            color: Colors.white,
+          ),
         ),
       ),
     );
@@ -59,7 +82,7 @@ class UserList extends StatelessWidget {
     return Card(
       color: Colors.white,
       elevation: 5,
-      margin: const EdgeInsets.all(10),
+      margin: EdgeInsets.all(10.sp),
       child: InkWell(
         onTap: () => ManageUser().dialogManageUser(context, user),
         child: Column(
@@ -67,15 +90,15 @@ class UserList extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              width: 25.w,
-              height: 25.w,
-              child: user.userImage == 'null'
+              width: 20.w,
+              height: 20.w,
+              child: user.image == ''
                   ? Image.asset(MyImage.person)
-                  : ShowImage().showUser(user.userImage),
+                  : ShowImage().showImage(user.image),
             ),
-            Text(user.userPhone, style: MyStyle().normalPrimary14()),
-            Text(user.userFirstName, style: MyStyle().normalBlack14()),
-            Text(user.userRole, style: MyStyle().normalBlue14()),
+            Text(user.phone, style: MyStyle().normalPrimary16()),
+            Text(user.role, style: MyStyle().normalBlack14()),
+            Text(user.status.toString(), style: MyStyle().normalBlack14()),
           ],
         ),
       ),

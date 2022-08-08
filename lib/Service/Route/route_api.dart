@@ -10,6 +10,7 @@ class RouteApi {
       'https://kittipongkdev.com/charoz/api/order/';
   static String domainApiShop = 'https://kittipongkdev.com/charoz/api/shop/';
   static String domainApiUser = 'https://kittipongkdev.com/charoz/api/user/';
+  static String domainApiRealtime = 'https://kittipongkdev.com/charoz/api/realtime/';
 
   // Image Domain
   static String domainBanner = 'https://kittipongkdev.com/charoz/banner/';

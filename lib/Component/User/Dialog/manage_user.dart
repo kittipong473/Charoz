@@ -17,67 +17,31 @@ class ManageUser {
         reverseTransitionDuration: Duration(milliseconds: 500),
       ),
       context: context,
-      builder: (context) => SimpleDialog(
+      builder: (dialogContext) => SimpleDialog(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              width: 40.w,
-              height: 40.w,
+              width: 30.w,
+              height: 30.w,
               child: Image.asset(MyImage.person),
             ),
-            const SizedBox(height: 20),
-            Text(
-              'เบอร์โทร : ${user.userPhone}',
-              style: MyStyle().boldBlue18(),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'ชื่อ : ${user.userFirstName}',
-              style: MyStyle().boldBlack16(),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'นามสกุล : ${user.userLastName}',
-              style: MyStyle().boldBlack16(),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'วันเกิด : ${user.userBirth}',
-              style: MyStyle().boldBlack16(),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'อีเมลล์ : ${user.userEmail}',
-              style: MyStyle().boldBlack16(),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'ตำแหน่ง : ${user.userRole}',
-              style: MyStyle().boldBlack16(),
-            ),
-            const SizedBox(height: 10),
+            SizedBox(height: 1.h),
+            Text('${user.firstname} ${user.lastname}',
+                style: MyStyle().boldBlue18()),
+            SizedBox(height: 3.h),
+            Text('เบอร์โทรศัพท์ : ${user.phone}',
+                style: MyStyle().normalBlack16()),
+            SizedBox(height: 1.h),
+            Text('อีเมลล์ : ${user.email}', style: MyStyle().normalBlack16()),
+            SizedBox(height: 1.h),
+            Text('ตำแหน่ง : ${user.role}', style: MyStyle().normalBlack16()),
           ],
         ),
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              TextButton(
-                onPressed: () {},
-                child: Text(
-                  'เปลี่ยนสถานะ',
-                  style: MyStyle().boldPrimary16(),
-                ),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: Text(
-                  'ดูข้อมูลที่อยู่',
-                  style: MyStyle().boldGreen16(),
-                ),
-              ),
-            ],
+          TextButton(
+            onPressed: () {},
+            child: Text('เปลี่ยนสถานะ', style: MyStyle().boldPrimary16()),
           ),
         ],
       ),

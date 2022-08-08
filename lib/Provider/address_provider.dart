@@ -1,6 +1,6 @@
 import 'package:charoz/Model/address_model.dart';
-import 'package:charoz/Service/Api/PHP/address_api.dart';
-import 'package:charoz/Utilty/global_variable.dart';
+import 'package:charoz/Service/Database/Firebase/address_crud.dart';
+import 'package:charoz/Utilty/my_variable.dart';
 import 'package:flutter/foundation.dart';
 
 class AddressProvider with ChangeNotifier {
@@ -10,27 +10,29 @@ class AddressProvider with ChangeNotifier {
   get address => _address;
   get addressList => _addressList;
 
-  Future getAllAddressWhereUser() async {
-    _addressList = await AddressApi().getAllAddressWhereUser();
+  Future readAddressList() async {
+    _addressList = await AddressCRUD().readAddressList();
+    _addressList!.sort((a, b) => b.time.compareTo(a.time));
     notifyListeners();
   }
 
-  void deleteAddressWhereId(int id) {
-    _addressList!.removeWhere((item) => item.addressId == id);
+  Future readAddressById(String id) async {
+    _address = await AddressCRUD().readAddressById(id);
     notifyListeners();
   }
 
   void getAddress() {
     _address = _addressList!
-        .firstWhere((element) => element.userId == GlobalVariable.userTokenId);
+        .firstWhere((element) => element.userid == MyVariable.userTokenId);
   }
 
-  void selectAddressWhereId(int id) {
-    _address = _addressList!.firstWhere((element) => element.addressId == id);
+  void selectAddressWhereId(String id) {
+    _address = _addressList!.firstWhere((element) => element.id == id);
     notifyListeners();
   }
 
-  void getAddressWhereId(int id) {
-    _address = _addressList!.firstWhere((element) => element.addressId == id);
+  void clearAddressData() {
+    _address = null;
+    _addressList = null;
   }
 }

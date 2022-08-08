@@ -1,6 +1,6 @@
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
-import 'package:charoz/Utilty/global_variable.dart';
+import 'package:charoz/Utilty/my_variable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pin_code_widget/flutter_pin_code_widget.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -38,14 +38,14 @@ class CodeVerify extends StatelessWidget {
             Positioned(
               bottom: 0,
               child: Container(
-                padding: GlobalVariable.largeDevice
+                padding: MyVariable.largeDevice
                     ? EdgeInsets.symmetric(horizontal: 10.w)
                     : const EdgeInsets.symmetric(horizontal: 0),
                 width: 100.w,
                 height: 80.h,
                 child: PinCodeWidget(
                   onFullPin: (code, __) {
-                    if (code == GlobalVariable.verifyPinCode) {
+                    if (code == '000000') {
                       Navigator.pop(context);
                     } else {
                       DialogAlert().doubleDialog(context, 'รหัส PIN ไม่ถูกต้อง',

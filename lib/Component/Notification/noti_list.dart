@@ -1,39 +1,28 @@
 import 'package:charoz/Component/Notification/Dialog/noti_detail.dart';
-import 'package:charoz/Component/Order/List/order_list_customer.dart';
-import 'package:charoz/Component/Order/List/order_list_manager.dart';
-import 'package:charoz/Component/Order/List/order_list_rider.dart';
+import 'package:charoz/Component/Notification/Modal/add_noti.dart';
+import 'package:charoz/Component/Order/order_list.dart';
 import 'package:charoz/Model/noti_model.dart';
 import 'package:charoz/Provider/noti_provider.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Widget/show_progress.dart';
-import 'package:charoz/Utilty/global_variable.dart';
+import 'package:charoz/Utilty/my_variable.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class NotiList extends StatefulWidget {
+class NotiList extends StatelessWidget {
   final List notiList;
   const NotiList({Key? key, required this.notiList}) : super(key: key);
 
-  @override
-  State<NotiList> createState() => _NotiListState();
-}
-
-class _NotiListState extends State<NotiList> {
-  @override
-  void initState() {
-    getData();
-    super.initState();
-  }
-
-  Future getData() async {
-    Provider.of<NotiProvider>(context, listen: false)
-        .getAllNotiWhereType(widget.notiList[GlobalVariable.indexNotiChip]);
+  Future getData(BuildContext context) async {
+    await Provider.of<NotiProvider>(context, listen: false)
+        .readNotiTypeList(notiList[MyVariable.indexNotiChip]);
   }
 
   @override
   Widget build(BuildContext context) {
+    getData(context);
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -41,19 +30,15 @@ class _NotiListState extends State<NotiList> {
         body: Stack(
           children: [
             Positioned.fill(
-              top: 8.h,
-              child: RefreshIndicator(
-                onRefresh: getData,
-                child: Column(
+              top: 2.h,
+              child: StatefulBuilder(
+                builder: (_, setState) => Column(
                   children: [
-                    buildChip(),
-                    if (GlobalVariable.indexNotiChip == 0) ...[
-                      if (GlobalVariable.role == 'customer') ...[
-                        const OrderListCustomer(),
-                      ] else if (GlobalVariable.role == 'manager') ...[
-                        const OrderListManager(),
-                      ] else if (GlobalVariable.role == 'rider') ...[
-                        const OrderListRider(),
+                    buildChip(context, setState),
+                    if (MyVariable.indexNotiChip == 0) ...[
+                      if (MyVariable.role != 'admin' &&
+                          MyVariable.role != '') ...[
+                        const OrderList(),
                       ] else ...[
                         buildNotiList(),
                       ],
@@ -64,45 +49,50 @@ class _NotiListState extends State<NotiList> {
                 ),
               ),
             ),
-            ScreenWidget().appBarTitle('การแจ้งเตือน'),
-            if (GlobalVariable.role == 'admin' ||
-                GlobalVariable.role == 'manager') ...[
-              ScreenWidget().createNoti(context),
-            ],
           ],
         ),
+        floatingActionButton:
+            MyVariable.role == 'admin' || MyVariable.role == 'manager'
+                ? FloatingActionButton(
+                    onPressed: () => AddNoti().openModalAdNoti(context),
+                    backgroundColor: MyStyle.bluePrimary,
+                    child: Icon(Icons.add_alert_rounded,
+                        size: 20.sp, color: Colors.white),
+                  )
+                : null,
       ),
     );
   }
 
-  Widget buildChip() {
+  Widget buildChip(BuildContext context, Function setState) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          for (var i = 0; i < widget.notiList.length; i++) ...[
-            chip(widget.notiList[i], i),
+          for (var i = 0; i < notiList.length; i++) ...[
+            chip(context, setState, notiList[i], i),
           ],
         ],
       ),
     );
   }
 
-  Widget chip(String title, int index) {
+  Widget chip(
+      BuildContext context, Function setState, String title, int index) {
     return ActionChip(
-      backgroundColor: GlobalVariable.indexNotiChip == index
+      backgroundColor: MyVariable.indexNotiChip == index
           ? MyStyle.primary
-          : Colors.grey.shade300,
+          : Colors.grey.shade100,
       label: Text(
         title,
-        style: GlobalVariable.indexNotiChip == index
+        style: MyVariable.indexNotiChip == index
             ? MyStyle().normalWhite16()
             : MyStyle().normalBlack16(),
       ),
       onPressed: () {
-        setState(() => GlobalVariable.indexNotiChip = index);
-        getData();
+        setState(() => MyVariable.indexNotiChip = index);
+        getData(context);
       },
     );
   }
@@ -110,39 +100,26 @@ class _NotiListState extends State<NotiList> {
   Widget buildNotiList() {
     return SizedBox(
       width: 100.w,
-      height: 70.h,
+      height: 77.h,
       child: Consumer<NotiProvider>(
         builder: (_, provider, __) => provider.notiList == null
-            ? Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'ยังไม่มี ${widget.notiList[GlobalVariable.indexNotiChip]} ในขณะนี้',
-                      style: MyStyle().normalPrimary18(),
-                    ),
-                    SizedBox(height: 3.h),
-                    Text(
-                      'กรุณารอรายการ ${widget.notiList[GlobalVariable.indexNotiChip]} ได้ในภายหลัง',
-                      style: MyStyle().normalPrimary18(),
-                    ),
-                  ],
-                ),
-              )
-            : ListView.builder(
-                shrinkWrap: true,
-                padding: const EdgeInsets.only(top: 0),
-                itemCount: provider.notiList.length,
-                itemBuilder: (context, index) {
-                  return buildNotiItem(provider.notiList[index], index);
-                },
-              ),
+            ? const ShowProgress()
+            : provider.notiList.isEmpty
+                ? ScreenWidget().showEmptyData(
+                    'ยังไม่มี ${notiList[MyVariable.indexNotiChip]} ในขณะนี้',
+                    'รอรายการ ${notiList[MyVariable.indexNotiChip]} ในภายหลัง')
+                : ListView.builder(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.only(top: 1.h),
+                    itemCount: provider.notiList.length,
+                    itemBuilder: (context, index) =>
+                        buildNotiItem(context, provider.notiList[index], index),
+                  ),
       ),
     );
   }
 
-  Widget buildNotiItem(NotiModel noti, int index) {
+  Widget buildNotiItem(BuildContext context, NotiModel noti, int index) {
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
       elevation: 5.0,
@@ -154,7 +131,7 @@ class _NotiListState extends State<NotiList> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Icon(Icons.campaign_rounded, size: 30.sp, color: MyStyle.primary),
-              Text(noti.notiName, style: MyStyle().normalBlack16()),
+              Text(noti.name, style: MyStyle().normalBlack16()),
               Icon(Icons.arrow_forward_ios_rounded,
                   color: MyStyle.primary, size: 20.sp),
             ],
@@ -162,37 +139,5 @@ class _NotiListState extends State<NotiList> {
         ),
       ),
     );
-  }
-
-  Color checkOrderStatusColor(String type, String status) {
-    if (type == GlobalVariable.orderReceiveTypeList[0]) {
-      if (status == GlobalVariable.orderStatusReceiveList[0]) {
-        return Colors.yellow.shade100;
-      } else if (status == GlobalVariable.orderStatusReceiveList[1]) {
-        return Colors.purple.shade100;
-      } else if (status == GlobalVariable.orderStatusReceiveList[2]) {
-        return Colors.green.shade100;
-      } else if (status == GlobalVariable.orderStatusReceiveList[4]) {
-        return Colors.red.shade100;
-      } else {
-        return Colors.white;
-      }
-    } else if (type == GlobalVariable.orderReceiveTypeList[1]) {
-      if (status == GlobalVariable.orderStatusDeliveryList[0] ||
-          status == GlobalVariable.orderStatusDeliveryList[1]) {
-        return Colors.yellow.shade100;
-      } else if (status == GlobalVariable.orderStatusDeliveryList[2]) {
-        return Colors.purple.shade100;
-      } else if (status == GlobalVariable.orderStatusDeliveryList[3]) {
-        return Colors.green.shade100;
-      } else if (status == GlobalVariable.orderStatusDeliveryList[5] ||
-          status == GlobalVariable.orderStatusDeliveryList[6]) {
-        return Colors.red.shade100;
-      } else {
-        return Colors.white;
-      }
-    } else {
-      return Colors.white;
-    }
   }
 }

@@ -72,7 +72,7 @@ class SelectAddress {
     return InkWell(
       onTap: () {
         Provider.of<AddressProvider>(context, listen: false)
-            .selectAddressWhereId(address.addressId);
+            .selectAddressWhereId(address.id);
         MyFunction().toast('เปลี่ยนที่อยู่จัดส่งเรียบร้อย');
         Navigator.pop(context);
       },
@@ -91,14 +91,14 @@ class SelectAddress {
               ),
               Column(
                 children: [
-                  Text(address.addressName, style: MyStyle().normalBlue16()),
+                  Text(address.name, style: MyStyle().normalBlue16()),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                          address.addressName == 'คอนโดถนอมมิตร'
-                              ? 'ตึกหมายเลข ${address.addressDetail}'
-                              : address.addressDetail,
+                          address.name == 'คอนโดถนอมมิตร'
+                              ? 'ตึกหมายเลข ${address.detail}'
+                              : address.detail,
                           style: MyStyle().normalBlack14()),
                     ],
                   ),

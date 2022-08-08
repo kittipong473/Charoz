@@ -1,11 +1,13 @@
 import 'package:charoz/Utilty/Constant/my_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
-class GlobalVariable {
+class MyVariable {
   // User Id
-  static int userTokenId = 0;
+  static String userTokenId = '';
   // Status Auto Login
-  static String accountUid = "";
+  static String accountUid = '';
   // Width and Height between iPad and iPhone
   static bool largeDevice = false;
   // Index Page of each Page Navigation
@@ -18,8 +20,6 @@ class GlobalVariable {
   static bool login = false;
   // Role of user
   static String role = '';
-  
-  static String verifyPinCode = '000000';
 
   // List of Carousel Shop Detail Image
   static List<String> carouselShopImage = [
@@ -30,11 +30,11 @@ class GlobalVariable {
   // Create FirebaseAuth Variable
   static FirebaseAuth auth = FirebaseAuth.instance;
   // title of this application
-  static String mainTitle = 'charoz';
+  static String mainTitle = 'Charoz Steak House';
   // Type of Product
   static List<String> productTypes = [
     'อาหาร',
-    'ออร์เดิฟ',
+    'ทานเล่น',
     'เครื่องดื่ม',
     'ของหวาน'
   ];
@@ -89,18 +89,17 @@ class GlobalVariable {
   // List of Order Receive Type
   static List<String> orderReceiveTypeList = [
     'มารับที่ร้านค้า',
-    'จัดส่งตามที่อยู่'
+    'จัดส่งตามที่อยู่',
+  ];
+  // List of Order Tracking
+  static List<String> orderTrackingList = [
+    'sending',
+    'accepted',
+    'finished',
+    'canceled',
   ];
   // List of Order Status
-  static List<String> orderStatusReceiveList = [
-    'รอการยืนยันจากร้านค้า',
-    'กำลังจัดทำอาหาร',
-    'ทำอาหารเสร็จสิ้น',
-    'ชำระเงินเรียบร้อย',
-    'ถูกยกเลิกจากร้านค้า',
-    'ให้คะแนนเรียบร้อย'
-  ];
-  static List<String> orderStatusDeliveryList = [
+  static List<String> orderStatusList = [
     'รอการยืนยันจากร้านค้า',
     'รอการยืนยันจากคนขับ',
     'กำลังจัดทำอาหาร',

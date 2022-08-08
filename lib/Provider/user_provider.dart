@@ -1,10 +1,10 @@
 import 'package:charoz/Model/user_model.dart';
-import 'package:charoz/Service/Api/PHP/user_api.dart';
+import 'package:charoz/Service/Database/Firebase/user_crud.dart';
 import 'package:charoz/Service/Route/route_page.dart';
+import 'package:charoz/Utilty/Function/data_manager.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
-import 'package:charoz/Utilty/Function/load_data.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
-import 'package:charoz/Utilty/global_variable.dart';
+import 'package:charoz/Utilty/my_variable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
@@ -21,114 +21,50 @@ class UserProvider with ChangeNotifier {
   get manager => _manager;
   get userList => _userList;
 
-  Future getAllUser() async {
-    _userList = await UserApi().getAllUser();
+  Future readUserList() async {
+    _userList = await UserCRUD().readUserList();
     notifyListeners();
   }
 
-  Future getCustomerWhereId(int id) async {
-    _customer = await UserApi().getUserWhereId(id: id);
+  Future readCustomerById(String id) async {
+    _customer = await UserCRUD().readUserById(id);
     notifyListeners();
   }
 
-  Future getRiderWhereId(int id) async {
-    _rider = await UserApi().getUserWhereId(id: id);
+  Future readRiderById(String id) async {
+    _rider = await UserCRUD().readUserById(id);
     notifyListeners();
   }
 
-  Future getManagerWhereId(int id) async {
-    _manager = await UserApi().getUserWhereId(id: id);
+  Future readManagerById(String id) async {
+    _manager = await UserCRUD().readUserById(id);
     notifyListeners();
   }
 
-  Future getUserWhereId(int id) async {
-    _user = await UserApi().getUserWhereId(id: id);
+  Future readUserById(String id) async {
+    _user = await UserCRUD().readUserById(id);
     notifyListeners();
   }
 
-  Future<bool> checkPhoneAndGetUser(String phone) async {
-    bool status = await UserApi().checkUserWherePhone(phone: phone);
-    if (status) {
-      _user = await UserApi().getUserWherePhone(phone: phone);
-      return true;
+  Future<String?> checkPhoneAndGetUser(String phone) async {
+    _user = await UserCRUD().readUserByPhone(phone);
+    if (_user != null) {
+      return _user!.email;
     } else {
-      return false;
+      return null;
     }
   }
 
-  Future<bool> checkPhone(String phone) async {
-    bool status = await UserApi().checkUserWherePhone(phone: phone);
-    if (status) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  Future<bool> checkEmail(String email) async {
-    bool status = await UserApi().checkUserWhereEmail(email: email);
-    if (status) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  Future getUserWhereToken() async {
-    _user = await UserApi().getUserWhereToken();
-    GlobalVariable.login = true;
-    GlobalVariable.role = _user!.userRole;
-    GlobalVariable.userTokenId = _user!.userId;
+  Future readUserByToken() async {
+    _user = await UserCRUD().readUserByToken();
+    MyVariable.login = true;
+    MyVariable.role = _user!.role;
+    MyVariable.userTokenId = _user!.id;
     notifyListeners();
-  }
-
-  Future authenEmailFirebase(
-      BuildContext context, String phone, String password) async {
-    bool status = await checkPhoneAndGetUser(phone);
-    if (status) {
-      await GlobalVariable.auth
-          .signInWithEmailAndPassword(
-              email: _user!.userEmail, password: password)
-          .then((value) => setLoginVariable(context))
-          .catchError((e) {
-        EasyLoading.dismiss();
-        DialogAlert().singleDialog(context, MyFunction().authenAlert(e.code));
-      });
-    } else {
-      EasyLoading.dismiss();
-      DialogAlert().doubleDialog(context, 'เบอร์โทรศัพท์นี้ไม่มีอยู่ในระบบ',
-          'กรุณาสมัครสมาชิกก่อนจึงเข้าใช้งาน');
-    }
-  }
-
-  void setLoginVariable(BuildContext context) {
-    GlobalVariable.login = true;
-    GlobalVariable.indexPageNavigation = 0;
-    GlobalVariable.role = _user!.userRole;
-    GlobalVariable.userTokenId = _user!.userId;
-    GlobalVariable.indexNotiChip = 0;
-    EasyLoading.dismiss();
-    MyFunction().toast('ยินดีต้อนรับสู่ Application');
-    LoadData().getDataByRole(context);
-    Navigator.pushNamedAndRemoveUntil(
-        context, RoutePage.routePageNavigation, (route) => false);
-  }
-
-  void setLogoutVariable(BuildContext context) {
-    GlobalVariable.login = false;
-    GlobalVariable.indexPageNavigation = 0;
-    GlobalVariable.role = '';
-    GlobalVariable.userTokenId = 0;
-    GlobalVariable.indexNotiChip = 0;
-    EasyLoading.dismiss();
-    MyFunction().toast('ลงชื่อออก สำเร็จ');
-    LoadData().getDataByRole(context);
-    Navigator.pushNamedAndRemoveUntil(
-        context, RoutePage.routePageNavigation, (route) => false);
   }
 
   Future signOutFirebase(BuildContext context) async {
-    await GlobalVariable.auth
+    await MyVariable.auth
         .signOut()
         .then((value) => setLogoutVariable(context))
         .catchError((e) {
@@ -137,12 +73,37 @@ class UserProvider with ChangeNotifier {
     });
   }
 
-  void checkUserPinSetting(BuildContext context) {
-    if (_user != null) {
-      if (_user!.userPinCode == 'null') {
-        WidgetsBinding.instance
-            .addPostFrameCallback((_) => DialogAlert().alertPinCode(context));
-      }
-    }
+  void setLoginVariable(BuildContext context) {
+    MyVariable.login = true;
+    MyVariable.indexPageNavigation = 0;
+    MyVariable.role = _user!.role;
+    MyVariable.userTokenId = _user!.id;
+    MyVariable.indexNotiChip = 0;
+    DataManager().clearAllData(context);
+    EasyLoading.dismiss();
+    MyFunction().toast('ยินดีต้อนรับสู่ Application');
+    Navigator.pushNamedAndRemoveUntil(
+        context, RoutePage.routePageNavigation, (route) => false);
+  }
+
+  void setLogoutVariable(BuildContext context) {
+    MyVariable.login = false;
+    MyVariable.indexPageNavigation = 0;
+    MyVariable.role = '';
+    MyVariable.userTokenId = '';
+    MyVariable.indexNotiChip = 0;
+    DataManager().clearAllData(context);
+    EasyLoading.dismiss();
+    MyFunction().toast('ลงชื่อออก สำเร็จ');
+    Navigator.pushNamedAndRemoveUntil(
+        context, RoutePage.routePageNavigation, (route) => false);
+  }
+
+  void clearUserData() {
+    _user = null;
+    _customer = null;
+    _rider = null;
+    _manager = null;
+    _userList = null;
   }
 }

@@ -20,8 +20,8 @@ class MyFunction {
   
   String cutWord10(String name) {
     String result = name;
-    if (result.length > 15) {
-      result = result.substring(0, 12);
+    if (result.length > 13) {
+      result = result.substring(0, 10);
       result = '$result...';
     }
     return result;
@@ -67,15 +67,5 @@ class MyFunction {
     return DateFormat('HH:mm').format(convert);
   }
 
-  String convertToDate(DateTime time) {
-    return DateFormat('dd-MM-yyyy').format(time);
-  }
-
-  String convertToTIme(DateTime time) {
-    return DateFormat('HH:mm').format(time);
-  }
-
-  String convertToDateTime(DateTime time) {
-    return DateFormat('dd-MMM-yyyy HH:mm').format(time);
-  }
+  String convertToDateTime(DateTime time) => DateFormat('E, d MMM yyyy HH:mm:ss').format(time);
 }

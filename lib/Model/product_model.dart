@@ -1,148 +1,131 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class ProductModel {
-  final int productId;
-  final String productName;
-  final String productType;
-  final double productPrice;
-  final String productDetail;
-  final String productImage;
-  final double productScore;
-  final int productStatus;
-  final int productSuggest;
-  final DateTime created;
-  final DateTime updated;
+  final String id;
+  final String name;
+  final String type;
+  final int price;
+  final String detail;
+  final String image;
+  final int status;
+  final int suggest;
+  final DateTime time;
   ProductModel({
-    required this.productId,
-    required this.productName,
-    required this.productType,
-    required this.productPrice,
-    required this.productDetail,
-    required this.productImage,
-    required this.productScore,
-    required this.productStatus,
-    required this.productSuggest,
-    required this.created,
-    required this.updated,
+    required this.id,
+    required this.name,
+    required this.type,
+    required this.price,
+    required this.detail,
+    required this.image,
+    required this.status,
+    required this.suggest,
+    required this.time,
   });
 
   ProductModel copyWith({
-    int? productId,
-    String? productName,
-    String? productType,
-    double? productPrice,
-    String? productDetail,
-    String? productImage,
-    double? productScore,
-    int? productStatus,
-    int? productSuggest,
-    DateTime? created,
-    DateTime? updated,
+    String? id,
+    String? name,
+    String? type,
+    int? price,
+    String? detail,
+    String? image,
+    int? status,
+    int? suggest,
+    DateTime? time,
   }) {
     return ProductModel(
-      productId: productId ?? this.productId,
-      productName: productName ?? this.productName,
-      productType: productType ?? this.productType,
-      productPrice: productPrice ?? this.productPrice,
-      productDetail: productDetail ?? this.productDetail,
-      productImage: productImage ?? this.productImage,
-      productScore: productScore ?? this.productScore,
-      productStatus: productStatus ?? this.productStatus,
-      productSuggest: productSuggest ?? this.productSuggest,
-      created: created ?? this.created,
-      updated: updated ?? this.updated,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      type: type ?? this.type,
+      price: price ?? this.price,
+      detail: detail ?? this.detail,
+      image: image ?? this.image,
+      status: status ?? this.status,
+      suggest: suggest ?? this.suggest,
+      time: time ?? this.time,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'productId': productId,
-      'productName': productName,
-      'productType': productType,
-      'productPrice': productPrice,
-      'productDetail': productDetail,
-      'productImage': productImage,
-      'productScore': productScore,
-      'productStatus': productStatus,
-      'productSuggest': productSuggest,
-      'created': created.millisecondsSinceEpoch,
-      'updated': updated.millisecondsSinceEpoch,
+    return {
+      'id': id,
+      'name': name,
+      'type': type,
+      'price': price,
+      'detail': detail,
+      'image': image,
+      'status': status,
+      'suggest': suggest,
+      'time': time.millisecondsSinceEpoch,
     };
   }
 
   factory ProductModel.fromMap(Map<String, dynamic> map) {
     return ProductModel(
-      productId: map['productId'] as int,
-      productName: map['productName'] as String,
-      productType: map['productType'] as String,
-      productPrice: map['productPrice'] as double,
-      productDetail: map['productDetail'] as String,
-      productImage: map['productImage'] as String,
-      productScore: map['productScore'] as double,
-      productStatus: map['productStatus'] as int,
-      productSuggest: map['productSuggest'] as int,
-      created: DateTime.fromMillisecondsSinceEpoch(map['created'] as int),
-      updated: DateTime.fromMillisecondsSinceEpoch(map['updated'] as int),
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+      type: map['type'] ?? '',
+      price: map['price']?.toInt() ?? 0,
+      detail: map['detail'] ?? '',
+      image: map['image'] ?? '',
+      status: map['status']?.toInt() ?? 0,
+      suggest: map['suggest']?.toInt() ?? 0,
+      time: DateTime.fromMillisecondsSinceEpoch(map['time']),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory ProductModel.fromJson(String source) =>
-      ProductModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory ProductModel.fromJson(String source) => ProductModel.fromMap(json.decode(source));
 
   @override
   String toString() {
-    return 'ProductModel(productId: $productId, productName: $productName, productType: $productType, productPrice: $productPrice, productDetail: $productDetail, productImage: $productImage, productScore: $productScore, productStatus: $productStatus, productSuggest: $productSuggest, created: $created, updated: $updated)';
+    return 'ProductModel(id: $id, name: $name, type: $type, price: $price, detail: $detail, image: $image, status: $status, suggest: $suggest, time: $time)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-
+  
     return other is ProductModel &&
-        other.productId == productId &&
-        other.productName == productName &&
-        other.productType == productType &&
-        other.productPrice == productPrice &&
-        other.productDetail == productDetail &&
-        other.productImage == productImage &&
-        other.productScore == productScore &&
-        other.productStatus == productStatus &&
-        other.productSuggest == productSuggest &&
-        other.created == created &&
-        other.updated == updated;
+      other.id == id &&
+      other.name == name &&
+      other.type == type &&
+      other.price == price &&
+      other.detail == detail &&
+      other.image == image &&
+      other.status == status &&
+      other.suggest == suggest &&
+      other.time == time;
   }
 
   @override
   int get hashCode {
-    return productId.hashCode ^
-        productName.hashCode ^
-        productType.hashCode ^
-        productPrice.hashCode ^
-        productDetail.hashCode ^
-        productImage.hashCode ^
-        productScore.hashCode ^
-        productStatus.hashCode ^
-        productSuggest.hashCode ^
-        created.hashCode ^
-        updated.hashCode;
+    return id.hashCode ^
+      name.hashCode ^
+      type.hashCode ^
+      price.hashCode ^
+      detail.hashCode ^
+      image.hashCode ^
+      status.hashCode ^
+      suggest.hashCode ^
+      time.hashCode;
   }
 }
 
 ProductModel convertProduct(dynamic item) {
     return ProductModel(
-      productId: int.parse(item['productId']),
-      productName: item['productName'],
-      productType: item['productType'],
-      productPrice: double.parse(item['productPrice']),
-      productDetail: item['productDetail'],
-      productImage: item['productImage'],
-      productScore: double.parse(item['productScore']),
-      productStatus: int.parse(item['productStatus']),
-      productSuggest: int.parse(item['productSuggest']),
-      created: DateTime.parse(item['created']),
-      updated: DateTime.parse(item['updated']),
+      id: item.id,
+      name: item['name'],
+      type: item['type'],
+      price: item['price'],
+      detail: item['detail'],
+      image: item['image'],
+      status: item['status'],
+      suggest: item['suggest'],
+      time: (item['time'] as Timestamp).toDate(),
     );
   }

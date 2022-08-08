@@ -74,6 +74,8 @@ dependencies:
   flutter_easyloading: ^3.0.5
   local_auth: ^2.1.0
   flutter_pin_code_widget: ^0.0.4+2
+  flutter_svg: ^1.0.3
+  firebase_storage: ^10.3.4
 
 flutter_icons:
   android: true

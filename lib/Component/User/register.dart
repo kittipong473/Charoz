@@ -1,16 +1,16 @@
-import 'package:charoz/Provider/user_provider.dart';
-import 'package:charoz/Service/Api/PHP/user_api.dart';
+import 'package:charoz/Model/SubModel/sub_user_model.dart';
+import 'package:charoz/Service/Database/Firebase/user_crud.dart';
 import 'package:charoz/Service/Route/route_page.dart';
+import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
-import 'package:charoz/Utilty/global_variable.dart';
+import 'package:charoz/Utilty/my_variable.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 final formKey = GlobalKey<FormState>();
@@ -37,12 +37,14 @@ class Register extends StatelessWidget {
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
+        appBar: ScreenWidget().appBarTheme('สมัครสมาชิก'),
         body: GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
           behavior: HitTestBehavior.opaque,
           child: Stack(
             children: [
               Positioned.fill(
+                top: 3.h,
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 5.w),
@@ -51,23 +53,22 @@ class Register extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SizedBox(height: 10.h),
+                          buildImage(),
+                          SizedBox(height: 3.h),
                           ScreenWidget().buildTitle('ข้อมูลทั่วไป'),
                           SizedBox(height: 3.h),
                           buildPhone(),
+                          SizedBox(height: 3.h),
+                          buildEmail(),
                           SizedBox(height: 3.h),
                           buildFirstName(),
                           SizedBox(height: 3.h),
                           buildLastName(),
                           SizedBox(height: 3.h),
-                          buildEmail(),
-                          SizedBox(height: 3.h),
-                          buildBirth(),
-                          SizedBox(height: 3.h),
                           buildPassword1(),
                           SizedBox(height: 3.h),
                           buildPassword2(),
-                          SizedBox(height: 2.h),
+                          SizedBox(height: 1.h),
                           buildPolicy(context),
                           buildCheck(context),
                           SizedBox(height: 3.h),
@@ -79,12 +80,18 @@ class Register extends StatelessWidget {
                   ),
                 ),
               ),
-              ScreenWidget().appBarTitle('ข้อมูลผู้ใช้งาน'),
-              ScreenWidget().backPage(context),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildImage() {
+    return Image.asset(
+      MyImage.logo3,
+      width: 40.w,
+      height: 40.w,
     );
   }
 
@@ -100,6 +107,8 @@ class Register extends StatelessWidget {
         validator: (value) {
           if (value!.isEmpty) {
             return 'กรุณากรอก เบอร์โทรศัพท์';
+          } else if (value.length != 10) {
+            return 'กรุณากรอก เบอร์โทรศัพท์ให้ถูกต้อง';
           } else {
             return null;
           }
@@ -179,63 +188,6 @@ class Register extends StatelessWidget {
           focusedBorder: OutlineInputBorder(
             borderSide: const BorderSide(color: MyStyle.light),
             borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildBirth() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 3.w),
-      width: 80.w,
-      child: StatefulBuilder(
-        builder: (context, setState) => TextFormField(
-          style: MyStyle().normalBlack16(),
-          inputFormatters: [dateFormat],
-          controller: birthController,
-          validator: (value) {
-            if (value!.isEmpty) {
-              return 'กรุณากรอก วันเดือนปีเกิด';
-            } else {
-              return null;
-            }
-          },
-          decoration: InputDecoration(
-            labelStyle: MyStyle().boldBlack16(),
-            labelText: 'วันเดือนปีเกิด :',
-            hintText: '2022-12-31 (ปี ค.ศ.)',
-            hintStyle: MyStyle().normalGrey14(),
-            prefixIcon: const Icon(Icons.schedule_rounded, color: MyStyle.dark),
-            enabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: MyStyle.dark),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: MyStyle.light),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            suffixIcon: IconButton(
-              onPressed: () {
-                showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(DateTime.now().year - 100),
-                  lastDate: DateTime(DateTime.now().year + 1),
-                ).then((value) {
-                  setState(() {
-                    birthValue = value;
-                    birthController.text =
-                        DateFormat('yyyy-MM-dd').format(birthValue!);
-                  });
-                });
-              },
-              icon: Icon(
-                Icons.calendar_today_rounded,
-                color: MyStyle.primary,
-                size: 20.sp,
-              ),
-            ),
           ),
         ),
       ),
@@ -395,16 +347,9 @@ class Register extends StatelessWidget {
       children: [
         TextButton(
           onPressed: () =>
-              Navigator.pushNamed(context, RoutePage.routeTermOfService),
-          child: Text('ข้อกำหนดเงื่อนไขการใช้บริการ',
-              style: MyStyle().boldPrimary14()),
-        ),
-        Text(' และ ', style: MyStyle().normalBlack14()),
-        TextButton(
-          onPressed: () =>
               Navigator.pushNamed(context, RoutePage.routePrivacyPolicy),
-          child:
-              Text('นโยบายความเป็นส่วนตัว', style: MyStyle().boldPrimary14()),
+          child: Text('ข้อกำหนดเงื่อนไขการใช้บริการ',
+              style: MyStyle().boldPrimary16()),
         ),
       ],
     );
@@ -432,9 +377,9 @@ class Register extends StatelessWidget {
       height: 5.h,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(primary: MyStyle.bluePrimary),
-        onPressed: () {
-          EasyLoading.show(status: 'loading...');
+        onPressed: () async {
           if (formKey.currentState!.validate()) {
+            EasyLoading.show(status: 'loading...');
             validateInformation(context);
           }
         },
@@ -447,21 +392,19 @@ class Register extends StatelessWidget {
     bool status1 =
         password1Controller.text == password2Controller.text ? true : false;
     bool status2 = allow;
-    bool status3 = await Provider.of<UserProvider>(context, listen: false)
-        .checkPhone(phoneController.text);
-    bool status4 = await Provider.of<UserProvider>(context, listen: false)
-        .checkEmail(emailController.text);
+    bool status3 = await UserCRUD().checkUserByPhone(phoneController.text);
+    bool status4 = await UserCRUD().checkUserByEmail(emailController.text);
     if (!status1) {
       EasyLoading.dismiss();
       DialogAlert().singleDialog(context, 'รหัสผ่านไม่ตรงกัน');
-    } else if (status2) {
+    } else if (!status2) {
       EasyLoading.dismiss();
       DialogAlert().singleDialog(
           context, 'กรุณายอมรับข้อกำหนด เมื่อทำการสมัครเป็นสมาชิก');
-    } else if (status3) {
+    } else if (!status3) {
       EasyLoading.dismiss();
       DialogAlert().singleDialog(context, 'เบอร์โทรศัพท์ถูกใช้งานแล้ว');
-    } else if (status4) {
+    } else if (!status4) {
       EasyLoading.dismiss();
       DialogAlert().singleDialog(context, 'อีเมลล์ถูกใช้งานแล้ว');
     } else {
@@ -470,26 +413,33 @@ class Register extends StatelessWidget {
   }
 
   Future processRegister(BuildContext context) async {
-    await GlobalVariable.auth
+    await MyVariable.auth
         .createUserWithEmailAndPassword(
             email: emailController.text, password: password1Controller.text)
         .then((value) async {
-      bool status = await UserApi().insertUser(
-        firstname: firstNameController.text,
-        lastname: lastNameController.text,
-        birth: DateTime.parse(birthController.text),
-        email: emailController.text,
-        phone: phoneController.text,
-        role: 'customer',
-        token: value.user!.uid,
+      bool status = await UserCRUD().createUser(
+        SubUserModel(
+          firstname: firstNameController.text,
+          lastname: lastNameController.text,
+          email: emailController.text,
+          phone: phoneController.text,
+          image: '',
+          role: 'customer',
+          status: 1,
+          tokenE: value.user!.uid,
+          tokenP: '',
+          time: Timestamp.fromDate(DateTime.now()),
+        ),
       );
       if (status) {
-        await GlobalVariable.auth.signOut();
+        await MyVariable.auth.signOut();
         EasyLoading.dismiss();
         Navigator.pop(context);
         MyFunction()
             .toast('สมัครสมาชิกสำเร็จ สามารถ Login เข้าใช้งานระบบได้เลย');
+        Navigator.pushNamed(context, RoutePage.routeLogin);
       } else {
+        EasyLoading.dismiss();
         DialogAlert().addFailedDialog(context);
       }
     }).catchError((e) {

@@ -34,7 +34,7 @@ class CarouselDetail {
                   onInteractionEnd: (details) => resetAnimation(),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
-                    child: ShowImage().showBanner(path),
+                    child: ShowImage().showImage(path),
                   ),
                 ),
               ),

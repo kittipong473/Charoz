@@ -1,14 +1,16 @@
 import 'dart:io';
 
+import 'package:charoz/Model/SubModel/sub_product_model.dart';
 import 'package:charoz/Provider/product_provider.dart';
-import 'package:charoz/Service/Api/PHP/product_api.dart';
+import 'package:charoz/Service/Database/Firebase/product_crud.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
-import 'package:charoz/Utilty/global_variable.dart';
+import 'package:charoz/Utilty/my_variable.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Widget/dropdown_menu.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
@@ -101,7 +103,7 @@ class AddProduct {
                 const Icon(Icons.arrow_drop_down_outlined, color: MyStyle.dark),
             isExpanded: true,
             value: chooseType,
-            items: GlobalVariable.productTypes
+            items: MyVariable.productTypes
                 .map(DropDownMenu().dropdownItem)
                 .toList(),
             onChanged: (value) => setState(() => chooseType = value as String),
@@ -284,14 +286,9 @@ class AddProduct {
         Checkbox(
           value: suggest,
           activeColor: MyStyle.primary,
-          onChanged: (check) {
-            setState(() => suggest = check!);
-          },
+          onChanged: (check) => setState(() => suggest = check!),
         ),
-        Text(
-          'แนะนำรายการอาหารที่หน้าหลัก',
-          style: MyStyle().normalBlack16(),
-        )
+        Text('แนะนำรายการอาหารที่หน้าหลัก', style: MyStyle().normalBlack16())
       ],
     );
   }
@@ -316,22 +313,26 @@ class AddProduct {
   }
 
   Future processInsert(BuildContext context) async {
-    String chooseImage = await ProductApi().saveProductImage(image!, file);
+    String chooseImage =
+        file == null ? await ProductCRUD().uploadImageProduct(file!) : '';
 
-    bool status = await ProductApi().insertProduct(
-      name: nameController.text,
-      type: chooseType!,
-      price: double.parse(priceController.text),
-      score: double.parse(scoreController.text),
-      detail: detailController.text.isEmpty ? 'ไม่มี' : detailController.text,
-      image: chooseImage,
-      suggest: suggest ? 1 : 0,
-      time: DateTime.now(),
+    bool status = await ProductCRUD().createProduct(
+      SubProductModel(
+        name: nameController.text,
+        type: chooseType!,
+        price: int.parse(priceController.text),
+        detail: detailController.text.isEmpty ? 'ไม่มี' : detailController.text,
+        image: chooseImage,
+        status: 1,
+        suggest: suggest ? 1 : 0,
+        time: Timestamp.fromDate(DateTime.now()),
+      ),
     );
 
     if (status) {
-      Provider.of<ProductProvider>(context, listen: false).getAllProductWhereType(
-          GlobalVariable.productTypes[GlobalVariable.indexProductChip]);
+      Provider.of<ProductProvider>(context, listen: false).readProductAllList();
+      Provider.of<ProductProvider>(context, listen: false).readProductTypeList(
+          MyVariable.productTypes[MyVariable.indexProductChip]);
       EasyLoading.dismiss();
       MyFunction().toast('เพิ่มรายการอาหารเรียบร้อยแล้ว');
       Navigator.pop(context);

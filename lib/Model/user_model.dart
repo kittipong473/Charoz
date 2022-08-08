@@ -1,89 +1,91 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserModel {
-  final int userId;
-  final String userFirstName;
-  final String userLastName;
-  final DateTime userBirth;
-  final String userEmail;
-  final String userPhone;
-  final String userImage;
-  final String userRole;
-  final String userEmailToken;
-  final String userPhoneToken;
-  final String userPinCode;
+  final String id;
+  final String firstname;
+  final String lastname;
+  final String email;
+  final String phone;
+  final String image;
+  final String role;
+  final int status;
+  final String tokenE;
+  final String tokenP;
+  final DateTime time;
   UserModel({
-    required this.userId,
-    required this.userFirstName,
-    required this.userLastName,
-    required this.userBirth,
-    required this.userEmail,
-    required this.userPhone,
-    required this.userImage,
-    required this.userRole,
-    required this.userEmailToken,
-    required this.userPhoneToken,
-    required this.userPinCode,
+    required this.id,
+    required this.firstname,
+    required this.lastname,
+    required this.email,
+    required this.phone,
+    required this.image,
+    required this.role,
+    required this.status,
+    required this.tokenE,
+    required this.tokenP,
+    required this.time,
   });
 
   UserModel copyWith({
-    int? userId,
-    String? userFirstName,
-    String? userLastName,
-    DateTime? userBirth,
-    String? userEmail,
-    String? userPhone,
-    String? userImage,
-    String? userRole,
-    String? userEmailToken,
-    String? userPhoneToken,
-    String? userPinCode,
+    String? id,
+    String? firstname,
+    String? lastname,
+    String? email,
+    String? phone,
+    String? image,
+    String? role,
+    int? status,
+    String? tokenE,
+    String? tokenP,
+    DateTime? time,
   }) {
     return UserModel(
-      userId: userId ?? this.userId,
-      userFirstName: userFirstName ?? this.userFirstName,
-      userLastName: userLastName ?? this.userLastName,
-      userBirth: userBirth ?? this.userBirth,
-      userEmail: userEmail ?? this.userEmail,
-      userPhone: userPhone ?? this.userPhone,
-      userImage: userImage ?? this.userImage,
-      userRole: userRole ?? this.userRole,
-      userEmailToken: userEmailToken ?? this.userEmailToken,
-      userPhoneToken: userPhoneToken ?? this.userPhoneToken,
-      userPinCode: userPinCode ?? this.userPinCode,
+      id: id ?? this.id,
+      firstname: firstname ?? this.firstname,
+      lastname: lastname ?? this.lastname,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      image: image ?? this.image,
+      role: role ?? this.role,
+      status: status ?? this.status,
+      tokenE: tokenE ?? this.tokenE,
+      tokenP: tokenP ?? this.tokenP,
+      time: time ?? this.time,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'userId': userId,
-      'userFirstName': userFirstName,
-      'userLastName': userLastName,
-      'userBirth': userBirth.millisecondsSinceEpoch,
-      'userEmail': userEmail,
-      'userPhone': userPhone,
-      'userImage': userImage,
-      'userRole': userRole,
-      'userEmailToken': userEmailToken,
-      'userPhoneToken': userPhoneToken,
-      'userPinCode': userPinCode,
+      'id': id,
+      'firstname': firstname,
+      'lastname': lastname,
+      'email': email,
+      'phone': phone,
+      'image': image,
+      'role': role,
+      'status': status,
+      'tokenE': tokenE,
+      'tokenP': tokenP,
+      'time': time.millisecondsSinceEpoch,
     };
   }
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      userId: map['userId']?.toInt() ?? 0,
-      userFirstName: map['userFirstName'] ?? '',
-      userLastName: map['userLastName'] ?? '',
-      userBirth: DateTime.fromMillisecondsSinceEpoch(map['userBirth']),
-      userEmail: map['userEmail'] ?? '',
-      userPhone: map['userPhone'] ?? '',
-      userImage: map['userImage'] ?? '',
-      userRole: map['userRole'] ?? '',
-      userEmailToken: map['userEmailToken'] ?? '',
-      userPhoneToken: map['userPhoneToken'] ?? '',
-      userPinCode: map['userPinCode'] ?? '',
+      id: map['id'] ?? '',
+      firstname: map['firstname'] ?? '',
+      lastname: map['lastname'] ?? '',
+      email: map['email'] ?? '',
+      phone: map['phone'] ?? '',
+      image: map['image'] ?? '',
+      role: map['role'] ?? '',
+      status: map['status']?.toInt() ?? 0,
+      tokenE: map['tokenE'] ?? '',
+      tokenP: map['tokenP'] ?? '',
+      time: DateTime.fromMillisecondsSinceEpoch(map['time']),
     );
   }
 
@@ -94,7 +96,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(userId: $userId, userFirstName: $userFirstName, userLastName: $userLastName, userBirth: $userBirth, userEmail: $userEmail, userPhone: $userPhone, userImage: $userImage, userRole: $userRole, userEmailToken: $userEmailToken, userPhoneToken: $userPhoneToken, userPinCode: $userPinCode)';
+    return 'UserModel(id: $id, firstname: $firstname, lastname: $lastname, email: $email, phone: $phone, image: $image, role: $role, status: $status, tokenE: $tokenE, tokenP: $tokenP, time: $time)';
   }
 
   @override
@@ -102,47 +104,47 @@ class UserModel {
     if (identical(this, other)) return true;
 
     return other is UserModel &&
-        other.userId == userId &&
-        other.userFirstName == userFirstName &&
-        other.userLastName == userLastName &&
-        other.userBirth == userBirth &&
-        other.userEmail == userEmail &&
-        other.userPhone == userPhone &&
-        other.userImage == userImage &&
-        other.userRole == userRole &&
-        other.userEmailToken == userEmailToken &&
-        other.userPhoneToken == userPhoneToken &&
-        other.userPinCode == userPinCode;
+        other.id == id &&
+        other.firstname == firstname &&
+        other.lastname == lastname &&
+        other.email == email &&
+        other.phone == phone &&
+        other.image == image &&
+        other.role == role &&
+        other.status == status &&
+        other.tokenE == tokenE &&
+        other.tokenP == tokenP &&
+        other.time == time;
   }
 
   @override
   int get hashCode {
-    return userId.hashCode ^
-        userFirstName.hashCode ^
-        userLastName.hashCode ^
-        userBirth.hashCode ^
-        userEmail.hashCode ^
-        userPhone.hashCode ^
-        userImage.hashCode ^
-        userRole.hashCode ^
-        userEmailToken.hashCode ^
-        userPhoneToken.hashCode ^
-        userPinCode.hashCode;
+    return id.hashCode ^
+        firstname.hashCode ^
+        lastname.hashCode ^
+        email.hashCode ^
+        phone.hashCode ^
+        image.hashCode ^
+        role.hashCode ^
+        status.hashCode ^
+        tokenE.hashCode ^
+        tokenP.hashCode ^
+        time.hashCode;
   }
 }
 
-UserModel convertUser(dynamic item) {
+UserModel convertUser(dynamic item, String? id) {
   return UserModel(
-    userId: int.parse(item['userId']),
-    userFirstName: item['userFirstName'],
-    userLastName: item['userLastName'],
-    userBirth: DateTime.parse(item['userBirth']),
-    userEmail: item['userEmail'],
-    userPhone: item['userPhone'],
-    userImage: item['userImage'],
-    userRole: item['userRole'],
-    userEmailToken: item['userEmailToken'],
-    userPhoneToken: item['userPhoneToken'],
-    userPinCode: item['userPinCode'],
+    id: id ?? item.id,
+    firstname: item['firstname'],
+    lastname: item['lastname'],
+    email: item['email'],
+    phone: item['phone'],
+    image: item['image'],
+    role: item['role'],
+    status: item['status'],
+    tokenE: item['tokenE'],
+    tokenP: item['tokenP'],
+    time: (item['time'] as Timestamp).toDate(),
   );
 }

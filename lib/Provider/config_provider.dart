@@ -1,22 +1,43 @@
 import 'package:charoz/Model/banner_model.dart';
-import 'package:charoz/Model/maintain_model.dart';
-import 'package:charoz/Service/Api/PHP/config_api.dart';
+import 'package:charoz/Model/maintenance_model.dart';
+import 'package:charoz/Model/privacy_model.dart';
+import 'package:charoz/Model/test_model.dart';
+import 'package:charoz/Service/Database/Firebase/config_crud.dart';
 import 'package:flutter/foundation.dart';
 
 class ConfigProvider with ChangeNotifier {
-  MaintainModel? _maintain;
+  MaintenanceModel? _maintenance;
   List<BannerModel>? _bannerList;
+  List<PrivacyModel>? _privacyList;
+  List<TestModel>? _testList;
 
-  get maintain => _maintain;
+  get maintenance => _maintenance;
   get bannerList => _bannerList;
+  get privacyList => _privacyList;
+  get testList => _testList;
 
-  Future getAllBanner() async {
-    _bannerList = await ConfigApi().getAllBanner();
+  Future readBannerList() async {
+    if (_bannerList == null) {
+      _bannerList = await ConfigCRUD().readBannerList();
+      notifyListeners();
+    }
+  }
+
+  Future readPrivacyList() async {
+    if (_privacyList == null) {
+      _privacyList = await ConfigCRUD().readPrivacyList();
+      notifyListeners();
+    }
+  }
+
+  Future readMaintenanceFromStatus(int status) async {
+    _maintenance = await ConfigCRUD().readMaintenanceFromStatus(status);
     notifyListeners();
   }
 
-  Future getMaintenance(int status) async {
-    _maintain = await ConfigApi().getMaintainWhereStatus(status: status);
-    notifyListeners();
+  void clearConfigData() {
+    _maintenance = null;
+    _bannerList = null;
+    _privacyList = null;
   }
 }

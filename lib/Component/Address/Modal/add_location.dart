@@ -1,11 +1,13 @@
+import 'package:charoz/Model/SubModel/sub_address_model.dart';
 import 'package:charoz/Provider/address_provider.dart';
-import 'package:charoz/Service/Api/PHP/address_api.dart';
+import 'package:charoz/Service/Database/Firebase/address_crud.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
-import 'package:charoz/Utilty/global_variable.dart';
+import 'package:charoz/Utilty/my_variable.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Widget/dropdown_menu.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
@@ -19,8 +21,8 @@ class AddLocation {
   String? chooseAddress;
   String? chooseNumber;
 
-  Future<dynamic> openModalAddAddress(context) => showModalBottomSheet(
-      context: context, builder: (context) => modalAddAddress());
+  Future<dynamic> openModalAddAddress(context) =>
+      showModalBottomSheet(context: context, builder: (_) => modalAddAddress());
 
   Widget modalAddAddress() {
     return SizedBox(
@@ -83,7 +85,7 @@ class AddLocation {
                 color: MyStyle.primary),
             isExpanded: true,
             value: chooseAddress,
-            items: GlobalVariable.locationTypes
+            items: MyVariable.locationTypes
                 .map(DropDownMenu().dropdownItem)
                 .toList(),
             onChanged: (value) =>
@@ -115,7 +117,7 @@ class AddLocation {
             ),
             isExpanded: true,
             value: chooseNumber,
-            items: GlobalVariable.buildingNumbers
+            items: MyVariable.buildingNumbers
                 .map(DropDownMenu().dropdownItem)
                 .toList(),
             onChanged: (value) {
@@ -186,18 +188,20 @@ class AddLocation {
   }
 
   Future processInsert(BuildContext context) async {
-    bool status = await AddressApi().insertAddress(
-      userid: GlobalVariable.userTokenId,
-      name: chooseAddress!,
-      desc: descController.text.isEmpty ? chooseNumber! : descController.text,
-      lat: 0,
-      lng: 0,
-      time: DateTime.now(),
+    bool status = await AddressCRUD().createAddress(
+      SubAddressModel(
+        userid: MyVariable.userTokenId,
+        name: chooseAddress!,
+        detail:
+            descController.text.isEmpty ? chooseNumber! : descController.text,
+        lat: 0,
+        lng: 0,
+        time: Timestamp.fromDate(DateTime.now()),
+      ),
     );
 
     if (status) {
-      Provider.of<AddressProvider>(context, listen: false)
-          .getAllAddressWhereUser();
+      Provider.of<AddressProvider>(context, listen: false).readAddressList();
       EasyLoading.dismiss();
       MyFunction().toast('เพิ่มข้อมูลที่อยู่เรียบร้อย');
       Navigator.pop(context);

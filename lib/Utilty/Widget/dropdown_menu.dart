@@ -5,10 +5,7 @@ class DropDownMenu {
   DropdownMenuItem<String> dropdownItem(String item) {
     return DropdownMenuItem(
       value: item,
-      child: Text(
-        item,
-        style: MyStyle().normalBlack14(),
-      ),
+      child: Text(item, style: MyStyle().normalBlack16()),
     );
   }
 }

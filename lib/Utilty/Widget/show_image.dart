@@ -17,10 +17,15 @@ class ShowImage {
     );
   }
 
-  Widget showBanner(String path) => showImage('${RouteApi.domainBanner}$path');
-  Widget showNoti(String path) => showImage('${RouteApi.domainNoti}$path');
-  Widget showProduct(String path) =>
-      showImage('${RouteApi.domainProduct}$path');
-  Widget showShop(String path) => showImage('${RouteApi.domainShop}$path');
-  Widget showUser(String path) => showImage('${RouteApi.domainUser}$path');
+  Widget showCircleImage(String url) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(50),
+      child: CachedNetworkImage(
+        fit: BoxFit.cover,
+        imageUrl: url,
+        placeholder: (context, url) => const ShowProgress(),
+        errorWidget: (context, url, error) => Image.asset(MyImage.error),
+      ),
+    );
+  }
 }

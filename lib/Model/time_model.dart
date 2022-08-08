@@ -2,102 +2,101 @@
 import 'dart:convert';
 
 class TimeModel {
-  final int timeId;
-  final int shopId;
-  final String timeOpen;
-  final String timeClose;
-  final String timeStatus;
-  final String timeChoose;
+  final String id;
+  final String shopid;
+  final String open;
+  final String close;
+  final String status;
+  final String choose;
   TimeModel({
-    required this.timeId,
-    required this.shopId,
-    required this.timeOpen,
-    required this.timeClose,
-    required this.timeStatus,
-    required this.timeChoose,
+    required this.id,
+    required this.shopid,
+    required this.open,
+    required this.close,
+    required this.status,
+    required this.choose,
   });
 
   TimeModel copyWith({
-    int? timeId,
-    int? shopId,
-    String? timeOpen,
-    String? timeClose,
-    String? timeStatus,
-    String? timeChoose,
+    String? id,
+    String? shopid,
+    String? open,
+    String? close,
+    String? status,
+    String? choose,
   }) {
     return TimeModel(
-      timeId: timeId ?? this.timeId,
-      shopId: shopId ?? this.shopId,
-      timeOpen: timeOpen ?? this.timeOpen,
-      timeClose: timeClose ?? this.timeClose,
-      timeStatus: timeStatus ?? this.timeStatus,
-      timeChoose: timeChoose ?? this.timeChoose,
+      id: id ?? this.id,
+      shopid: shopid ?? this.shopid,
+      open: open ?? this.open,
+      close: close ?? this.close,
+      status: status ?? this.status,
+      choose: choose ?? this.choose,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'timeId': timeId,
-      'shopId': shopId,
-      'timeOpen': timeOpen,
-      'timeClose': timeClose,
-      'timeStatus': timeStatus,
-      'timeChoose': timeChoose,
+      'id': id,
+      'shopid': shopid,
+      'open': open,
+      'close': close,
+      'status': status,
+      'choose': choose,
     };
   }
 
   factory TimeModel.fromMap(Map<String, dynamic> map) {
     return TimeModel(
-      timeId: map['timeId']?.toInt() ?? 0,
-      shopId: map['shopId']?.toInt() ?? 0,
-      timeOpen: map['timeOpen'] ?? '',
-      timeClose: map['timeClose'] ?? '',
-      timeStatus: map['timeStatus'] ?? '',
-      timeChoose: map['timeChoose'] ?? '',
+      id: map['id'] ?? '',
+      shopid: map['shopid'] ?? '',
+      open: map['open'] ?? '',
+      close: map['close'] ?? '',
+      status: map['status'] ?? '',
+      choose: map['choose'] ?? '',
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory TimeModel.fromJson(String source) =>
-      TimeModel.fromMap(json.decode(source));
+  factory TimeModel.fromJson(String source) => TimeModel.fromMap(json.decode(source));
 
   @override
   String toString() {
-    return 'TimeModel(timeId: $timeId, shopId: $shopId, timeOpen: $timeOpen, timeClose: $timeClose, timeStatus: $timeStatus, timeChoose: $timeChoose)';
+    return 'TimeModel(id: $id, shopid: $shopid, open: $open, close: $close, status: $status, choose: $choose)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-
+  
     return other is TimeModel &&
-        other.timeId == timeId &&
-        other.shopId == shopId &&
-        other.timeOpen == timeOpen &&
-        other.timeClose == timeClose &&
-        other.timeStatus == timeStatus &&
-        other.timeChoose == timeChoose;
+      other.id == id &&
+      other.shopid == shopid &&
+      other.open == open &&
+      other.close == close &&
+      other.status == status &&
+      other.choose == choose;
   }
 
   @override
   int get hashCode {
-    return timeId.hashCode ^
-        shopId.hashCode ^
-        timeOpen.hashCode ^
-        timeClose.hashCode ^
-        timeStatus.hashCode ^
-        timeChoose.hashCode;
+    return id.hashCode ^
+      shopid.hashCode ^
+      open.hashCode ^
+      close.hashCode ^
+      status.hashCode ^
+      choose.hashCode;
   }
 }
 
 TimeModel convertTime(dynamic item) {
   return TimeModel(
-    timeId: int.parse(item['timeId']),
-    shopId: int.parse(item['shopId']),
-    timeOpen: item['timeOpen'],
-    timeClose: item['timeClose'],
-    timeStatus: item['timeStatus'],
-    timeChoose: item['timeChoose'],
+    id: item.id,
+    shopid: item['shopid'],
+    open: item['open'],
+    close: item['close'],
+    status: item['status'],
+    choose: item['choose'],
   );
 }

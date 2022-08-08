@@ -1,14 +1,16 @@
 import 'dart:io';
 
+import 'package:charoz/Model/SubModel/sub_noti_model.dart';
 import 'package:charoz/Provider/noti_provider.dart';
-import 'package:charoz/Service/Api/PHP/noti_api.dart';
+import 'package:charoz/Service/Database/Firebase/noti_crud.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
-import 'package:charoz/Utilty/global_variable.dart';
+import 'package:charoz/Utilty/my_variable.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Widget/dropdown_menu.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
@@ -111,11 +113,11 @@ class AddNoti {
                 color: MyStyle.primary),
             isExpanded: true,
             value: chooseType,
-            items: GlobalVariable.role == 'admin'
-                ? GlobalVariable.notisAdmin
+            items: MyVariable.role == 'admin'
+                ? MyVariable.notisAdmin
                     .map(DropDownMenu().dropdownItem)
                     .toList()
-                : GlobalVariable.notisUser
+                : MyVariable.notisUser
                     .map(DropDownMenu().dropdownItem)
                     .toList(),
             onChanged: (value) => setState(() => chooseType = value as String),
@@ -372,21 +374,25 @@ class AddNoti {
   }
 
   Future processInsert(BuildContext context) async {
-    String chooseImage = await NotiApi().saveNotiImage(image!, file);
+    String chooseImage =
+        file == null ? await NotiCRUD().uploadImageNoti(file!) : '';
 
-    bool status = await NotiApi().insertNoti(
-      type: chooseType!,
-      name: nameController.text,
-      detail: detailController.text,
-      userid: int.parse(useridController.text),
-      image: chooseImage,
-      start: startValue!,
-      end: endValue!,
+    bool status = await NotiCRUD().createNoti(
+      SubNotiModel(
+        userid: useridController.text.isEmpty ? '' : useridController.text,
+        type: chooseType!,
+        name: nameController.text,
+        detail: detailController.text,
+        image: chooseImage,
+        start: Timestamp.fromDate(startValue!),
+        end: Timestamp.fromDate(endValue!),
+        status: 1,
+      ),
     );
 
     if (status) {
-      Provider.of<NotiProvider>(context, listen: false).getAllNotiWhereType(
-          GlobalVariable.notisAdmin[GlobalVariable.indexNotiChip]);
+      Provider.of<NotiProvider>(context, listen: false)
+          .readNotiTypeList(MyVariable.notisAdmin[MyVariable.indexNotiChip]);
       EasyLoading.dismiss();
       MyFunction().toast('เพิ่มการแจ้งเตือนเรียบร้อย');
       Navigator.pop(context);

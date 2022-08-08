@@ -1,119 +1,115 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class OrderModel {
-  final int orderId;
-  final int shopId;
-  final int managerId;
-  final int customerId;
-  final int riderId;
-  final int addressId;
-  final String productIds;
-  final String orderProductAmounts;
-  final double orderTotal;
-  final String orderReceiveType;
-  final String orderCommentShop;
-  final String orderCommentRider;
-  final String orderStatus;
-  final String orderTracking;
-  final DateTime created;
-  final DateTime updated;
+  final String id;
+  final String shopid;
+  final String riderid;
+  final String customerid;
+  final String addressid;
+  final String productidList;
+  final String productamountList;
+  final int charge;
+  final int total;
+  final int type;
+  final String commentshop;
+  final String commentrider;
+  final int status;
+  final int track;
+  final DateTime time;
   OrderModel({
-    required this.orderId,
-    required this.shopId,
-    required this.managerId,
-    required this.customerId,
-    required this.riderId,
-    required this.addressId,
-    required this.productIds,
-    required this.orderProductAmounts,
-    required this.orderTotal,
-    required this.orderReceiveType,
-    required this.orderCommentShop,
-    required this.orderCommentRider,
-    required this.orderStatus,
-    required this.orderTracking,
-    required this.created,
-    required this.updated,
+    required this.id,
+    required this.shopid,
+    required this.riderid,
+    required this.customerid,
+    required this.addressid,
+    required this.productidList,
+    required this.productamountList,
+    required this.charge,
+    required this.total,
+    required this.type,
+    required this.commentshop,
+    required this.commentrider,
+    required this.status,
+    required this.track,
+    required this.time,
   });
 
   OrderModel copyWith({
-    int? orderId,
-    int? shopId,
-    int? managerId,
-    int? customerId,
-    int? riderId,
-    int? addressId,
-    String? productIds,
-    String? orderProductAmounts,
-    double? orderTotal,
-    String? orderReceiveType,
-    String? orderCommentShop,
-    String? orderCommentRider,
-    String? orderStatus,
-    String? orderTracking,
-    DateTime? created,
-    DateTime? updated,
+    String? id,
+    String? shopid,
+    String? riderid,
+    String? customerid,
+    String? addressid,
+    String? productidList,
+    String? productamountList,
+    int? charge,
+    int? total,
+    int? type,
+    String? commentshop,
+    String? commentrider,
+    int? status,
+    int? track,
+    DateTime? time,
   }) {
     return OrderModel(
-      orderId: orderId ?? this.orderId,
-      shopId: shopId ?? this.shopId,
-      managerId: managerId ?? this.managerId,
-      customerId: customerId ?? this.customerId,
-      riderId: riderId ?? this.riderId,
-      addressId: addressId ?? this.addressId,
-      productIds: productIds ?? this.productIds,
-      orderProductAmounts: orderProductAmounts ?? this.orderProductAmounts,
-      orderTotal: orderTotal ?? this.orderTotal,
-      orderReceiveType: orderReceiveType ?? this.orderReceiveType,
-      orderCommentShop: orderCommentShop ?? this.orderCommentShop,
-      orderCommentRider: orderCommentRider ?? this.orderCommentRider,
-      orderStatus: orderStatus ?? this.orderStatus,
-      orderTracking: orderTracking ?? this.orderTracking,
-      created: created ?? this.created,
-      updated: updated ?? this.updated,
+      id: id ?? this.id,
+      shopid: shopid ?? this.shopid,
+      riderid: riderid ?? this.riderid,
+      customerid: customerid ?? this.customerid,
+      addressid: addressid ?? this.addressid,
+      productidList: productidList ?? this.productidList,
+      productamountList: productamountList ?? this.productamountList,
+      charge: charge ?? this.charge,
+      total: total ?? this.total,
+      type: type ?? this.type,
+      commentshop: commentshop ?? this.commentshop,
+      commentrider: commentrider ?? this.commentrider,
+      status: status ?? this.status,
+      track: track ?? this.track,
+      time: time ?? this.time,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'orderId': orderId,
-      'shopId': shopId,
-      'managerId': managerId,
-      'customerId': customerId,
-      'riderId': riderId,
-      'addressId': addressId,
-      'productIds': productIds,
-      'orderProductAmounts': orderProductAmounts,
-      'orderTotal': orderTotal,
-      'orderReceiveType': orderReceiveType,
-      'orderCommentShop': orderCommentShop,
-      'orderCommentRider': orderCommentRider,
-      'orderStatus': orderStatus,
-      'orderTracking': orderTracking,
-      'created': created.millisecondsSinceEpoch,
-      'updated': updated.millisecondsSinceEpoch,
+      'id': id,
+      'shopid': shopid,
+      'riderid': riderid,
+      'customerid': customerid,
+      'addressid': addressid,
+      'productidList': productidList,
+      'productamountList': productamountList,
+      'charge': charge,
+      'total': total,
+      'type': type,
+      'commentshop': commentshop,
+      'commentrider': commentrider,
+      'status': status,
+      'track': track,
+      'time': time.millisecondsSinceEpoch,
     };
   }
 
   factory OrderModel.fromMap(Map<String, dynamic> map) {
     return OrderModel(
-      orderId: map['orderId']?.toInt() ?? 0,
-      shopId: map['shopId']?.toInt() ?? 0,
-      managerId: map['managerId']?.toInt() ?? 0,
-      customerId: map['customerId']?.toInt() ?? 0,
-      riderId: map['riderId']?.toInt() ?? 0,
-      addressId: map['addressId']?.toInt() ?? 0,
-      productIds: map['productIds'] ?? '',
-      orderProductAmounts: map['orderProductAmounts'] ?? '',
-      orderTotal: map['orderTotal']?.toDouble() ?? 0.0,
-      orderReceiveType: map['orderReceiveType'] ?? '',
-      orderCommentShop: map['orderCommentShop'] ?? '',
-      orderCommentRider: map['orderCommentRider'] ?? '',
-      orderStatus: map['orderStatus'] ?? '',
-      orderTracking: map['orderTracking'] ?? '',
-      created: DateTime.fromMillisecondsSinceEpoch(map['created']),
-      updated: DateTime.fromMillisecondsSinceEpoch(map['updated']),
+      id: map['id'] ?? '',
+      shopid: map['shopid'] ?? '',
+      riderid: map['riderid'] ?? '',
+      customerid: map['customerid'] ?? '',
+      addressid: map['addressid'] ?? '',
+      productidList: map['productidList'] ?? '',
+      productamountList: map['productamountList'] ?? '',
+      charge: map['charge']?.toInt() ?? 0,
+      total: map['total']?.toInt() ?? 0,
+      type: map['type']?.toInt() ?? 0,
+      commentshop: map['commentshop'] ?? '',
+      commentrider: map['commentrider'] ?? '',
+      status: map['status']?.toInt() ?? 0,
+      track: map['track']?.toInt() ?? 0,
+      time: (map['time'] as Timestamp).toDate(),
     );
   }
 
@@ -124,7 +120,7 @@ class OrderModel {
 
   @override
   String toString() {
-    return 'OrderModel(orderId: $orderId, shopId: $shopId, managerId: $managerId, customerId: $customerId, riderId: $riderId, addressId: $addressId, productIds: $productIds, orderProductAmounts: $orderProductAmounts, orderTotal: $orderTotal, orderReceiveType: $orderReceiveType, orderCommentShop: $orderCommentShop, orderCommentRider: $orderCommentRider, orderStatus: $orderStatus, orderTracking: $orderTracking, created: $created, updated: $updated)';
+    return 'OrderModel(id: $id, shopid: $shopid, riderid: $riderid, customerid: $customerid, addressid: $addressid, productidList: $productidList, productamountList: $productamountList, charge: $charge, total: $total, type: $type, commentshop: $commentshop, commentrider: $commentrider, status: $status, track: $track, time: $time)';
   }
 
   @override
@@ -132,62 +128,59 @@ class OrderModel {
     if (identical(this, other)) return true;
 
     return other is OrderModel &&
-        other.orderId == orderId &&
-        other.shopId == shopId &&
-        other.managerId == managerId &&
-        other.customerId == customerId &&
-        other.riderId == riderId &&
-        other.addressId == addressId &&
-        other.productIds == productIds &&
-        other.orderProductAmounts == orderProductAmounts &&
-        other.orderTotal == orderTotal &&
-        other.orderReceiveType == orderReceiveType &&
-        other.orderCommentShop == orderCommentShop &&
-        other.orderCommentRider == orderCommentRider &&
-        other.orderStatus == orderStatus &&
-        other.orderTracking == orderTracking &&
-        other.created == created &&
-        other.updated == updated;
+        other.id == id &&
+        other.shopid == shopid &&
+        other.riderid == riderid &&
+        other.customerid == customerid &&
+        other.addressid == addressid &&
+        other.productidList == productidList &&
+        other.productamountList == productamountList &&
+        other.charge == charge &&
+        other.total == total &&
+        other.type == type &&
+        other.commentshop == commentshop &&
+        other.commentrider == commentrider &&
+        other.status == status &&
+        other.track == track &&
+        other.time == time;
   }
 
   @override
   int get hashCode {
-    return orderId.hashCode ^
-        shopId.hashCode ^
-        managerId.hashCode ^
-        customerId.hashCode ^
-        riderId.hashCode ^
-        addressId.hashCode ^
-        productIds.hashCode ^
-        orderProductAmounts.hashCode ^
-        orderTotal.hashCode ^
-        orderReceiveType.hashCode ^
-        orderCommentShop.hashCode ^
-        orderCommentRider.hashCode ^
-        orderStatus.hashCode ^
-        orderTracking.hashCode ^
-        created.hashCode ^
-        updated.hashCode;
+    return id.hashCode ^
+        shopid.hashCode ^
+        riderid.hashCode ^
+        customerid.hashCode ^
+        addressid.hashCode ^
+        productidList.hashCode ^
+        productamountList.hashCode ^
+        charge.hashCode ^
+        total.hashCode ^
+        type.hashCode ^
+        commentshop.hashCode ^
+        commentrider.hashCode ^
+        status.hashCode ^
+        track.hashCode ^
+        time.hashCode;
   }
 }
 
 OrderModel convertOrder(dynamic item) {
   return OrderModel(
-    orderId: int.parse(item['orderId']),
-    shopId: int.parse(item['shopId']),
-    managerId: int.parse(item['managerId']),
-    customerId: int.parse(item['customerId']),
-    riderId: int.parse(item['riderId']),
-    addressId: int.parse(item['addressId']),
-    productIds: item['productIds'],
-    orderProductAmounts: item['orderProductAmounts'],
-    orderTotal: double.parse(item['orderTotal']),
-    orderReceiveType: item['orderReceiveType'],
-    orderCommentShop: item['orderCommentShop'],
-    orderCommentRider: item['orderCommentRider'],
-    orderStatus: item['orderStatus'],
-    orderTracking: item['orderTracking'],
-    created: DateTime.parse(item['created']),
-    updated: DateTime.parse(item['updated']),
+    id: item.id,
+    shopid: item['shopid'],
+    customerid: item['customerid'],
+    riderid: item['riderid'],
+    addressid: item['addressid'],
+    productidList: item['productid'],
+    productamountList: item['productamount'],
+    charge: item['charge'],
+    total: item['total'],
+    type: item['type'],
+    commentshop: item['commentshop'],
+    commentrider: item['commentrider'],
+    status: item['status'],
+    track: item['track'],
+    time: (item['time'] as Timestamp).toDate(),
   );
 }

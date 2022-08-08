@@ -33,7 +33,7 @@ class SearchProduct extends SearchDelegate {
     return Consumer<ProductProvider>(
       builder: (_, provider, __) {
         List<ProductModel> suggestions = provider.productAlls.where((item) {
-          final result = item.productName.toLowerCase();
+          final result = item.name.toLowerCase();
           final input = query.toLowerCase();
           return result.contains(input) ? true : false;
         }).toList();
@@ -62,33 +62,24 @@ class SearchProduct extends SearchDelegate {
     );
   }
 
-  Widget buildItem(ProductModel suggestion, BuildContext context) {
+  Widget buildItem(ProductModel product, BuildContext context) {
     return Card(
       elevation: 5,
-      color:
-          suggestion.productStatus == 0 ? Colors.grey.shade400 : Colors.white,
+      color: product.status == 0 ? Colors.grey.shade400 : Colors.white,
       child: ListTile(
         leading: SizedBox(
           width: 15.w,
           height: 15.w,
-          child: ShowImage().showProduct(suggestion.productImage),
+          child: ShowImage().showImage(product.image),
         ),
-        title: Text(
-          suggestion.productName,
-          style: MyStyle().normalPrimary16(),
-        ),
-        subtitle: Text(
-          '${suggestion.productPrice} ฿',
-          style: MyStyle().normalBlue16(),
-        ),
-        trailing: Text(
-          suggestion.productStatus == 1 ? 'ขาย' : 'หมด',
-          style: MyStyle().normalGreen14(),
-        ),
+        title: Text(product.name, style: MyStyle().normalPrimary16()),
+        subtitle: Text('${product.price} ฿', style: MyStyle().normalBlue16()),
+        trailing: Text(product.status == 1 ? 'ขาย' : 'หมด',
+            style: MyStyle().normalGreen14()),
         onTap: () {
           query = '';
           Navigator.pop(context);
-          ProductDetail().dialogProduct(context, suggestion);
+          ProductDetail().dialogProduct(context, product);
         },
       ),
     );

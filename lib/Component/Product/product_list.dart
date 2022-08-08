@@ -4,7 +4,7 @@ import 'package:charoz/Model/product_model.dart';
 import 'package:charoz/Provider/product_provider.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
-import 'package:charoz/Utilty/global_variable.dart';
+import 'package:charoz/Utilty/my_variable.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:charoz/Utilty/Widget/search_product.dart';
@@ -28,27 +28,30 @@ class _ProductListState extends State<ProductList> {
 
   @override
   void initState() {
-    getData();
-    scrollController.addListener(listenScrolling);
     super.initState();
+    scrollController.addListener(listenScrolling);
+    getData();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   Future getData() async {
-    Provider.of<ProductProvider>(context, listen: false).getAllProductWhereType(
-        GlobalVariable.productTypes[GlobalVariable.indexProductChip]);
+    await Provider.of<ProductProvider>(context, listen: false).readProductAllList();
+    await Provider.of<ProductProvider>(context, listen: false).readProductTypeList(
+        MyVariable.productTypes[MyVariable.indexProductChip]);
   }
 
   void listenScrolling() {
     if (scrollController.position.atEdge) {
       final isTop = scrollController.position.pixels == 0;
       if (isTop) {
-        setState(() {
-          scroll = true;
-        });
+        setState(() => scroll = true);
       } else {
-        setState(() {
-          scroll = false;
-        });
+        setState(() => scroll = false);
       }
     }
   }
@@ -62,22 +65,18 @@ class _ProductListState extends State<ProductList> {
         body: Stack(
           children: [
             Positioned.fill(
-              top: 16.h,
-              child: RefreshIndicator(
-                onRefresh: getData,
-                child: Column(
-                  children: [
-                    buildChip(),
-                    buildProductList(),
-                  ],
-                ),
+              top: 10.h,
+              child: Column(
+                children: [
+                  buildChip(),
+                  buildProductList(),
+                ],
               ),
             ),
-            ScreenWidget().appBarTitleLarge('รายการเมนูอาหาร'),
             buildSearch(),
           ],
         ),
-        floatingActionButton: GlobalVariable.role == 'manager'
+        floatingActionButton: MyVariable.role == 'manager'
             ? FloatingActionButton(
                 backgroundColor: MyStyle.bluePrimary,
                 child: const Icon(Icons.add_rounded, color: Colors.white),
@@ -116,10 +115,10 @@ class _ProductListState extends State<ProductList> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              chip(GlobalVariable.productTypes[0], 0),
-              chip(GlobalVariable.productTypes[1], 1),
-              chip(GlobalVariable.productTypes[2], 2),
-              chip(GlobalVariable.productTypes[3], 3),
+              chip(MyVariable.productTypes[0], 0),
+              chip(MyVariable.productTypes[1], 1),
+              chip(MyVariable.productTypes[2], 2),
+              chip(MyVariable.productTypes[3], 3),
             ],
           ),
         ],
@@ -129,17 +128,17 @@ class _ProductListState extends State<ProductList> {
 
   Widget chip(String title, int index) {
     return ActionChip(
-      backgroundColor: GlobalVariable.indexProductChip == index
+      backgroundColor: MyVariable.indexProductChip == index
           ? MyStyle.primary
           : Colors.grey.shade300,
       label: Text(
         title,
-        style: GlobalVariable.indexProductChip == index
+        style: MyVariable.indexProductChip == index
             ? MyStyle().normalWhite16()
             : MyStyle().normalBlack16(),
       ),
       onPressed: () {
-        setState(() => GlobalVariable.indexProductChip = index);
+        setState(() => MyVariable.indexProductChip = index);
         getData();
       },
     );
@@ -147,16 +146,19 @@ class _ProductListState extends State<ProductList> {
 
   Positioned buildSearch() {
     return Positioned(
-      top: 8.h,
-      left: 10.w,
-      right: 10.w,
+      top: 2.h,
+      left: 2.w,
+      right: 2.w,
       child: InkWell(
         onTap: () => showSearch(context: context, delegate: SearchProduct()),
         child: Container(
-          height: 5.h,
-          padding: const EdgeInsets.all(10),
+          height: 7.h,
+          padding: EdgeInsets.symmetric(horizontal: 5.w),
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(10)),
+            color: Colors.white,
+            border: Border.all(color: MyStyle.primary),
+            borderRadius: BorderRadius.circular(10),
+          ),
           child: Row(
             children: [
               Icon(Icons.search_rounded, size: 20.sp, color: MyStyle.primary),
@@ -172,11 +174,11 @@ class _ProductListState extends State<ProductList> {
   Widget buildProductList() {
     return SizedBox(
       width: 100.w,
-      height: 70.h,
+      height: 68.h,
       child: Consumer<ProductProvider>(
         builder: (_, provider, __) => provider.productList == null
             ? ScreenWidget().showEmptyData(
-                'ไม่มีรายการ ${GlobalVariable.productTypes[GlobalVariable.indexProductChip]} ในขณะนี้',
+                'ไม่มีรายการ ${MyVariable.productTypes[MyVariable.indexProductChip]} ในขณะนี้',
                 'กรุณารอรายการได้ในภายหลัง')
             : GridView.builder(
                 shrinkWrap: true,
@@ -186,15 +188,15 @@ class _ProductListState extends State<ProductList> {
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                     childAspectRatio: 2 / 3, maxCrossAxisExtent: 160),
                 itemBuilder: (context, index) =>
-                    buildProductItem(provider.productList[index], index),
+                    buildProductItem(provider.productList[index]),
               ),
       ),
     );
   }
 
-  Widget buildProductItem(ProductModel product, int index) {
+  Widget buildProductItem(ProductModel product) {
     return Card(
-      color: product.productStatus == 0 ? Colors.grey.shade400 : Colors.white,
+      color: product.status == 0 ? Colors.grey.shade400 : Colors.white,
       elevation: 5,
       margin: const EdgeInsets.all(10),
       child: InkWell(
@@ -204,7 +206,7 @@ class _ProductListState extends State<ProductList> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              width: GlobalVariable.largeDevice ? 25.w : 30.w,
+              width: MyVariable.largeDevice ? 25.w : 30.w,
               height: 12.h,
               child: SizedBox(
                 width: 30.w,
@@ -212,9 +214,9 @@ class _ProductListState extends State<ProductList> {
                 child: Stack(
                   children: [
                     Positioned.fill(
-                      child: ShowImage().showProduct(product.productImage),
+                      child: ShowImage().showImage(product.image),
                     ),
-                    if (product.productSuggest == 1) ...[
+                    if (product.suggest == 1) ...[
                       Positioned(
                         top: 5,
                         right: 5,
@@ -230,15 +232,15 @@ class _ProductListState extends State<ProductList> {
               ),
             ),
             Text(
-              MyFunction().cutWord10(product.productName),
+              MyFunction().cutWord10(product.name),
               style: MyStyle().normalPrimary16(),
             ),
             Text(
-              'ราคา ${product.productPrice.toStringAsFixed(0)}.-',
+              'ราคา ${product.price.toStringAsFixed(0)}.-',
               style: MyStyle().normalBlue16(),
             ),
             Text(
-              'สถานะ : ${product.productStatus == 0 ? 'หมด' : 'ขาย'}',
+              'สถานะ : ${product.status == 0 ? 'หมด' : 'ขาย'}',
               style: MyStyle().normalBlack14(),
             ),
           ],

@@ -11,17 +11,18 @@ class MaintenancePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
-        body: Consumer<ConfigProvider>(
-          builder: (context, provider, child) => provider.maintain == null
-              ? const ShowProgress()
-              : Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w),
-                  child: Center(
-                    child: Column(
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
+          child: Center(
+            child: Consumer<ConfigProvider>(
+              builder: (context, provider, child) => provider.maintenance == null
+                  ? const ShowProgress()
+                  : Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -32,18 +33,22 @@ class MaintenancePage extends StatelessWidget {
                         ),
                         SizedBox(height: 5.h),
                         Text(
-                          provider.maintain!.maintainName,
+                          provider.maintenance!.name,
                           style: MyStyle().boldPrimary20(),
                         ),
                         SizedBox(height: 5.h),
                         Text(
-                          provider.maintain!.maintainDetail,
+                          provider.maintenance!.detail,
+                          style: MyStyle().boldPrimary18(),
+                        ),
+                        Text(
+                          provider.maintenance!.id,
                           style: MyStyle().boldPrimary18(),
                         ),
                       ],
                     ),
-                  ),
-                ),
+            ),
+          ),
         ),
       ),
     );
