@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:charoz/Model/SubModel/sub_product_model.dart';
-import 'package:charoz/Model/product_model.dart';
+import 'package:charoz/Model_Sub/product_sub.dart';
+import 'package:charoz/Model_Main/product_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -54,7 +54,7 @@ class ProductCRUD {
     }
   }
 
-  Future<bool> createProduct(SubProductModel model) async {
+  Future<bool> createProduct(ProductModify model) async {
     try {
       await product.doc().set(model.toMap());
       return true;
@@ -63,7 +63,7 @@ class ProductCRUD {
     }
   }
 
-  Future<bool> updateProduct(String id, SubProductModel model) async {
+  Future<bool> updateProduct(String id, ProductModify model) async {
     try {
       await product.doc(id).update(model.toMap());
       return true;

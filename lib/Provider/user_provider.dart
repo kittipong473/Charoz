@@ -1,4 +1,4 @@
-import 'package:charoz/Model/user_model.dart';
+import 'package:charoz/Model_Main/user_model.dart';
 import 'package:charoz/Service/Database/Firebase/user_crud.dart';
 import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Function/data_manager.dart';

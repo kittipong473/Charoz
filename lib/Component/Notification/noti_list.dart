@@ -1,7 +1,7 @@
 import 'package:charoz/Component/Notification/Dialog/noti_detail.dart';
 import 'package:charoz/Component/Notification/Modal/add_noti.dart';
 import 'package:charoz/Component/Order/order_list.dart';
-import 'package:charoz/Model/noti_model.dart';
+import 'package:charoz/Model_Main/noti_model.dart';
 import 'package:charoz/Provider/noti_provider.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Widget/show_progress.dart';

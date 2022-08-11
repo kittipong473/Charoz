@@ -1,7 +1,6 @@
-import 'package:charoz/Model/shop_model.dart';
+import 'package:charoz/Model_Main/shop_model.dart';
 import 'package:charoz/Provider/shop_provider.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
-import 'package:charoz/Utilty/Function/location_service.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:charoz/Utilty/Widget/show_progress.dart';
 import 'package:flutter/material.dart';
@@ -18,12 +17,11 @@ class ShopMap extends StatefulWidget {
 
 class _ShopMapState extends State<ShopMap> {
   GoogleMapController? googleMapController;
-  bool? allowLocation;
 
   @override
   void initState() {
     super.initState();
-    checkLocation();
+    getLocation();
   }
 
   @override
@@ -32,9 +30,8 @@ class _ShopMapState extends State<ShopMap> {
     super.dispose();
   }
 
-  Future checkLocation() async {
-    allowLocation = await LocationService().checkPermission();
-    setState(() {});
+  Future getLocation() async {
+    await Provider.of<ShopProvider>(context, listen: false).checkLocation();
   }
 
   @override
@@ -46,12 +43,14 @@ class _ShopMapState extends State<ShopMap> {
         appBar: ScreenWidget().appBarTheme('แผนที่ร้านอาหาร'),
         body: Stack(
           children: [
-            Positioned.fill(
-              child: allowLocation != null
-                  ? allowLocation!
-                      ? buildActiveMap()
-                      : buildDisableMap()
-                  : const ShowProgress(),
+            Consumer<ShopProvider>(
+              builder: (_, provider, __) => Positioned.fill(
+                child: provider.allowLocation == null
+                    ? const ShowProgress()
+                    : provider.allowLocation!
+                        ? buildActiveMap()
+                        : buildDisableMap(),
+              ),
             ),
           ],
         ),

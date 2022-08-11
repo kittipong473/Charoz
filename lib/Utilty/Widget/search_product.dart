@@ -1,5 +1,5 @@
 import 'package:charoz/Component/Product/Dialog/product_detail.dart';
-import 'package:charoz/Model/product_model.dart';
+import 'package:charoz/Model_Main/product_model.dart';
 import 'package:charoz/Provider/product_provider.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Widget/show_image.dart';

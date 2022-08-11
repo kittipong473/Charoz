@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class SubNotiModel {
+class NotiModify {
   final String userid;
   final String type;
   final String name;
@@ -11,7 +11,7 @@ class SubNotiModel {
   final Timestamp start;
   final Timestamp end;
   final int status;
-  SubNotiModel({
+  NotiModify({
     required this.userid,
     required this.type,
     required this.name,
@@ -22,7 +22,7 @@ class SubNotiModel {
     required this.status,
   });
 
-  SubNotiModel copyWith({
+  NotiModify copyWith({
     String? userid,
     String? type,
     String? name,
@@ -32,7 +32,7 @@ class SubNotiModel {
     Timestamp? end,
     int? status,
   }) {
-    return SubNotiModel(
+    return NotiModify(
       userid: userid ?? this.userid,
       type: type ?? this.type,
       name: name ?? this.name,
@@ -57,8 +57,8 @@ class SubNotiModel {
     };
   }
 
-  factory SubNotiModel.fromMap(Map<String, dynamic> map) {
-    return SubNotiModel(
+  factory NotiModify.fromMap(Map<String, dynamic> map) {
+    return NotiModify(
       userid: map['userid'] ?? '',
       type: map['type'] ?? '',
       name: map['name'] ?? '',
@@ -72,7 +72,7 @@ class SubNotiModel {
 
   String toJson() => json.encode(toMap());
 
-  factory SubNotiModel.fromJson(String source) => SubNotiModel.fromMap(json.decode(source));
+  factory NotiModify.fromJson(String source) => NotiModify.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -83,7 +83,7 @@ class SubNotiModel {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
   
-    return other is SubNotiModel &&
+    return other is NotiModify &&
       other.userid == userid &&
       other.type == type &&
       other.name == name &&

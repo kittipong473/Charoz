@@ -1,5 +1,6 @@
 import 'package:charoz/Component/Order/confirm_order.dart';
 import 'package:charoz/Component/Order/order_detail.dart';
+import 'package:charoz/Component/Rider/rider_working.dart';
 import 'package:charoz/Component/Security/code_setting.dart';
 import 'package:charoz/Component/Security/privacy_policy.dart';
 import 'package:charoz/Component/Shop/shop_detail.dart';

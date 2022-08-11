@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:charoz/Component/Shop/Dialog/carousel_detail.dart';
 import 'package:charoz/Component/Shop/Modal/edit_shop_admin.dart';
+import 'package:charoz/Component/Shop/Modal/edit_shop_manager.dart';
 import 'package:charoz/Provider/shop_provider.dart';
 import 'package:charoz/Provider/user_provider.dart';
 import 'package:charoz/Service/Route/route_page.dart';
@@ -44,11 +45,21 @@ class ShopDetail extends StatelessWidget {
         ),
         floatingActionButton:
             MyVariable.role == 'manager' || MyVariable.role == 'admin'
-                ? FloatingActionButton(
-                    onPressed: () {},
-                    backgroundColor: MyStyle.bluePrimary,
-                    child: const Icon(Icons.edit_location_alt_rounded,
-                        color: Colors.white),
+                ? Consumer<ShopProvider>(
+                    builder: (_, provider, __) => FloatingActionButton(
+                      onPressed: () {
+                        if (MyVariable.role == 'admin') {
+                          EditShopAdmin().openModalEditShopAdmin(
+                              context, provider.shop, provider.time);
+                        } else if (MyVariable.role == 'manager') {
+                          EditShopManager().openModalEditShopManager(
+                              context, provider.shop, provider.time);
+                        }
+                      },
+                      backgroundColor: MyStyle.bluePrimary,
+                      child: const Icon(Icons.edit_location_alt_rounded,
+                          color: Colors.white),
+                    ),
                   )
                 : FloatingActionButton(
                     onPressed: () =>

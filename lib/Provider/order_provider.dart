@@ -1,4 +1,4 @@
-import 'package:charoz/Model/order_model.dart';
+import 'package:charoz/Model_Main/order_model.dart';
 import 'package:charoz/Service/Database/Firebase/order_crud.dart';
 import 'package:flutter/foundation.dart';
 
@@ -12,7 +12,6 @@ class OrderProvider with ChangeNotifier {
   List<String>? _statusList;
   final List<String> _productidList = [];
   final List<int> _productamountList = [];
-  final List<String> _orderStatusList = [];
 
   get commentshop => _commentshop;
   get commentrider => _commentrider;
@@ -23,34 +22,15 @@ class OrderProvider with ChangeNotifier {
   get statusList => _statusList;
   get productidList => _productidList;
   get productamountList => _productamountList;
-  get orderStatusList => _orderStatusList;
 
-  Future readOrderCustomerList() async {
-    _orderList = await OrderCRUD().readOrderCustomerList();
-    _orderList!.sort((a, b) => b.time.compareTo(a.time));
-    notifyListeners();
-  }
-
-  Future readOrderManagerListByProcess() async {
-    _orderList = await OrderCRUD().readOrderManagerListByProcess();
+  Future readOrderCustomerListByFinish() async {
+    _orderList = await OrderCRUD().readOrderCustomerListByFinish();
     _orderList!.sort((a, b) => b.time.compareTo(a.time));
     notifyListeners();
   }
 
   Future readOrderManagerListByFinish() async {
     _orderList = await OrderCRUD().readOrderManagerListByFinish();
-    _orderList!.sort((a, b) => b.time.compareTo(a.time));
-    notifyListeners();
-  }
-
-  Future readOrderRiderListByNotAccept() async {
-    _orderList = await OrderCRUD().readOrderRiderListByNotAccept();
-    _orderList!.sort((a, b) => b.time.compareTo(a.time));
-    notifyListeners();
-  }
-
-  Future readOrderRiderListByAccept() async {
-    _orderList = await OrderCRUD().readOrderRiderListByAccept();
     _orderList!.sort((a, b) => b.time.compareTo(a.time));
     notifyListeners();
   }
@@ -92,7 +72,8 @@ class OrderProvider with ChangeNotifier {
     _orderList = null;
   }
 
-  void selectOrderWhereId(String id) {
-    _order = _orderList!.firstWhere((element) => element.id == id);
+  void setOrderModel(OrderModel order) {
+    _order = order;
+    notifyListeners();
   }
 }

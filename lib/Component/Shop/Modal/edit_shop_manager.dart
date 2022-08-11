@@ -1,8 +1,11 @@
 import 'dart:io';
 
-import 'package:charoz/Model/shop_model.dart';
-import 'package:charoz/Model/time_model.dart';
+import 'package:charoz/Model_Sub/shop_manager_sub.dart';
+import 'package:charoz/Model_Sub/time_sub.dart';
+import 'package:charoz/Model_Main/shop_model.dart';
+import 'package:charoz/Model_Main/time_model.dart';
 import 'package:charoz/Provider/shop_provider.dart';
+import 'package:charoz/Service/Database/Firebase/shop_crud.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:charoz/Utilty/my_variable.dart';
@@ -10,8 +13,10 @@ import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Widget/dropdown_menu.dart';
 import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:charoz/Utilty/Widget/show_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -21,30 +26,35 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 class EditShopManager {
   final formKey = GlobalKey<FormState>();
   TextEditingController nameController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
   TextEditingController announceController = TextEditingController();
   TextEditingController detailController = TextEditingController();
   TextEditingController openController = TextEditingController();
   TextEditingController closeController = TextEditingController();
+  TextEditingController freightController = TextEditingController();
   MaskTextInputFormatter timeFormat = MaskTextInputFormatter(mask: '##:##:##');
   File? file;
   String? image;
   String? chooseType;
+
   Future<dynamic> openModalEditShopManager(
       context, ShopModel shop, TimeModel time) {
     nameController.text = shop.name;
+    phoneController.text = shop.phone;
     announceController.text = shop.announce;
     detailController.text = shop.detail;
     openController.text = time.open;
     closeController.text = time.close;
+    freightController.text = shop.freight.toString();
     image = shop.image;
     chooseType = time.choose;
     return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        builder: (context) => modalEditShop(shop.id));
+        builder: (context) => modalEditShop(shop.id, time.id));
   }
 
-  Widget modalEditShop(String id) {
+  Widget modalEditShop(String shopid, String timeid) {
     return SizedBox(
       width: 100.w,
       height: 90.h,
@@ -57,7 +67,7 @@ class EditShopManager {
               Positioned.fill(
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
                     child: Form(
                       key: formKey,
                       child: Column(
@@ -67,6 +77,8 @@ class EditShopManager {
                           SizedBox(height: 3.h),
                           buildName(),
                           SizedBox(height: 3.h),
+                          buildPhone(),
+                          SizedBox(height: 3.h),
                           buildAnnounce(),
                           SizedBox(height: 3.h),
                           buildDetail(),
@@ -75,9 +87,11 @@ class EditShopManager {
                           SizedBox(height: 3.h),
                           buildClose(context, setState),
                           SizedBox(height: 3.h),
+                          buildFreight(),
+                          SizedBox(height: 3.h),
                           buildImage(setState),
                           SizedBox(height: 3.h),
-                          buildButton(context, id),
+                          buildButton(context, shopid, timeid),
                           SizedBox(height: 2.h),
                         ],
                       ),
@@ -114,9 +128,8 @@ class EditShopManager {
             ),
             isExpanded: true,
             value: chooseType,
-            items: MyVariable.timeTypes
-                .map(DropDownMenu().dropdownItem)
-                .toList(),
+            items:
+                MyVariable.timeTypes.map(DropDownMenu().dropdownItem).toList(),
             onChanged: (value) {
               setState(() => chooseType = value as String);
             },
@@ -147,6 +160,38 @@ class EditShopManager {
             Icons.table_restaurant_rounded,
             color: MyStyle.dark,
           ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: MyStyle.dark),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: MyStyle.light),
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildPhone() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      width: 80.w,
+      child: TextFormField(
+        keyboardType: TextInputType.phone,
+        style: MyStyle().normalBlack16(),
+        controller: phoneController,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'กรุณากรอก เบอร์โทร';
+          } else {
+            return null;
+          }
+        },
+        decoration: InputDecoration(
+          labelStyle: MyStyle().normalBlack16(),
+          labelText: 'เบอร์โทรร้าน :',
+          prefixIcon: const Icon(Icons.phone_rounded, color: MyStyle.dark),
           enabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(color: MyStyle.dark),
             borderRadius: BorderRadius.circular(10),
@@ -312,6 +357,39 @@ class EditShopManager {
     );
   }
 
+  Widget buildFreight() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      width: 60.w,
+      child: TextFormField(
+        keyboardType: TextInputType.number,
+        style: MyStyle().normalBlack16(),
+        controller: freightController,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'กรุณากรอก ค่าส่งอาหาร';
+          } else {
+            return null;
+          }
+        },
+        decoration: InputDecoration(
+          labelStyle: MyStyle().boldBlack16(),
+          labelText: 'ค่าส่งอาหาร(บาท) :',
+          prefixIcon:
+              const Icon(Icons.delivery_dining_rounded, color: MyStyle.dark),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: MyStyle.dark),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: MyStyle.light),
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget buildImage(Function setState) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -371,7 +449,7 @@ class EditShopManager {
     );
   }
 
-  Widget buildButton(BuildContext context, String id) {
+  Widget buildButton(BuildContext context, String shopid, String timeid) {
     return SizedBox(
       width: 90.w,
       height: 5.h,
@@ -379,7 +457,8 @@ class EditShopManager {
         style: ElevatedButton.styleFrom(primary: MyStyle.bluePrimary),
         onPressed: () {
           if (formKey.currentState!.validate()) {
-            processUpdate(context, id);
+            EasyLoading.show(status: 'loading...');
+            processUpdate(context, shopid, timeid);
           }
         },
         child: Text('แก้ไขข้อมูลร้านค้า', style: MyStyle().normalWhite16()),
@@ -387,31 +466,42 @@ class EditShopManager {
     );
   }
 
-  Future processUpdate(BuildContext context, String id) async {
-  //   String chooseImage = await ShopApi().saveShopImage(image!, file);
+  Future processUpdate(
+      BuildContext context, String shopid, String timeid) async {
+    String chooseImage =
+        file == null ? await ShopCRUD().uploadImageShop(file!) : '';
 
-  //   bool status1 = await ShopApi().editShopByManager(
-  //     id: id,
-  //     name: nameController.text,
-  //     announce: announceController.text,
-  //     detail: detailController.text,
-  //     image: chooseImage,
-  //     time: DateTime.now(),
-  //   );
-  //   bool status2 = await ShopApi().editTimeWhereShop(
-  //     id: id,
-  //     type: chooseType!,
-  //     timeOpen: openController.text,
-  //     timeClose: closeController.text,
-  //   );
+    bool status1 = await ShopCRUD().updateShopByManager(
+      shopid,
+      ShopManagerModify(
+        name: nameController.text,
+        announce: announceController.text,
+        detail: detailController.text,
+        phone: phoneController.text,
+        image: chooseImage,
+        freight: int.parse(freightController.text),
+        time: Timestamp.fromDate(DateTime.now()),
+      ),
+    );
+    bool status2 = await ShopCRUD().updateTime(
+      timeid,
+      TimeModify(
+        shopid: shopid,
+        open: openController.text,
+        close: closeController.text,
+        choose: chooseType!,
+      ),
+    );
 
-  //   if (status1 && status2) {
-  //     Provider.of<ShopProvider>(context, listen: false).getShopModel();
-  //     Provider.of<ShopProvider>(context, listen: false).getTimeModel();
-  //     MyFunction().toast('แก้ไขร้านค้าเรียบร้อยแล้ว');
-  //     Navigator.pop(context);
-  //   } else {
-  //     DialogAlert().editFailedDialog(context);
-  //   }
+    if (status1 && status2) {
+      Provider.of<ShopProvider>(context, listen: false).readShopModel();
+      Provider.of<ShopProvider>(context, listen: false).readTimeModel();
+      EasyLoading.dismiss();
+      MyFunction().toast('แก้ไขร้านค้าเรียบร้อยแล้ว');
+      Navigator.pop(context);
+    } else {
+      EasyLoading.dismiss();
+      DialogAlert().editFailedDialog(context);
+    }
   }
 }

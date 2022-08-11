@@ -1,5 +1,5 @@
 import 'package:animations/animations.dart';
-import 'package:charoz/Model/noti_model.dart';
+import 'package:charoz/Model_Main/noti_model.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';

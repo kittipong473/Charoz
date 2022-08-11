@@ -2,7 +2,6 @@ import 'package:charoz/Service/Database/Firebase/order_crud.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
-import 'package:charoz/Utilty/my_variable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -85,7 +84,7 @@ class ManagerProcess {
                 onPressed: () {
                   Navigator.pop(dialogContext);
                   EasyLoading.show(status: 'loading...');
-                  processAcceptOrder(context, id, 7, 2);
+                  processAcceptOrder(context, id, 6, 2);
                 },
                 child: Text('ปฏิเสธ', style: MyStyle().boldRed18()),
               ),
@@ -102,7 +101,7 @@ class ManagerProcess {
 
   Future processAcceptOrder(
       BuildContext context, String id, int status, int track) async {
-    bool api = await OrderCRUD().updateStatusOrder(id, status, track);
+    bool api = await OrderCRUD().updateOrderStatus(id, status, track);
     if (api) {
       EasyLoading.dismiss();
       Navigator.pop(context);
@@ -117,7 +116,7 @@ class ManagerProcess {
   }
 
   Future processFinishOrder(BuildContext context, String id) async {
-    bool api = await OrderCRUD().updateStatusOrder(id, 4, 2);
+    bool api = await OrderCRUD().updateOrderStatus(id, 3, 1);
     if (api) {
       EasyLoading.dismiss();
       Navigator.pop(context);

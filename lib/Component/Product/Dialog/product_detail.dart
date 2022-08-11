@@ -1,6 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:charoz/Component/Product/Modal/edit_product.dart';
-import 'package:charoz/Model/product_model.dart';
+import 'package:charoz/Model_Main/product_model.dart';
 import 'package:charoz/Provider/order_provider.dart';
 import 'package:charoz/Provider/product_provider.dart';
 import 'package:charoz/Service/Database/Firebase/product_crud.dart';

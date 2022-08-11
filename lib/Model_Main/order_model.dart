@@ -9,8 +9,8 @@ class OrderModel {
   final String riderid;
   final String customerid;
   final String addressid;
-  final String productidList;
-  final String productamountList;
+  final String productid;
+  final String productamount;
   final int charge;
   final int total;
   final int type;
@@ -25,8 +25,8 @@ class OrderModel {
     required this.riderid,
     required this.customerid,
     required this.addressid,
-    required this.productidList,
-    required this.productamountList,
+    required this.productid,
+    required this.productamount,
     required this.charge,
     required this.total,
     required this.type,
@@ -43,8 +43,8 @@ class OrderModel {
     String? riderid,
     String? customerid,
     String? addressid,
-    String? productidList,
-    String? productamountList,
+    String? productid,
+    String? productamount,
     int? charge,
     int? total,
     int? type,
@@ -60,8 +60,8 @@ class OrderModel {
       riderid: riderid ?? this.riderid,
       customerid: customerid ?? this.customerid,
       addressid: addressid ?? this.addressid,
-      productidList: productidList ?? this.productidList,
-      productamountList: productamountList ?? this.productamountList,
+      productid: productid ?? this.productid,
+      productamount: productamount ?? this.productamount,
       charge: charge ?? this.charge,
       total: total ?? this.total,
       type: type ?? this.type,
@@ -80,8 +80,8 @@ class OrderModel {
       'riderid': riderid,
       'customerid': customerid,
       'addressid': addressid,
-      'productidList': productidList,
-      'productamountList': productamountList,
+      'productid': productid,
+      'productamount': productamount,
       'charge': charge,
       'total': total,
       'type': type,
@@ -100,8 +100,8 @@ class OrderModel {
       riderid: map['riderid'] ?? '',
       customerid: map['customerid'] ?? '',
       addressid: map['addressid'] ?? '',
-      productidList: map['productidList'] ?? '',
-      productamountList: map['productamountList'] ?? '',
+      productid: map['productid'] ?? '',
+      productamount: map['productamount'] ?? '',
       charge: map['charge']?.toInt() ?? 0,
       total: map['total']?.toInt() ?? 0,
       type: map['type']?.toInt() ?? 0,
@@ -109,7 +109,7 @@ class OrderModel {
       commentrider: map['commentrider'] ?? '',
       status: map['status']?.toInt() ?? 0,
       track: map['track']?.toInt() ?? 0,
-      time: (map['time'] as Timestamp).toDate(),
+      time: DateTime.fromMillisecondsSinceEpoch(map['time']),
     );
   }
 
@@ -120,7 +120,7 @@ class OrderModel {
 
   @override
   String toString() {
-    return 'OrderModel(id: $id, shopid: $shopid, riderid: $riderid, customerid: $customerid, addressid: $addressid, productidList: $productidList, productamountList: $productamountList, charge: $charge, total: $total, type: $type, commentshop: $commentshop, commentrider: $commentrider, status: $status, track: $track, time: $time)';
+    return 'OrderModel(id: $id, shopid: $shopid, riderid: $riderid, customerid: $customerid, addressid: $addressid, productid: $productid, productamount: $productamount, charge: $charge, total: $total, type: $type, commentshop: $commentshop, commentrider: $commentrider, status: $status, track: $track, time: $time)';
   }
 
   @override
@@ -133,8 +133,8 @@ class OrderModel {
         other.riderid == riderid &&
         other.customerid == customerid &&
         other.addressid == addressid &&
-        other.productidList == productidList &&
-        other.productamountList == productamountList &&
+        other.productid == productid &&
+        other.productamount == productamount &&
         other.charge == charge &&
         other.total == total &&
         other.type == type &&
@@ -152,8 +152,8 @@ class OrderModel {
         riderid.hashCode ^
         customerid.hashCode ^
         addressid.hashCode ^
-        productidList.hashCode ^
-        productamountList.hashCode ^
+        productid.hashCode ^
+        productamount.hashCode ^
         charge.hashCode ^
         total.hashCode ^
         type.hashCode ^
@@ -165,15 +165,15 @@ class OrderModel {
   }
 }
 
-OrderModel convertOrder(dynamic item) {
+OrderModel convertOrder(dynamic item, String? id) {
   return OrderModel(
-    id: item.id,
+    id: id ?? item.id,
     shopid: item['shopid'],
     customerid: item['customerid'],
     riderid: item['riderid'],
     addressid: item['addressid'],
-    productidList: item['productid'],
-    productamountList: item['productamount'],
+    productid: item['productid'],
+    productamount: item['productamount'],
     charge: item['charge'],
     total: item['total'],
     type: item['type'],

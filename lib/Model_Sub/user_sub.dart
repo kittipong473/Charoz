@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class SubUserModel {
+class UserModify {
   final String firstname;
   final String lastname;
   final String email;
@@ -13,7 +13,7 @@ class SubUserModel {
   final String tokenE;
   final String tokenP;
   final Timestamp time;
-  SubUserModel({
+  UserModify({
     required this.firstname,
     required this.lastname,
     required this.email,
@@ -26,7 +26,7 @@ class SubUserModel {
     required this.time,
   });
 
-  SubUserModel copyWith({
+  UserModify copyWith({
     String? firstname,
     String? lastname,
     String? email,
@@ -38,7 +38,7 @@ class SubUserModel {
     String? tokenP,
     Timestamp? time,
   }) {
-    return SubUserModel(
+    return UserModify(
       firstname: firstname ?? this.firstname,
       lastname: lastname ?? this.lastname,
       email: email ?? this.email,
@@ -67,8 +67,8 @@ class SubUserModel {
     };
   }
 
-  factory SubUserModel.fromMap(Map<String, dynamic> map) {
-    return SubUserModel(
+  factory UserModify.fromMap(Map<String, dynamic> map) {
+    return UserModify(
       firstname: map['firstname'] ?? '',
       lastname: map['lastname'] ?? '',
       email: map['email'] ?? '',
@@ -84,7 +84,7 @@ class SubUserModel {
 
   String toJson() => json.encode(toMap());
 
-  factory SubUserModel.fromJson(String source) => SubUserModel.fromMap(json.decode(source));
+  factory UserModify.fromJson(String source) => UserModify.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -95,7 +95,7 @@ class SubUserModel {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
   
-    return other is SubUserModel &&
+    return other is UserModify &&
       other.firstname == firstname &&
       other.lastname == lastname &&
       other.email == email &&

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class SubOrderModel {
+class OrderModify {
   final String shopid;
   final String riderid;
   final String customerid;
@@ -17,7 +17,7 @@ class SubOrderModel {
   final int status;
   final int track;
   final Timestamp time;
-  SubOrderModel({
+  OrderModify({
     required this.shopid,
     required this.riderid,
     required this.customerid,
@@ -34,7 +34,7 @@ class SubOrderModel {
     required this.time,
   });
 
-  SubOrderModel copyWith({
+  OrderModify copyWith({
     String? shopid,
     String? riderid,
     String? customerid,
@@ -50,7 +50,7 @@ class SubOrderModel {
     int? track,
     Timestamp? time,
   }) {
-    return SubOrderModel(
+    return OrderModify(
       shopid: shopid ?? this.shopid,
       riderid: riderid ?? this.riderid,
       customerid: customerid ?? this.customerid,
@@ -87,8 +87,8 @@ class SubOrderModel {
     };
   }
 
-  factory SubOrderModel.fromMap(Map<String, dynamic> map) {
-    return SubOrderModel(
+  factory OrderModify.fromMap(Map<String, dynamic> map) {
+    return OrderModify(
       shopid: map['shopid'] ?? '',
       riderid: map['riderid'] ?? '',
       customerid: map['customerid'] ?? '',
@@ -108,7 +108,7 @@ class SubOrderModel {
 
   String toJson() => json.encode(toMap());
 
-  factory SubOrderModel.fromJson(String source) => SubOrderModel.fromMap(json.decode(source));
+  factory OrderModify.fromJson(String source) => OrderModify.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -119,7 +119,7 @@ class SubOrderModel {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
   
-    return other is SubOrderModel &&
+    return other is OrderModify &&
       other.shopid == shopid &&
       other.riderid == riderid &&
       other.customerid == customerid &&

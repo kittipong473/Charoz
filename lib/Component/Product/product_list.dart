@@ -1,7 +1,8 @@
 import 'package:charoz/Component/Product/Modal/add_product.dart';
 import 'package:charoz/Component/Product/Dialog/product_detail.dart';
-import 'package:charoz/Model/product_model.dart';
+import 'package:charoz/Model_Main/product_model.dart';
 import 'package:charoz/Provider/product_provider.dart';
+import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/my_variable.dart';
@@ -22,38 +23,18 @@ class ProductList extends StatefulWidget {
 }
 
 class _ProductListState extends State<ProductList> {
-  final scrollController = ScrollController();
-  bool scroll = true;
-  double countScore = 0.0;
-
   @override
   void initState() {
     super.initState();
-    scrollController.addListener(listenScrolling);
     getData();
   }
 
-  @override
-  void dispose() {
-    scrollController.dispose();
-    super.dispose();
-  }
-
   Future getData() async {
-    await Provider.of<ProductProvider>(context, listen: false).readProductAllList();
-    await Provider.of<ProductProvider>(context, listen: false).readProductTypeList(
-        MyVariable.productTypes[MyVariable.indexProductChip]);
-  }
-
-  void listenScrolling() {
-    if (scrollController.position.atEdge) {
-      final isTop = scrollController.position.pixels == 0;
-      if (isTop) {
-        setState(() => scroll = true);
-      } else {
-        setState(() => scroll = false);
-      }
-    }
+    await Provider.of<ProductProvider>(context, listen: false)
+        .readProductAllList();
+    await Provider.of<ProductProvider>(context, listen: false)
+        .readProductTypeList(
+            MyVariable.productTypes[MyVariable.indexProductChip]);
   }
 
   @override
@@ -84,27 +65,13 @@ class _ProductListState extends State<ProductList> {
               )
             : FloatingActionButton(
                 backgroundColor: MyStyle.bluePrimary,
-                child: scroll
-                    ? const Icon(Icons.arrow_downward_rounded,
-                        color: Colors.white)
-                    : const Icon(Icons.arrow_upward_rounded,
-                        color: Colors.white),
-                onPressed: scroll ? scrollDown : scrollUp,
+                child: const Icon(Icons.shopping_cart_rounded,
+                    color: Colors.white),
+                onPressed: () =>
+                    Navigator.pushNamed(context, RoutePage.routeOrderCart),
               ),
       ),
     );
-  }
-
-  void scrollUp() {
-    double start = 0;
-    scrollController.animateTo(start,
-        duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
-  }
-
-  void scrollDown() {
-    double end = scrollController.position.maxScrollExtent;
-    scrollController.animateTo(end,
-        duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
   }
 
   Widget buildChip() {
@@ -182,7 +149,6 @@ class _ProductListState extends State<ProductList> {
                 'กรุณารอรายการได้ในภายหลัง')
             : GridView.builder(
                 shrinkWrap: true,
-                controller: scrollController,
                 padding: const EdgeInsets.only(top: 0),
                 itemCount: provider.productList.length,
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(

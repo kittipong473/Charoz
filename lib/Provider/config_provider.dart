@@ -1,7 +1,7 @@
-import 'package:charoz/Model/banner_model.dart';
-import 'package:charoz/Model/maintenance_model.dart';
-import 'package:charoz/Model/privacy_model.dart';
-import 'package:charoz/Model/test_model.dart';
+import 'package:charoz/Model_Main/banner_model.dart';
+import 'package:charoz/Model_Main/maintenance_model.dart';
+import 'package:charoz/Model_Main/privacy_model.dart';
+import 'package:charoz/Model_Main/test_model.dart';
 import 'package:charoz/Service/Database/Firebase/config_crud.dart';
 import 'package:flutter/foundation.dart';
 

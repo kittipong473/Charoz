@@ -1,7 +1,6 @@
 import 'package:charoz/Utilty/Constant/my_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 
 class MyVariable {
   // User Id
@@ -98,15 +97,22 @@ class MyVariable {
     'finished',
     'canceled',
   ];
+  static List<Color> orderTrackingColor = [
+    Colors.yellow.shade100,
+    Colors.green.shade100,
+    Colors.red.shade100,
+    Colors.grey.shade100,
+  ];
   // List of Order Status
   static List<String> orderStatusList = [
     'รอการยืนยันจากร้านค้า',
     'รอการยืนยันจากคนขับ',
     'กำลังจัดทำอาหาร',
+    'ทำอาหารเสร็จสิ้น',
     'คนขับกำลังจัดส่ง',
     'ชำระเงินเรียบร้อย',
     'ถูกยกเลิกจากร้านค้า',
-    'ถูกยกเลิกจากคนขับ',
+    'ไม่มีคนขับสะดวกรับงาน',
     'ให้คะแนนเรียบร้อย'
   ];
 }

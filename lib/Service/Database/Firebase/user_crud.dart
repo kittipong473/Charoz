@@ -1,5 +1,5 @@
-import 'package:charoz/Model/SubModel/sub_user_model.dart';
-import 'package:charoz/Model/user_model.dart';
+import 'package:charoz/Model_Sub/user_sub.dart';
+import 'package:charoz/Model_Main/user_model.dart';
 import 'package:charoz/Utilty/my_variable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -9,7 +9,7 @@ class UserCRUD {
   Future readUserList() async {
     List<UserModel> result = [];
     try {
-      final snapshot = await user.orderBy('role').get();
+      final snapshot = await user.orderBy('time', descending: true).get();
       for (var item in snapshot.docs) {
         result.add(convertUser(item, null));
       }
@@ -86,7 +86,7 @@ class UserCRUD {
     }
   }
 
-  Future<bool> createUser(SubUserModel model) async {
+  Future<bool> createUser(UserModify model) async {
     try {
       await user.doc().set(model.toMap());
       return true;

@@ -1,8 +1,8 @@
 import 'package:charoz/Component/Notification/Modal/add_noti.dart';
 import 'package:charoz/Component/Shop/Modal/edit_shop_admin.dart';
 import 'package:charoz/Component/Shop/Modal/edit_shop_manager.dart';
-import 'package:charoz/Model/shop_model.dart';
-import 'package:charoz/Model/time_model.dart';
+import 'package:charoz/Model_Main/shop_model.dart';
+import 'package:charoz/Model_Main/time_model.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/my_variable.dart';
 import 'package:flutter/material.dart';

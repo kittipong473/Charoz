@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class SubProductModel {
+class ProductModify {
   final String name;
   final String type;
   final int price;
@@ -11,7 +11,7 @@ class SubProductModel {
   final int status;
   final int suggest;
   final Timestamp time;
-  SubProductModel({
+  ProductModify({
     required this.name,
     required this.type,
     required this.price,
@@ -22,7 +22,7 @@ class SubProductModel {
     required this.time,
   });
 
-  SubProductModel copyWith({
+  ProductModify copyWith({
     String? name,
     String? type,
     int? price,
@@ -32,7 +32,7 @@ class SubProductModel {
     int? suggest,
     Timestamp? time,
   }) {
-    return SubProductModel(
+    return ProductModify(
       name: name ?? this.name,
       type: type ?? this.type,
       price: price ?? this.price,
@@ -57,8 +57,8 @@ class SubProductModel {
     };
   }
 
-  factory SubProductModel.fromMap(Map<String, dynamic> map) {
-    return SubProductModel(
+  factory ProductModify.fromMap(Map<String, dynamic> map) {
+    return ProductModify(
       name: map['name'] ?? '',
       type: map['type'] ?? '',
       price: map['price']?.toInt() ?? 0,
@@ -72,7 +72,7 @@ class SubProductModel {
 
   String toJson() => json.encode(toMap());
 
-  factory SubProductModel.fromJson(String source) => SubProductModel.fromMap(json.decode(source));
+  factory ProductModify.fromJson(String source) => ProductModify.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -83,7 +83,7 @@ class SubProductModel {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
   
-    return other is SubProductModel &&
+    return other is ProductModify &&
       other.name == name &&
       other.type == type &&
       other.price == price &&

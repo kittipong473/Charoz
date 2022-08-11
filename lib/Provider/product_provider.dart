@@ -1,4 +1,4 @@
-import 'package:charoz/Model/product_model.dart';
+import 'package:charoz/Model_Main/product_model.dart';
 import 'package:charoz/Service/Database/Firebase/product_crud.dart';
 import 'package:flutter/foundation.dart';
 

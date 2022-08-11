@@ -1,5 +1,5 @@
 import 'package:charoz/Component/User/Dialog/manage_user.dart';
-import 'package:charoz/Model/user_model.dart';
+import 'package:charoz/Model_Main/user_model.dart';
 import 'package:charoz/Provider/user_provider.dart';
 import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
@@ -98,7 +98,7 @@ class _UserListState extends State<UserList> {
             ),
             Text(user.phone, style: MyStyle().normalPrimary16()),
             Text(user.role, style: MyStyle().normalBlack14()),
-            Text(user.status.toString(), style: MyStyle().normalBlack14()),
+            Text(user.status == 1 ? 'อยู่ในระบบ' : 'ปิดการใช้งาน', style: MyStyle().normalBlue14()),
           ],
         ),
       ),

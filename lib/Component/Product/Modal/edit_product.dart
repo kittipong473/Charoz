@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:charoz/Model/SubModel/sub_product_model.dart';
-import 'package:charoz/Model/product_model.dart';
+import 'package:charoz/Model_Sub/product_sub.dart';
+import 'package:charoz/Model_Main/product_model.dart';
 import 'package:charoz/Provider/product_provider.dart';
 import 'package:charoz/Service/Database/Firebase/product_crud.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
@@ -296,7 +296,7 @@ class EditProduct {
 
     bool status = await ProductCRUD().updateProduct(
       id,
-      SubProductModel(
+      ProductModify(
         name: nameController.text,
         type: chooseType!,
         price: int.parse(priceController.text),

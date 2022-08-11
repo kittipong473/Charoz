@@ -1,6 +1,6 @@
 import 'package:charoz/Component/Order/Process/manager_process.dart';
 import 'package:charoz/Component/Order/Process/rider_process.dart';
-import 'package:charoz/Model/product_model.dart';
+import 'package:charoz/Model_Main/product_model.dart';
 import 'package:charoz/Provider/address_provider.dart';
 import 'package:charoz/Provider/order_provider.dart';
 import 'package:charoz/Provider/product_provider.dart';
@@ -14,7 +14,6 @@ import 'package:charoz/Utilty/Widget/show_image.dart';
 import 'package:charoz/Utilty/Widget/show_progress.dart';
 import 'package:charoz/Utilty/my_variable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -23,8 +22,13 @@ String role = MyVariable.role;
 class OrderDetail extends StatelessWidget {
   const OrderDetail({Key? key}) : super(key: key);
 
+  void getData(BuildContext context) {
+    Provider.of<ProductProvider>(context, listen: false).readProductAllList();
+  }
+
   @override
   Widget build(BuildContext context) {
+    getData(context);
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -71,21 +75,25 @@ class OrderDetail extends StatelessWidget {
   Widget buildOrderList() {
     return Consumer2<ProductProvider, OrderProvider>(
       builder: (_, pprovider, oprovider, __) {
-        List<String> productIdList =
-            MyFunction().convertToList(oprovider.order.productidList);
-        List<String> productAmountList =
-            MyFunction().convertToList(oprovider.order.productamountList);
-        return ListView.separated(
-            separatorBuilder: (context, index) => const Divider(),
-            shrinkWrap: true,
-            padding: const EdgeInsets.only(top: 0),
-            itemCount: productIdList.length,
-            itemBuilder: (context, index) {
-              Provider.of<ProductProvider>(context, listen: false)
-                  .selectProductWhereId(productIdList[index]);
-              return buildOrderItem(pprovider.product,
-                  int.parse(productAmountList[index]), index);
-            });
+        if (oprovider.order == null) {
+          return const ShowProgress();
+        } else {
+          List<String> productIdList =
+              MyFunction().convertToList(oprovider.order.productid);
+          List<String> productAmountList =
+              MyFunction().convertToList(oprovider.order.productamount);
+          return ListView.separated(
+              separatorBuilder: (context, index) => const Divider(),
+              shrinkWrap: true,
+              padding: const EdgeInsets.only(top: 0),
+              itemCount: productIdList.length,
+              itemBuilder: (context, index) {
+                Provider.of<ProductProvider>(context, listen: false)
+                    .selectProductWhereId(productIdList[index]);
+                return buildOrderItem(pprovider.product,
+                    int.parse(productAmountList[index]), index);
+              });
+        }
       },
     );
   }
@@ -191,10 +199,11 @@ class OrderDetail extends StatelessWidget {
           SizedBox(height: 3.h),
           if (oprovider.order.status == 0) ...[
             managerAcceptButton(
-                context, oprovider.order.orderId, oprovider.order.type),
-          ] else if (oprovider.order.status == 3) ...[
+                context, oprovider.order.id, oprovider.order.type),
+          ] else if (oprovider.order.status == 2) ...[
             managerFinishButton(context, oprovider.order.id),
           ],
+          SizedBox(height: 2.h),
         ],
       ),
     );
@@ -204,21 +213,22 @@ class OrderDetail extends StatelessWidget {
     return Consumer<OrderProvider>(
       builder: (_, oprovider, __) => Column(
         children: [
-          ScreenWidget().buildTitle('ข้อมูลร้านอาหาร'),
-          SizedBox(height: 1.h),
-          buildShopAddress(context),
-          ScreenWidget().buildSpacer(),
           ScreenWidget().buildTitle('ข้อมูลลูกค้า'),
           SizedBox(height: 1.h),
           buildCustomerInformation(context, oprovider.order.customerid),
-          SizedBox(height: 2.h),
-          if (oprovider.order.status == 2) ...[
+          ScreenWidget().buildSpacer(),
+          ScreenWidget().buildTitle('ข้อมูลที่อยู่ลูกค้า'),
+          SizedBox(height: 1.h),
+          buildUserAddress(context, oprovider.order.addressid),
+          SizedBox(height: 3.h),
+          if (oprovider.order.status == 1) ...[
             riderAcceptButton(context, oprovider.order.id),
-          ] else if (oprovider.order.status == 4) ...[
+          ] else if (oprovider.order.status == 3) ...[
             riderReceiveButton(context, oprovider.order.id),
-          ] else if (oprovider.order.status == 5) ...[
+          ] else if (oprovider.order.status == 4) ...[
             riderSendButton(context, oprovider.order.id),
           ],
+          SizedBox(height: 2.h),
         ],
       ),
     );
@@ -244,7 +254,7 @@ class OrderDetail extends StatelessWidget {
               buildUserAddress(context, oprovider.order.addressid),
               SizedBox(height: 2.h),
             ],
-            if (oprovider.order.status == 6) ...[
+            if (oprovider.order.status == 5) ...[
               customerScoreButton(context, oprovider.order.id),
             ],
           ],
@@ -259,7 +269,7 @@ class OrderDetail extends StatelessWidget {
     }
     return Consumer<UserProvider>(
       builder: (_, uprovider, __) => SizedBox(
-        width: 100.w,
+        width: 80.w,
         height: 10.h,
         child: ListTile(
           leading: riderid == ''
@@ -295,32 +305,29 @@ class OrderDetail extends StatelessWidget {
     Provider.of<UserProvider>(context, listen: false)
         .readCustomerById(customerid);
     return Consumer<UserProvider>(
-      builder: (_, uprovider, __) => uprovider.customer == null
-          ? const ShowProgress()
-          : SizedBox(
-              width: 100.w,
-              height: 10.h,
-              child: ListTile(
-                leading: uprovider.customer.image == 'null'
-                    ? Image.asset(MyImage.person)
-                    : ShowImage().showCircleImage(uprovider.customer.image),
-                title: Row(
-                  children: [
-                    Text('ชื่อลูกค้า  :  ', style: MyStyle().boldPrimary16()),
-                    Text(
-                        '${uprovider.customer.firstname} ${uprovider.customer.lastname}',
-                        style: MyStyle().normalBlack16()),
-                  ],
-                ),
-                subtitle: Row(
-                  children: [
-                    Text('เบอร์โทร  :  ', style: MyStyle().boldPrimary16()),
-                    Text(uprovider.customer.phone,
-                        style: MyStyle().normalBlack16()),
-                  ],
-                ),
-              ),
-            ),
+      builder: (_, uprovider, __) => SizedBox(
+        width: 80.w,
+        height: 10.h,
+        child: ListTile(
+          leading: uprovider.customer.image == ''
+              ? Image.asset(MyImage.person)
+              : ShowImage().showCircleImage(uprovider.customer.image),
+          title: Row(
+            children: [
+              Text('ชื่อลูกค้า  :  ', style: MyStyle().boldPrimary16()),
+              Text(
+                  '${uprovider.customer.firstname} ${uprovider.customer.lastname}',
+                  style: MyStyle().normalBlack16()),
+            ],
+          ),
+          subtitle: Row(
+            children: [
+              Text('เบอร์โทร  :  ', style: MyStyle().boldPrimary16()),
+              Text(uprovider.customer.phone, style: MyStyle().normalBlack16()),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -388,7 +395,7 @@ class OrderDetail extends StatelessWidget {
             child: Text('ยืนยันออเดอร์', style: MyStyle().normalWhite16()),
           ),
         ),
-        SizedBox(height: 5.h),
+        SizedBox(height: 3.h),
         SizedBox(
           width: 80.w,
           height: 5.h,
@@ -425,16 +432,7 @@ class OrderDetail extends StatelessWidget {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(primary: Colors.green),
             onPressed: () => RiderProcess().acceptConfirmYes(context, orderId),
-            child: Text('ยืนยัน', style: MyStyle().normalWhite16()),
-          ),
-        ),
-        SizedBox(
-          width: 80.w,
-          height: 5.h,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(primary: Colors.red),
-            onPressed: () => RiderProcess().acceptConfirmNo(context, orderId),
-            child: Text('ยกเลิก', style: MyStyle().normalWhite16()),
+            child: Text('ยืนยันออเดอร์', style: MyStyle().normalWhite16()),
           ),
         ),
       ],

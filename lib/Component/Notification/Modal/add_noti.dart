@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:charoz/Model/SubModel/sub_noti_model.dart';
+import 'package:charoz/Model_Sub/noti_add.dart';
 import 'package:charoz/Provider/noti_provider.dart';
 import 'package:charoz/Service/Database/Firebase/noti_crud.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
@@ -378,7 +378,7 @@ class AddNoti {
         file == null ? await NotiCRUD().uploadImageNoti(file!) : '';
 
     bool status = await NotiCRUD().createNoti(
-      SubNotiModel(
+      NotiModify(
         userid: useridController.text.isEmpty ? '' : useridController.text,
         type: chooseType!,
         name: nameController.text,

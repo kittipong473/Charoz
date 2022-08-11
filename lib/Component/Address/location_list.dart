@@ -1,7 +1,7 @@
 import 'package:charoz/Component/Address/Modal/add_location.dart';
 import 'package:charoz/Component/Address/Modal/edit_location.dart';
 import 'package:charoz/Provider/address_provider.dart';
-import 'package:charoz/Model/address_model.dart';
+import 'package:charoz/Model_Main/address_model.dart';
 import 'package:charoz/Service/Database/Firebase/address_crud.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';

@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:charoz/Model/SubModel/sub_noti_model.dart';
-import 'package:charoz/Model/noti_model.dart';
+import 'package:charoz/Model_Sub/noti_add.dart';
+import 'package:charoz/Model_Main/noti_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -12,7 +12,10 @@ class NotiCRUD {
   Future readNotiTypeList(String type) async {
     List<NotiModel> result = [];
     try {
-      final snapshot = await notificate.where('type', isEqualTo: type).get();
+      final snapshot = await notificate
+          .where('type', isEqualTo: type)
+          .orderBy('start', descending: true)
+          .get();
       for (var item in snapshot.docs) {
         result.add(convertNoti(item));
       }
@@ -22,7 +25,7 @@ class NotiCRUD {
     }
   }
 
-  Future<bool> createNoti(SubNotiModel model) async {
+  Future<bool> createNoti(NotiModify model) async {
     try {
       await notificate.doc().set(model.toMap());
       return true;
@@ -31,7 +34,7 @@ class NotiCRUD {
     }
   }
 
-  Future<bool> updateNoti(String id, SubNotiModel model) async {
+  Future<bool> updateNoti(String id, NotiModify model) async {
     try {
       await notificate.doc(id).update(model.toMap());
       return true;

@@ -2,14 +2,14 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class SubAddressModel {
+class AddressModify {
   final String userid;
   final String name;
   final String detail;
   final int lat;
   final int lng;
   final Timestamp time;
-  SubAddressModel({
+  AddressModify({
     required this.userid,
     required this.name,
     required this.detail,
@@ -18,7 +18,7 @@ class SubAddressModel {
     required this.time,
   });
 
-  SubAddressModel copyWith({
+  AddressModify copyWith({
     String? userid,
     String? name,
     String? detail,
@@ -26,7 +26,7 @@ class SubAddressModel {
     int? lng,
     Timestamp? time,
   }) {
-    return SubAddressModel(
+    return AddressModify(
       userid: userid ?? this.userid,
       name: name ?? this.name,
       detail: detail ?? this.detail,
@@ -47,8 +47,8 @@ class SubAddressModel {
     };
   }
 
-  factory SubAddressModel.fromMap(Map<String, dynamic> map) {
-    return SubAddressModel(
+  factory AddressModify.fromMap(Map<String, dynamic> map) {
+    return AddressModify(
       userid: map['userid'] ?? '',
       name: map['name'] ?? '',
       detail: map['detail'] ?? '',
@@ -60,7 +60,7 @@ class SubAddressModel {
 
   String toJson() => json.encode(toMap());
 
-  factory SubAddressModel.fromJson(String source) => SubAddressModel.fromMap(json.decode(source));
+  factory AddressModify.fromJson(String source) => AddressModify.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -71,7 +71,7 @@ class SubAddressModel {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
   
-    return other is SubAddressModel &&
+    return other is AddressModify &&
       other.userid == userid &&
       other.name == name &&
       other.detail == detail &&

@@ -1,17 +1,20 @@
-import 'package:charoz/Model/shop_model.dart';
-import 'package:charoz/Model/time_model.dart';
+import 'package:charoz/Model_Main/shop_model.dart';
+import 'package:charoz/Model_Main/time_model.dart';
 import 'package:charoz/Service/Database/Firebase/shop_crud.dart';
+import 'package:charoz/Utilty/Function/location_service.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 
 class ShopProvider with ChangeNotifier {
   String? _shopStatus;
+  bool? _allowLocation;
   ShopModel? _shop;
   TimeModel? _time;
   List<ShopModel>? _shopList;
 
   get shopStatus => _shopStatus;
+  get allowLocation=> _allowLocation;
   get shop => _shop;
   get time => _time;
   get shopList => _shopList;
@@ -24,6 +27,11 @@ class ShopProvider with ChangeNotifier {
   Future readTimeModel() async {
     _time = await ShopCRUD().readTimeModel();
     getTimeStatus();
+    notifyListeners();
+  }
+
+  Future checkLocation() async {
+    _allowLocation = await LocationService().checkPermission();
     notifyListeners();
   }
 

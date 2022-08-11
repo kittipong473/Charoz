@@ -1,4 +1,4 @@
-import 'package:charoz/Model/noti_model.dart';
+import 'package:charoz/Model_Main/noti_model.dart';
 import 'package:charoz/Service/Database/Firebase/noti_crud.dart';
 import 'package:flutter/cupertino.dart';
 

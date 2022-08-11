@@ -1,4 +1,4 @@
-import 'package:charoz/Model/SubModel/sub_user_model.dart';
+import 'package:charoz/Model_Sub/user_sub.dart';
 import 'package:charoz/Service/Database/Firebase/user_crud.dart';
 import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
@@ -418,7 +418,7 @@ class Register extends StatelessWidget {
             email: emailController.text, password: password1Controller.text)
         .then((value) async {
       bool status = await UserCRUD().createUser(
-        SubUserModel(
+        UserModify(
           firstname: firstNameController.text,
           lastname: lastNameController.text,
           email: emailController.text,

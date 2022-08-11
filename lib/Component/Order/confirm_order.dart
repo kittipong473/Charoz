@@ -1,6 +1,6 @@
 import 'package:charoz/Component/Order/Modal/select_address.dart';
-import 'package:charoz/Model/SubModel/sub_order_model.dart';
-import 'package:charoz/Model/product_model.dart';
+import 'package:charoz/Model_Sub/order_sub.dart';
+import 'package:charoz/Model_Main/product_model.dart';
 import 'package:charoz/Provider/address_provider.dart';
 import 'package:charoz/Provider/order_provider.dart';
 import 'package:charoz/Provider/product_provider.dart';
@@ -86,7 +86,7 @@ class ConfirmOrder extends StatelessWidget {
   Widget buildShopAddress() {
     return Consumer<ShopProvider>(
       builder: (context, provider, __) => InkWell(
-        onTap: () => Navigator.pushNamed(context, RoutePage.routeShopDetail),
+        onTap: () => Navigator.pushNamed(context, RoutePage.routeShopMap),
         child: Card(
           elevation: 5,
           child: Container(
@@ -195,8 +195,8 @@ class ConfirmOrder extends StatelessWidget {
   }
 
   Widget buildTotal() {
-    return Consumer<OrderProvider>(
-      builder: (_, provider, __) => Column(
+    return Consumer2<OrderProvider, ShopProvider>(
+      builder: (_, oprovider, sprovider, __) => Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -209,9 +209,9 @@ class ConfirmOrder extends StatelessWidget {
                 ],
               ),
               Text(
-                  provider.type == MyVariable.orderReceiveTypeList[0]
+                  oprovider.type == MyVariable.orderReceiveTypeList[0]
                       ? '0 ฿'
-                      : '10 ฿',
+                      : '${sprovider.shop.freight} ฿',
                   style: MyStyle().boldPrimary18()),
             ],
           ),
@@ -226,7 +226,7 @@ class ConfirmOrder extends StatelessWidget {
                   Text('ค่าใช้จ่ายทั้งหมด : ', style: MyStyle().boldBlack16()),
                 ],
               ),
-              Text('${provider.totalPay} ฿', style: MyStyle().boldPrimary18()),
+              Text('${oprovider.totalPay} ฿', style: MyStyle().boldPrimary18()),
             ],
           ),
         ],
@@ -341,7 +341,7 @@ class ConfirmOrder extends StatelessWidget {
   Future processOrder(BuildContext context, OrderProvider oprovider,
       String addressId, String shopId, String managerId) async {
     bool status1 = await OrderCRUD().createOrder(
-      SubOrderModel(
+      OrderModify(
         shopid: shopId,
         riderid: '',
         customerid: MyVariable.userTokenId,

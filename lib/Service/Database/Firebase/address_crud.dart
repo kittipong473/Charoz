@@ -1,5 +1,5 @@
-import 'package:charoz/Model/SubModel/sub_address_model.dart';
-import 'package:charoz/Model/address_model.dart';
+import 'package:charoz/Model_Sub/address_add.dart';
+import 'package:charoz/Model_Main/address_model.dart';
 import 'package:charoz/Utilty/my_variable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -34,7 +34,7 @@ class AddressCRUD {
     }
   }
 
-  Future<bool> createAddress(SubAddressModel model) async {
+  Future<bool> createAddress(AddressModify model) async {
     try {
       await address.doc().set(model.toMap());
       return true;
@@ -43,7 +43,7 @@ class AddressCRUD {
     }
   }
 
-  Future<bool> updateAddress(String id, SubAddressModel model) async {
+  Future<bool> updateAddress(String id, AddressModify model) async {
     try {
       await address.doc(id).update(model.toMap());
       return true;

@@ -1,6 +1,6 @@
 import 'package:charoz/Component/Order/Modal/select_address.dart';
-import 'package:charoz/Model/address_model.dart';
-import 'package:charoz/Model/product_model.dart';
+import 'package:charoz/Model_Main/address_model.dart';
+import 'package:charoz/Model_Main/product_model.dart';
 import 'package:charoz/Provider/order_provider.dart';
 import 'package:charoz/Provider/product_provider.dart';
 import 'package:charoz/Service/Route/route_page.dart';
@@ -51,12 +51,14 @@ class OrderCart extends StatelessWidget {
                           ] else ...[
                             buildOrderList(oprovider),
                           ],
-                          SizedBox(height: 2.h),
+                          SizedBox(height: 3.h),
                           ScreenWidget().buildTitle('หมายเหตุเกี่ยวกับออเดอร์'),
                           SizedBox(height: 2.h),
                           buildDetailShop(),
                           SizedBox(height: 2.h),
                           buildDetailRider(),
+                          SizedBox(height: 3.h),
+                          ScreenWidget().buildTitle('ประเภทการรับอาหาร'),
                           SizedBox(height: 2.h),
                           buildType(),
                           SizedBox(height: 3.h),
@@ -197,7 +199,7 @@ class OrderCart extends StatelessWidget {
         controller: shopController,
         decoration: InputDecoration(
           labelStyle: MyStyle().normalBlack16(),
-          labelText: 'หมายเหตุถึงร้านอาหาร :',
+          labelText: 'หมายเหตุถึงร้านอาหาร(ถ้ามี) :',
           errorStyle: MyStyle().normalRed14(),
           prefixIcon: const Icon(
             Icons.mode_edit_outline_rounded,
@@ -226,7 +228,7 @@ class OrderCart extends StatelessWidget {
         controller: riderController,
         decoration: InputDecoration(
           labelStyle: MyStyle().normalBlack16(),
-          labelText: 'หมายเหตุถึงคนขับ :',
+          labelText: 'หมายเหตุถึงคนขับ(ถ้ามี) :',
           errorStyle: MyStyle().normalRed14(),
           prefixIcon: const Icon(
             Icons.mode_edit_outline_rounded,
@@ -246,31 +248,25 @@ class OrderCart extends StatelessWidget {
   }
 
   Widget buildType() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text('ประเภทการรับสินค้า : ', style: MyStyle().normalBlack16()),
-        Container(
-          width: 40.w,
-          padding: EdgeInsets.symmetric(horizontal: 3.w),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: MyStyle.dark),
-          ),
-          child: StatefulBuilder(
-            builder: (context, setState) => DropdownButton(
-              iconSize: 24.sp,
-              icon: const Icon(Icons.arrow_drop_down_outlined,
-                  color: MyStyle.primary),
-              isExpanded: true,
-              value: chooseType,
-              items: MyVariable.orderReceiveTypeList.map(DropDownMenu().dropdownItem).toList(),
-              onChanged: (value) =>
-                  setState(() => chooseType = value as String),
-            ),
-          ),
+    return Container(
+      width: 50.w,
+      padding: EdgeInsets.symmetric(horizontal: 3.w),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: MyStyle.dark),
+      ),
+      child: StatefulBuilder(
+        builder: (context, setState) => DropdownButton(
+          iconSize: 24.sp,
+          icon: const Icon(Icons.arrow_drop_down_outlined,
+              color: MyStyle.primary),
+          isExpanded: true,
+          value: chooseType,
+          items: MyVariable.orderReceiveTypeList.map(DropDownMenu().dropdownItem).toList(),
+          onChanged: (value) =>
+              setState(() => chooseType = value as String),
         ),
-      ],
+      ),
     );
   }
 

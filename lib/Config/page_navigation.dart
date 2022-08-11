@@ -1,7 +1,7 @@
 import 'package:charoz/Component/Notification/noti_list.dart';
 import 'package:charoz/Component/Order/order_history.dart';
 import 'package:charoz/Component/Order/order_list.dart';
-import 'package:charoz/Component/Rider/rider_order_detail.dart';
+import 'package:charoz/Component/Rider/rider_working.dart';
 import 'package:charoz/Component/Shop/shop_detail.dart';
 import 'package:charoz/Component/User/Modal/edit_user.dart';
 import 'package:charoz/Config/home.dart';
@@ -66,16 +66,6 @@ class _PageNavigationState extends State<PageNavigation> {
                 ),
               ),
             ),
-            actions: [
-              if (MyVariable.role == 'customer') ...[
-                buildAction(
-                    Icons.shopping_cart_rounded, RoutePage.routeOrderCart)
-              ],
-              if (MyVariable.role == 'admin' ||
-                  MyVariable.role == 'manager') ...[
-                buildAction(Icons.edit_note_rounded, RoutePage.routeOrderCart)
-              ],
-            ],
             bottom: TabBar(
               indicatorColor: MyStyle.bluePrimary,
               indicatorWeight: 3,
@@ -158,7 +148,7 @@ class _PageNavigationState extends State<PageNavigation> {
               fragmentDrawerList(
                 Icons.connect_without_contact_rounded,
                 'ติดต่อผู้ดูแล',
-                'สงข้อความ ปัญหา ข้อสงสัย ให้แอดมินทราบ',
+                'ส่งข้อความ ปัญหา ข้อสงสัย ให้แอดมินทราบ',
                 () => Navigator.pushNamed(context, RoutePage.routeLocationList),
               ),
             ] else if (MyVariable.role == 'manager' ||
@@ -235,7 +225,7 @@ class _PageNavigationState extends State<PageNavigation> {
     } else if (MyVariable.role == 'rider') {
       screens = [
         NotiList(notiList: MyVariable.notisRider),
-        const RiderOrderDetail(),
+        const RiderWorking(),
         const OrderList(),
         const ShopDetail(),
       ];

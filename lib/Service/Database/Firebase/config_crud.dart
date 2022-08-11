@@ -1,6 +1,6 @@
-import 'package:charoz/Model/banner_model.dart';
-import 'package:charoz/Model/maintenance_model.dart';
-import 'package:charoz/Model/privacy_model.dart';
+import 'package:charoz/Model_Main/banner_model.dart';
+import 'package:charoz/Model_Main/maintenance_model.dart';
+import 'package:charoz/Model_Main/privacy_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ConfigCRUD {

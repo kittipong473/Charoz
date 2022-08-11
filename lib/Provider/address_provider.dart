@@ -1,4 +1,4 @@
-import 'package:charoz/Model/address_model.dart';
+import 'package:charoz/Model_Main/address_model.dart';
 import 'package:charoz/Service/Database/Firebase/address_crud.dart';
 import 'package:charoz/Utilty/my_variable.dart';
 import 'package:flutter/foundation.dart';

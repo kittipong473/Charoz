@@ -1,4 +1,4 @@
-import 'package:charoz/Model/test_model.dart';
+import 'package:charoz/Model_Main/test_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TestCRUD {

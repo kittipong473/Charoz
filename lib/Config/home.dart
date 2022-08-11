@@ -1,9 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:charoz/Component/Product/Dialog/product_detail.dart';
 import 'package:charoz/Component/Shop/Dialog/carousel_detail.dart';
-import 'package:charoz/Model/banner_model.dart';
+import 'package:charoz/Model_Main/banner_model.dart';
 import 'package:charoz/Provider/config_provider.dart';
-import 'package:charoz/Model/product_model.dart';
+import 'package:charoz/Model_Main/product_model.dart';
 import 'package:charoz/Provider/product_provider.dart';
 import 'package:charoz/Provider/shop_provider.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
