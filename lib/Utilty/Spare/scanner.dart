@@ -142,4 +142,41 @@ class _ScannerState extends State<Scanner> {
       ),
     );
   }
+
+  // Widget buildQRcode() {
+  //   return Column(
+  //     children: [
+  //       QrImage(
+  //         data: controller.text,
+  //         size: 200,
+  //         backgroundColor: Colors.white,
+  //       ),
+  //       const SizedBox(height: 40),
+  //       TextField(
+  //         controller: controller,
+  //         decoration: InputDecoration(
+  //           hintText: "Enter the Data",
+  //           suffixIcon: IconButton(
+  //             icon: const Icon(Icons.send_rounded),
+  //             onPressed: () => setState(() {}),
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
+
+  // Widget buildOpenScanner() {
+  //   return ElevatedButton(
+  //     onPressed: () {
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (context) => const Scanner(),
+  //         ),
+  //       );
+  //     },
+  //     child: const Text('Open Scanner'),
+  //   );
+  // }
 }

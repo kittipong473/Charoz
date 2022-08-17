@@ -1,6 +1,6 @@
+import 'package:charoz/Component/Notification/Dialog/noti_delete.dart';
 import 'package:charoz/Component/Notification/Dialog/noti_detail.dart';
 import 'package:charoz/Component/Notification/Modal/add_noti.dart';
-import 'package:charoz/Component/Order/order_list.dart';
 import 'package:charoz/Model_Main/noti_model.dart';
 import 'package:charoz/Provider/noti_provider.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
@@ -12,12 +12,11 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class NotiList extends StatelessWidget {
-  final List notiList;
-  const NotiList({Key? key, required this.notiList}) : super(key: key);
+  const NotiList({Key? key}) : super(key: key);
 
   Future getData(BuildContext context) async {
     await Provider.of<NotiProvider>(context, listen: false)
-        .readNotiTypeList(notiList[MyVariable.indexNotiChip]);
+        .readNotiTypeList(MyVariable.notiTypeList[MyVariable.indexNotiChip]);
   }
 
   @override
@@ -35,16 +34,7 @@ class NotiList extends StatelessWidget {
                 builder: (_, setState) => Column(
                   children: [
                     buildChip(context, setState),
-                    if (MyVariable.indexNotiChip == 0) ...[
-                      if (MyVariable.role != 'admin' &&
-                          MyVariable.role != '') ...[
-                        const OrderList(),
-                      ] else ...[
-                        buildNotiList(),
-                      ],
-                    ] else ...[
-                      buildNotiList(),
-                    ],
+                    buildNotiList(),
                   ],
                 ),
               ),
@@ -70,8 +60,8 @@ class NotiList extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          for (var i = 0; i < notiList.length; i++) ...[
-            chip(context, setState, notiList[i], i),
+          for (var i = 0; i < MyVariable.notiTypeList.length; i++) ...[
+            chip(context, setState, MyVariable.notiTypeList[i], i),
           ],
         ],
       ),
@@ -106,8 +96,8 @@ class NotiList extends StatelessWidget {
             ? const ShowProgress()
             : provider.notiList.isEmpty
                 ? ScreenWidget().showEmptyData(
-                    'ยังไม่มี ${notiList[MyVariable.indexNotiChip]} ในขณะนี้',
-                    'รอรายการ ${notiList[MyVariable.indexNotiChip]} ในภายหลัง')
+                    'ยังไม่มี ${MyVariable.notiTypeList[MyVariable.indexNotiChip]} ในขณะนี้',
+                    'รอรายการ ${MyVariable.notiTypeList[MyVariable.indexNotiChip]} ในภายหลัง')
                 : ListView.builder(
                     shrinkWrap: true,
                     padding: EdgeInsets.only(top: 1.h),
@@ -125,6 +115,7 @@ class NotiList extends StatelessWidget {
       elevation: 5.0,
       child: InkWell(
         onTap: () => NotiDetail().dialogNoti(context, noti),
+        onLongPress: () => NotiDelete().confirmDelete(context, noti.id),
         child: Padding(
           padding: EdgeInsets.all(10.sp),
           child: Row(

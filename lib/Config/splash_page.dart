@@ -23,28 +23,17 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
-    loadData();
     super.initState();
+    checkMaintenance();
   }
 
-  Future loadData() async {
-    await checkLoginStatus();
-
-    int maintenance = await ConfigCRUD().readStatusFromAS();
+  Future checkMaintenance() async {
     // int maintenance = 0;
-
+    int? maintenance = await ConfigCRUD().readStatusFromAS();
     if (maintenance == 0 || maintenance == 1) {
-      Provider.of<ConfigProvider>(context, listen: false)
-          .readMaintenanceFromStatus(maintenance);
-      Future.delayed(Duration.zero, () {
-        Navigator.pushNamedAndRemoveUntil(
-            context, RoutePage.routeMaintenancePage, (route) => false);
-      });
+      appMaintenance(maintenance!);
     } else if (maintenance == 2) {
-      Future.delayed(Duration.zero, () {
-        Navigator.pushNamedAndRemoveUntil(
-            context, RoutePage.routePageNavigation, (route) => false);
-      });
+      checkLogin();
     } else {
       DialogAlert().doubleDialog(
           context, 'เซิฟเวอร์มีปัญหา', 'กรุณาเข้าใช้งานในภายหลัง');
@@ -52,11 +41,24 @@ class _SplashPageState extends State<SplashPage> {
     }
   }
 
-  Future checkLoginStatus() async {
+  void appMaintenance(int maintenance) {
+    Provider.of<ConfigProvider>(context, listen: false)
+        .readMaintenanceFromStatus(maintenance);
+    Future.delayed(Duration.zero, () {
+      Navigator.pushNamedAndRemoveUntil(
+          context, RoutePage.routeMaintenancePage, (route) => false);
+    });
+  }
+
+  void checkLogin() {
     if (MyVariable.accountUid != "") {
-      await Provider.of<UserProvider>(context, listen: false).readUserByToken();
+      Provider.of<UserProvider>(context, listen: false)
+          .getUserPreference(context);
     } else {
-      MyVariable.login = false;
+      Future.delayed(Duration.zero, () {
+        Navigator.pushNamedAndRemoveUntil(
+            context, RoutePage.routeCodeVerify, (route) => false);
+      });
     }
   }
 

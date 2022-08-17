@@ -12,6 +12,9 @@ class ShopAdminModify {
   final double lng;
   final String image;
   final int freight;
+  final int choose;
+  final String open;
+  final String close;
   final Timestamp time;
   ShopAdminModify({
     required this.name,
@@ -23,6 +26,9 @@ class ShopAdminModify {
     required this.lng,
     required this.image,
     required this.freight,
+    required this.choose,
+    required this.open,
+    required this.close,
     required this.time,
   });
 
@@ -36,6 +42,9 @@ class ShopAdminModify {
     double? lng,
     String? image,
     int? freight,
+    int? choose,
+    String? open,
+    String? close,
     Timestamp? time,
   }) {
     return ShopAdminModify(
@@ -48,6 +57,9 @@ class ShopAdminModify {
       lng: lng ?? this.lng,
       image: image ?? this.image,
       freight: freight ?? this.freight,
+      choose: choose ?? this.choose,
+      open: open ?? this.open,
+      close: close ?? this.close,
       time: time ?? this.time,
     );
   }
@@ -63,6 +75,9 @@ class ShopAdminModify {
       'lng': lng,
       'image': image,
       'freight': freight,
+      'choose': choose,
+      'open': open,
+      'close': close,
       'time': time,
     };
   }
@@ -78,6 +93,9 @@ class ShopAdminModify {
       lng: map['lng']?.toDouble() ?? 0.0,
       image: map['image'] ?? '',
       freight: map['freight']?.toInt() ?? 0,
+      choose: map['choose']?.toInt() ?? 0,
+      open: map['open'] ?? '',
+      close: map['close'] ?? '',
       time: map['time'],
     );
   }
@@ -88,7 +106,7 @@ class ShopAdminModify {
 
   @override
   String toString() {
-    return 'SubShopAdminModel(name: $name, announce: $announce, detail: $detail, address: $address, phone: $phone, lat: $lat, lng: $lng, image: $image, freight: $freight, time: $time)';
+    return 'ShopAdminModify(name: $name, announce: $announce, detail: $detail, address: $address, phone: $phone, lat: $lat, lng: $lng, image: $image, freight: $freight, choose: $choose, open: $open, close: $close, time: $time)';
   }
 
   @override
@@ -105,6 +123,9 @@ class ShopAdminModify {
       other.lng == lng &&
       other.image == image &&
       other.freight == freight &&
+      other.choose == choose &&
+      other.open == open &&
+      other.close == close &&
       other.time == time;
   }
 
@@ -119,6 +140,9 @@ class ShopAdminModify {
       lng.hashCode ^
       image.hashCode ^
       freight.hashCode ^
+      choose.hashCode ^
+      open.hashCode ^
+      close.hashCode ^
       time.hashCode;
   }
 }

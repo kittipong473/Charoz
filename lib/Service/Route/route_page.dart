@@ -1,6 +1,7 @@
 import 'package:charoz/Component/Order/confirm_order.dart';
 import 'package:charoz/Component/Order/order_detail.dart';
 import 'package:charoz/Component/Rider/rider_working.dart';
+import 'package:charoz/Component/Security/code_manage.dart';
 import 'package:charoz/Component/Security/code_setting.dart';
 import 'package:charoz/Component/Security/privacy_policy.dart';
 import 'package:charoz/Component/Shop/shop_detail.dart';
@@ -21,10 +22,11 @@ import 'package:flutter/material.dart';
 class RoutePage {
   static String routeCodeVerify = '/codeverify';
   static String routeCodeSetting = '/codesetting';
+  static String routeCodeManage = '/codemanage';
   static String routeSplashPage = '/splashpage';
   static String routeMaintenancePage = '/maintenancepage';
   static String routePageNavigation = '/pagenavigation';
-  static String routeRegisterToken = '/registertoken';
+  static String routeVerifyToken = '/verifytoken';
   static String routeOrderCart = '/ordercart';
   static String routeLocationList = '/locationlist';
   static String routeConfirmOrder = '/confirmorder';
@@ -41,10 +43,11 @@ class RoutePage {
 final Map<String, WidgetBuilder> routes = {
   '/codeverify': (BuildContext context) => const CodeVerify(),
   '/codesetting': (BuildContext context) => const CodeSetting(),
+  '/codemanage': (BuildContext context) => const CodeManage(),
   '/splashpage': (BuildContext context) => const SplashPage(),
   '/maintenancepage': (BuildContext context) => const MaintenancePage(),
   '/pagenavigation': (BuildContext context) => const PageNavigation(),
-  '/registertoken': (BuildContext context) => const RegisterToken(),
+  '/verifytoken': (BuildContext context) => const VerifyToken(),
   '/ordercart': (BuildContext context) => const OrderCart(),
   '/locationlist': (BuildContext context) => const LocationList(),
   '/confirmorder': (BuildContext context) => const ConfirmOrder(),

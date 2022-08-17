@@ -1,4 +1,4 @@
-import 'package:charoz/Model_Sub/user_sub.dart';
+import 'package:charoz/Model_Sub/user_modify.dart';
 import 'package:charoz/Service/Database/Firebase/user_crud.dart';
 import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
@@ -428,6 +428,7 @@ class Register extends StatelessWidget {
           status: 1,
           tokenE: value.user!.uid,
           tokenP: '',
+          pincode: '',
           time: Timestamp.fromDate(DateTime.now()),
         ),
       );

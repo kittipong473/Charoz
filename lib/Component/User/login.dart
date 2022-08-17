@@ -1,5 +1,5 @@
+import 'package:charoz/Model_Main/user_model.dart';
 import 'package:charoz/Provider/user_provider.dart';
-import 'package:charoz/Service/Database/Firebase/user_crud.dart';
 import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
@@ -169,37 +169,101 @@ class Login extends StatelessWidget {
     return SizedBox(
       width: 80.w,
       height: 5.h,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(primary: MyStyle.bluePrimary),
-        onPressed: () {
-          if (formKey.currentState!.validate()) {
-            EasyLoading.show(status: 'loading...');
-            processLogin(context);
-          }
-        },
-        child: Text('เข้าสู่ระบบ', style: MyStyle().normalWhite16()),
+      child: Consumer<UserProvider>(
+        builder: (_, provider, __) => ElevatedButton(
+          style: ElevatedButton.styleFrom(primary: MyStyle.bluePrimary),
+          onPressed: () async {
+            if (formKey.currentState!.validate()) {
+              EasyLoading.show(status: 'loading...');
+              checkUser(context, provider.user);
+            }
+          },
+          child: Text('เข้าสู่ระบบ', style: MyStyle().normalWhite16()),
+        ),
       ),
     );
   }
 
-  Future processLogin(BuildContext context) async {
-    String? email = await Provider.of<UserProvider>(context, listen: false)
+  Future checkUser(BuildContext context, UserModel user) async {
+    bool status = await Provider.of<UserProvider>(context, listen: false)
         .checkPhoneAndGetUser(phoneController.text);
-    if (email != null) {
+    if (status) {
+      processLogin(context, user);
+    } else {
+      EasyLoading.dismiss();
+      DialogAlert().doubleDialog(context, 'เบอร์โทรศัพท์นี้ไม่มีอยู่ในระบบ',
+          'กรุณาสมัครสมาชิกก่อนจึงเข้าใช้งาน');
+    }
+  }
+
+  Future processLogin(BuildContext context, UserModel user) async {
+    if (user.status == 1) {
       await MyVariable.auth
           .signInWithEmailAndPassword(
-              email: email, password: passwordController.text)
+              email: user.email, password: passwordController.text)
           .then((value) async {
-        Provider.of<UserProvider>(context, listen: false)
-            .setLoginVariable(context);
+        phoneController.clear();
+        passwordController.clear();
+        EasyLoading.dismiss();
+        if (user.pincode == '') {
+          alertPinCode(context, user.id);
+        } else {
+          Provider.of<UserProvider>(context, listen: false)
+              .setLoginVariable(context);
+        }
       }).catchError((e) {
         EasyLoading.dismiss();
         DialogAlert().singleDialog(context, MyFunction().authenAlert(e.code));
       });
     } else {
       EasyLoading.dismiss();
-      DialogAlert().doubleDialog(context, 'เบอร์โทรศัพท์นี้ไม่มีอยู่ในระบบ',
-          'กรุณาสมัครสมาชิกก่อนจึงเข้าใช้งาน');
+      DialogAlert().doubleDialog(context, 'คุณถูกระงับการใช้งาน',
+          'โปรดติดต่อสอบถามผู้ดูแลระบบเมื่อมีข้อสงสัย');
     }
+  }
+
+  void alertPinCode(BuildContext context, String id) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: ListTile(
+          leading:
+              Icon(Icons.info_outlined, color: MyStyle.primary, size: 30.sp),
+          title: Text(
+            'กำหนดรหัส Pin Code เพื่อความปลอดภัย',
+            style: MyStyle().boldPrimary16(),
+            textAlign: TextAlign.center,
+          ),
+          subtitle: Text(
+            'คุณต้องการตั้งรหัส pin code เมื่อเข้าใช้งาน application หรือไม่ ?',
+            style: MyStyle().normalBlack14(),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(dialogContext);
+                  Navigator.pushNamed(context, RoutePage.routeCodeSetting);
+                },
+                child: Text('ตั้งรหัส pin', style: MyStyle().boldGreen16()),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(dialogContext);
+                  Provider.of<UserProvider>(context, listen: false)
+                      .setLoginVariable(context);
+                },
+                child: Text('ไม่ตั้งรหัส', style: MyStyle().boldRed16()),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }

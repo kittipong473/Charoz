@@ -1,27 +1,31 @@
 import 'package:charoz/Model_Main/order_model.dart';
+import 'package:charoz/Model_Main/product_model.dart';
 import 'package:charoz/Service/Database/Firebase/order_crud.dart';
+import 'package:charoz/Service/Database/Firebase/shop_crud.dart';
 import 'package:flutter/foundation.dart';
 
 class OrderProvider with ChangeNotifier {
   String? _commentshop;
   String? _commentrider;
-  String? _type;
-  double? _totalPay;
+  int? _type;
+  int? _freight;
+  int? _totalPay;
   OrderModel? _order;
   List<OrderModel>? _orderList;
   List<String>? _statusList;
-  final List<String> _productidList = [];
-  final List<int> _productamountList = [];
+  final List<ProductModel> _productList = [];
+  final List<int> _amountList = [];
 
   get commentshop => _commentshop;
   get commentrider => _commentrider;
   get type => _type;
+  get freight => _freight;
   get totalPay => _totalPay;
   get order => _order;
   get orderList => _orderList;
   get statusList => _statusList;
-  get productidList => _productidList;
-  get productamountList => _productamountList;
+  get productList => _productList;
+  get amountList => _amountList;
 
   Future readOrderCustomerListByFinish() async {
     _orderList = await OrderCRUD().readOrderCustomerListByFinish();
@@ -36,40 +40,54 @@ class OrderProvider with ChangeNotifier {
   }
 
   Future readOrderRiderListByFinish() async {
-    _orderList = await await OrderCRUD().readOrderRiderListByFinish();
+    _orderList = await OrderCRUD().readOrderRiderListByFinish();
     _orderList!.sort((a, b) => b.time.compareTo(a.time));
     notifyListeners();
   }
 
-  void addOrderToCart(String id, int amount) {
-    _productidList.add(id);
-    _productamountList.add(amount);
+  Future readOrderAdminListByFinish() async {
+    _orderList = await OrderCRUD().readOrderAdminListByFinish();
+    _orderList!.sort((a, b) => b.time.compareTo(a.time));
     notifyListeners();
   }
 
-  void addDetailOrder(String shop, String rider, String type, double total) {
+  void calculateTotalPay(int type, int freight) {
+    _totalPay = 0;
+    for (var i = 0; i < _productList.length; i++) {
+      _totalPay = totalPay + _productList[i].price * _amountList[i];
+    }
+    if (type == 1) {
+      _totalPay = _totalPay! + freight;
+    }
+    notifyListeners();
+  }
+
+  void addProductToCart(ProductModel product, int amount) {
+    _productList.add(product);
+    _amountList.add(amount);
+    notifyListeners();
+  }
+
+  void addCartToOrder(String shop, String rider, int type) {
     _commentshop = shop;
     _commentrider = rider;
     _type = type;
-    _totalPay = type == 'มารับที่ร้านค้า' ? total : total + 10;
     notifyListeners();
   }
 
-  void removeOrderWhereId(String id, int amount) {
-    _productidList.remove(id);
-    _productamountList.remove(amount);
+  void removeOrderWhereId(ProductModel product, int amount) {
+    _productList.remove(product);
+    _amountList.remove(amount);
     notifyListeners();
   }
 
   void clearOrderData() {
-    _productidList.clear();
-    _productamountList.clear();
+    _productList.clear();
+    _amountList.clear();
     _commentrider = null;
     _commentshop = null;
     _type = null;
     _totalPay = null;
-    _order = null;
-    _orderList = null;
   }
 
   void setOrderModel(OrderModel order) {

@@ -1,9 +1,7 @@
 import 'dart:io';
 
-import 'package:charoz/Model_Sub/shop_manager_sub.dart';
-import 'package:charoz/Model_Sub/time_sub.dart';
+import 'package:charoz/Model_Sub/shop_manager_modify.dart';
 import 'package:charoz/Model_Main/shop_model.dart';
-import 'package:charoz/Model_Main/time_model.dart';
 import 'package:charoz/Provider/shop_provider.dart';
 import 'package:charoz/Service/Database/Firebase/shop_crud.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
@@ -37,24 +35,23 @@ class EditShopManager {
   String? image;
   String? chooseType;
 
-  Future<dynamic> openModalEditShopManager(
-      context, ShopModel shop, TimeModel time) {
+  Future<dynamic> openModalEditShopManager(context, ShopModel shop) {
     nameController.text = shop.name;
     phoneController.text = shop.phone;
     announceController.text = shop.announce;
     detailController.text = shop.detail;
-    openController.text = time.open;
-    closeController.text = time.close;
+    openController.text = shop.open;
+    closeController.text = shop.close;
     freightController.text = shop.freight.toString();
     image = shop.image;
-    chooseType = time.choose;
+    chooseType = MyVariable.timeTypes[shop.choose];
     return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        builder: (context) => modalEditShop(shop.id, time.id));
+        builder: (context) => modalEditShop(shop.id));
   }
 
-  Widget modalEditShop(String shopid, String timeid) {
+  Widget modalEditShop(String shopid) {
     return SizedBox(
       width: 100.w,
       height: 90.h,
@@ -91,7 +88,7 @@ class EditShopManager {
                           SizedBox(height: 3.h),
                           buildImage(setState),
                           SizedBox(height: 3.h),
-                          buildButton(context, shopid, timeid),
+                          buildButton(context, shopid),
                           SizedBox(height: 2.h),
                         ],
                       ),
@@ -449,7 +446,7 @@ class EditShopManager {
     );
   }
 
-  Widget buildButton(BuildContext context, String shopid, String timeid) {
+  Widget buildButton(BuildContext context, String shopid) {
     return SizedBox(
       width: 90.w,
       height: 5.h,
@@ -458,7 +455,7 @@ class EditShopManager {
         onPressed: () {
           if (formKey.currentState!.validate()) {
             EasyLoading.show(status: 'loading...');
-            processUpdate(context, shopid, timeid);
+            processUpdate(context, shopid);
           }
         },
         child: Text('แก้ไขข้อมูลร้านค้า', style: MyStyle().normalWhite16()),
@@ -467,11 +464,11 @@ class EditShopManager {
   }
 
   Future processUpdate(
-      BuildContext context, String shopid, String timeid) async {
+      BuildContext context, String shopid) async {
     String chooseImage =
-        file == null ? await ShopCRUD().uploadImageShop(file!) : '';
+        file != null ? await ShopCRUD().uploadImageShop(file!) : image!;
 
-    bool status1 = await ShopCRUD().updateShopByManager(
+    bool status = await ShopCRUD().updateShopByManager(
       shopid,
       ShopManagerModify(
         name: nameController.text,
@@ -481,21 +478,14 @@ class EditShopManager {
         image: chooseImage,
         freight: int.parse(freightController.text),
         time: Timestamp.fromDate(DateTime.now()),
-      ),
-    );
-    bool status2 = await ShopCRUD().updateTime(
-      timeid,
-      TimeModify(
-        shopid: shopid,
         open: openController.text,
         close: closeController.text,
-        choose: chooseType!,
+        choose: MyVariable.timeTypes.indexOf(chooseType!),
       ),
     );
 
-    if (status1 && status2) {
+    if (status) {
       Provider.of<ShopProvider>(context, listen: false).readShopModel();
-      Provider.of<ShopProvider>(context, listen: false).readTimeModel();
       EasyLoading.dismiss();
       MyFunction().toast('แก้ไขร้านค้าเรียบร้อยแล้ว');
       Navigator.pop(context);

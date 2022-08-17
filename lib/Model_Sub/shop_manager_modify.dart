@@ -9,6 +9,9 @@ class ShopManagerModify {
   final String phone;
   final String image;
   final int freight;
+  final int choose;
+  final String open;
+  final String close;
   final Timestamp time;
   ShopManagerModify({
     required this.name,
@@ -17,6 +20,9 @@ class ShopManagerModify {
     required this.phone,
     required this.image,
     required this.freight,
+    required this.choose,
+    required this.open,
+    required this.close,
     required this.time,
   });
 
@@ -27,6 +33,9 @@ class ShopManagerModify {
     String? phone,
     String? image,
     int? freight,
+    int? choose,
+    String? open,
+    String? close,
     Timestamp? time,
   }) {
     return ShopManagerModify(
@@ -36,6 +45,9 @@ class ShopManagerModify {
       phone: phone ?? this.phone,
       image: image ?? this.image,
       freight: freight ?? this.freight,
+      choose: choose ?? this.choose,
+      open: open ?? this.open,
+      close: close ?? this.close,
       time: time ?? this.time,
     );
   }
@@ -48,6 +60,9 @@ class ShopManagerModify {
       'phone': phone,
       'image': image,
       'freight': freight,
+      'choose': choose,
+      'open': open,
+      'close': close,
       'time': time,
     };
   }
@@ -60,6 +75,9 @@ class ShopManagerModify {
       phone: map['phone'] ?? '',
       image: map['image'] ?? '',
       freight: map['freight']?.toInt() ?? 0,
+      choose: map['choose']?.toInt() ?? 0,
+      open: map['open'] ?? '',
+      close: map['close'] ?? '',
       time: map['time'],
     );
   }
@@ -70,7 +88,7 @@ class ShopManagerModify {
 
   @override
   String toString() {
-    return 'SubShopManagerModel(name: $name, announce: $announce, detail: $detail, phone: $phone, image: $image, freight: $freight, time: $time)';
+    return 'ShopManagerModify(name: $name, announce: $announce, detail: $detail, phone: $phone, image: $image, freight: $freight, choose: $choose, open: $open, close: $close, time: $time)';
   }
 
   @override
@@ -84,6 +102,9 @@ class ShopManagerModify {
       other.phone == phone &&
       other.image == image &&
       other.freight == freight &&
+      other.choose == choose &&
+      other.open == open &&
+      other.close == close &&
       other.time == time;
   }
 
@@ -95,6 +116,9 @@ class ShopManagerModify {
       phone.hashCode ^
       image.hashCode ^
       freight.hashCode ^
+      choose.hashCode ^
+      open.hashCode ^
+      close.hashCode ^
       time.hashCode;
   }
 }

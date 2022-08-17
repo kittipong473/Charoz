@@ -2,6 +2,7 @@ import 'package:charoz/Service/Database/Firebase/order_crud.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
+import 'package:charoz/Utilty/my_variable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -37,7 +38,7 @@ class RiderProcess {
                 onPressed: () {
                   Navigator.pop(dialogContext);
                   EasyLoading.show(status: 'loading...');
-                  processAcceptOrder(context, id, 2);
+                  processAcceptOrder(context, id);
                 },
                 child: Text('ยอมรับ', style: MyStyle().boldGreen18()),
               ),
@@ -52,12 +53,13 @@ class RiderProcess {
     );
   }
 
-  Future processAcceptOrder(BuildContext context, String id, int status) async {
-    bool api1 = await OrderCRUD().updateOrderStatus(id, status, 1);
+  Future processAcceptOrder(BuildContext context, String id) async {
+    bool api1 = await OrderCRUD().updateOrderStatus(id, 2, 1);
     bool api2 = await OrderCRUD().updateOrderRiderId(id);
     if (api1 && api2) {
       EasyLoading.dismiss();
       Navigator.pop(context);
+      MyVariable.tabController!.animateTo(1);
       MyFunction().toast('ยอมรับออเดอร์ เรียบร้อย');
     } else {
       EasyLoading.dismiss();

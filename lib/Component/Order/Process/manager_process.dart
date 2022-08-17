@@ -127,4 +127,17 @@ class ManagerProcess {
           context, 'มีปัญหาเกิดขึ้นที่ระบบ', 'กรุณาลองใหม่อีกครั้งในภายหลัง');
     }
   }
+
+  Future processCompleteOrder(BuildContext context, String id) async {
+    bool api = await OrderCRUD().updateOrderStatus(id, 5, 3);
+    if (api) {
+      EasyLoading.dismiss();
+      Navigator.pop(context);
+      MyFunction().toast('อัพเดทสถานะ เรียบร้อย');
+    } else {
+      EasyLoading.dismiss();
+      DialogAlert().doubleDialog(
+          context, 'มีปัญหาเกิดขึ้นที่ระบบ', 'กรุณาลองใหม่อีกครั้งในภายหลัง');
+    }
+  }
 }

@@ -1,34 +1,20 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:charoz/Model_Sub/shop_admin_sub.dart';
-import 'package:charoz/Model_Sub/shop_manager_sub.dart';
-import 'package:charoz/Model_Sub/time_sub.dart';
+import 'package:charoz/Model_Sub/shop_admin_modify.dart';
+import 'package:charoz/Model_Sub/shop_manager_modify.dart';
 import 'package:charoz/Model_Main/shop_model.dart';
-import 'package:charoz/Model_Main/time_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class ShopCRUD {
   final shop = FirebaseFirestore.instance.collection('shop');
-  final time = FirebaseFirestore.instance.collection('time');
 
   Future readShopModel() async {
     try {
       final snapshot = await shop.limit(1).get();
       for (var item in snapshot.docs) {
         return convertShop(item);
-      }
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future readTimeModel() async {
-     try {
-      final snapshot = await time.limit(1).get();
-      for (var item in snapshot.docs) {
-        return convertTime(item);
       }
     } catch (e) {
       rethrow;
@@ -47,15 +33,6 @@ class ShopCRUD {
   Future<bool> updateShopByManager(String id, ShopManagerModify model) async {
     try {
       await shop.doc(id).update(model.toMap());
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  Future<bool> updateTime(String id, TimeModify model) async {
-    try {
-      await time.doc(id).update(model.toMap());
       return true;
     } catch (e) {
       return false;

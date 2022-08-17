@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:charoz/Model_Sub/noti_add.dart';
+import 'package:charoz/Model_Sub/noti_modify.dart';
 import 'package:charoz/Provider/noti_provider.dart';
 import 'package:charoz/Service/Database/Firebase/noti_crud.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
@@ -25,7 +25,6 @@ class AddNoti {
   TextEditingController detailController = TextEditingController();
   TextEditingController startController = TextEditingController();
   TextEditingController endController = TextEditingController();
-  TextEditingController useridController = TextEditingController();
   MaskTextInputFormatter dateFormat =
       MaskTextInputFormatter(mask: '##-##-####');
   DateTime? startValue;
@@ -33,10 +32,11 @@ class AddNoti {
   String? image;
   File? file;
   String? chooseType;
+  String? chooseRole;
 
   Future<dynamic> openModalAdNoti(context) {
     startValue = DateTime.now();
-    image = 'null';
+    image = '';
     startController.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
     return showModalBottomSheet(
         context: context,
@@ -74,7 +74,7 @@ class AddNoti {
                           SizedBox(height: 3.h),
                           buildEnd(context, setState),
                           SizedBox(height: 3.h),
-                          buildUserId(),
+                          buildUserId(setState),
                           SizedBox(height: 3.h),
                           buildImage(setState),
                           SizedBox(height: 3.h),
@@ -113,13 +113,9 @@ class AddNoti {
                 color: MyStyle.primary),
             isExpanded: true,
             value: chooseType,
-            items: MyVariable.role == 'admin'
-                ? MyVariable.notisAdmin
-                    .map(DropDownMenu().dropdownItem)
-                    .toList()
-                : MyVariable.notisUser
-                    .map(DropDownMenu().dropdownItem)
-                    .toList(),
+            items: MyVariable.notiTypeList
+                .map(DropDownMenu().dropdownItem)
+                .toList(),
             onChanged: (value) => setState(() => chooseType = value as String),
           ),
         ),
@@ -288,38 +284,31 @@ class AddNoti {
     );
   }
 
-  Widget buildUserId() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      width: 50.w,
-      child: TextFormField(
-        keyboardType: TextInputType.number,
-        style: MyStyle().normalBlack16(),
-        controller: useridController,
-        validator: (value) {
-          if (value!.isEmpty) {
-            return 'กรุณากรอก รหัสเป้าหมาย';
-          } else {
-            return null;
-          }
-        },
-        decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
-          labelText: 'รหัสเป้าหมาย :',
-          prefixIcon: const Icon(
-            Icons.key_rounded,
-            color: MyStyle.dark,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
+  Widget buildUserId(Function setState) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text('กลุ่มเป้าหมาย : ', style: MyStyle().normalBlack16()),
+        Container(
+          width: 50.w,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: MyStyle.primary),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
-            borderRadius: BorderRadius.circular(10),
+          child: DropdownButton(
+            iconSize: 24.sp,
+            icon: const Icon(Icons.arrow_drop_down_outlined,
+                color: MyStyle.primary),
+            isExpanded: true,
+            value: chooseRole,
+            items: MyVariable.notiRoleTargetList
+                .map(DropDownMenu().dropdownItem)
+                .toList(),
+            onChanged: (value) => setState(() => chooseRole = value as String),
           ),
         ),
-      ),
+      ],
     );
   }
 
@@ -366,6 +355,8 @@ class AddNoti {
             processInsert(context);
           } else if (chooseType == null) {
             DialogAlert().singleDialog(context, 'กรุณาเลือก หัวข้อ');
+          } else if (chooseRole == null) {
+            DialogAlert().singleDialog(context, 'กรุณาเลือก กลุ่มเป้าหมาย');
           }
         },
         child: Text('เพิ่มการแจ้งเตือน', style: MyStyle().normalWhite16()),
@@ -375,11 +366,18 @@ class AddNoti {
 
   Future processInsert(BuildContext context) async {
     String chooseImage =
-        file == null ? await NotiCRUD().uploadImageNoti(file!) : '';
-
+        file != null ? await NotiCRUD().uploadImageNoti(file!) : '';
+    String roleTarget = '';
+    if (chooseRole == MyVariable.notiRoleTargetList[0]) {
+      roleTarget = 'everyone';
+    } else if (chooseRole == MyVariable.notiRoleTargetList[1]) {
+      roleTarget = 'rider';
+    } else if (chooseRole == MyVariable.notiRoleTargetList[2]) {
+      roleTarget = 'customer';
+    }
     bool status = await NotiCRUD().createNoti(
       NotiModify(
-        userid: useridController.text.isEmpty ? '' : useridController.text,
+        userid: roleTarget,
         type: chooseType!,
         name: nameController.text,
         detail: detailController.text,
@@ -392,7 +390,7 @@ class AddNoti {
 
     if (status) {
       Provider.of<NotiProvider>(context, listen: false)
-          .readNotiTypeList(MyVariable.notisAdmin[MyVariable.indexNotiChip]);
+          .readNotiTypeList(MyVariable.notiTypeList[MyVariable.indexNotiChip]);
       EasyLoading.dismiss();
       MyFunction().toast('เพิ่มการแจ้งเตือนเรียบร้อย');
       Navigator.pop(context);

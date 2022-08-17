@@ -78,36 +78,41 @@ class EditUser {
   }
 
   Widget buildImage(Function setState) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        IconButton(
-          onPressed: () async {
-            file = await MyFunction().chooseImage(ImageSource.camera);
-            setState(() {});
-          },
-          icon: const Icon(Icons.add_a_photo, size: 36, color: MyStyle.dark),
-        ),
-        SizedBox(
-          width: 30.w,
-          height: 30.w,
-          child: file == null
-              ? image == ''
-                  ? Image.asset(MyImage.person, width: 30.w, height: 30.w)
-                  : ShowImage().showImage(image!)
-              : Image.file(file!, width: 30.w, height: 30.w),
-        ),
-        IconButton(
-          onPressed: () async {
-            file = await MyFunction().chooseImage(ImageSource.gallery);
-            setState(() {});
-          },
-          icon: const Icon(Icons.add_photo_alternate,
-              size: 36, color: MyStyle.dark),
-        ),
-      ],
+    return SizedBox(
+      width: 30.w,
+      height: 30.w,
+      child: Image.asset(MyImage.person),
     );
+    // return Row(
+    //   crossAxisAlignment: CrossAxisAlignment.center,
+    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //   children: [
+    //     IconButton(
+    //       onPressed: () async {
+    //         file = await MyFunction().chooseImage(ImageSource.camera);
+    //         setState(() {});
+    //       },
+    //       icon: const Icon(Icons.add_a_photo, size: 36, color: MyStyle.dark),
+    //     ),
+    //     SizedBox(
+    //       width: 30.w,
+    //       height: 30.w,
+    //       child: file == null
+    //           ? image == ''
+    //               ? Image.asset(MyImage.person, width: 30.w, height: 30.w)
+    //               : ShowImage().showImage(image!)
+    //           : Image.file(file!, width: 30.w, height: 30.w),
+    //     ),
+    //     IconButton(
+    //       onPressed: () async {
+    //         file = await MyFunction().chooseImage(ImageSource.gallery);
+    //         setState(() {});
+    //       },
+    //       icon: const Icon(Icons.add_photo_alternate,
+    //           size: 36, color: MyStyle.dark),
+    //     ),
+    //   ],
+    // );
   }
 
   Widget buildFirstName() {

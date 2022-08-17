@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:charoz/Model_Sub/product_sub.dart';
+import 'package:charoz/Model_Sub/product_modify.dart';
 import 'package:charoz/Model_Main/product_model.dart';
 import 'package:charoz/Provider/product_provider.dart';
 import 'package:charoz/Service/Database/Firebase/product_crud.dart';
@@ -15,7 +15,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -24,7 +23,6 @@ class EditProduct {
   TextEditingController nameController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController detailController = TextEditingController();
-  MaskTextInputFormatter scoreFormat = MaskTextInputFormatter(mask: '#.#');
   bool suggest = false;
   String? image;
   File? file;
@@ -292,7 +290,7 @@ class EditProduct {
 
   Future processUpdate(BuildContext context, String id) async {
     String chooseImage =
-        file == null ? await ProductCRUD().uploadImageProduct(file!) : '';
+        file != null ? await ProductCRUD().uploadImageProduct(file!) : image!;
 
     bool status = await ProductCRUD().updateProduct(
       id,

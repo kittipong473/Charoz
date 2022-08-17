@@ -1,8 +1,13 @@
 import 'package:animations/animations.dart';
 import 'package:charoz/Model_Main/user_model.dart';
+import 'package:charoz/Provider/user_provider.dart';
+import 'package:charoz/Service/Database/Firebase/user_crud.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
+import 'package:charoz/Utilty/Function/dialog_alert.dart';
+import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ManageUser {
@@ -40,7 +45,25 @@ class ManageUser {
         ),
         children: [
           TextButton(
-            onPressed: () {},
+            onPressed: () async {
+              int? statusUser;
+              if (user.status == 1) {
+                statusUser = 0;
+              } else if (user.status == 0) {
+                statusUser = 1;
+              }
+              bool status =
+                  await UserCRUD().updateUserStatus(user.id, statusUser!);
+              if (status) {
+                Provider.of<UserProvider>(context, listen: false)
+                    .readUserList();
+                MyFunction().toast('เปลี่ยนสถานะเรียบร้อย');
+                Navigator.pop(context);
+              } else {
+                DialogAlert().doubleDialog(context, 'เปลี่ยนสถานะล้มเหลว',
+                    'กรุณาลองใหม่อีกครั้งในภายหลัง');
+              }
+            },
             child: Text('เปลี่ยนสถานะ', style: MyStyle().boldPrimary16()),
           ),
         ],

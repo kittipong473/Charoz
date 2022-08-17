@@ -9,12 +9,12 @@ class MyVariable {
   static String accountUid = '';
   // Width and Height between iPad and iPhone
   static bool largeDevice = false;
-  // Index Page of each Page Navigation
-  static int indexPageNavigation = 0;
   // Index Page of Product Type
   static int indexProductChip = 0;
-  // Index Page of Customer Notification
+  // Index Page of Notification Type
   static int indexNotiChip = 0;
+  // Index Page of Order Type
+  static int indexOrderChip = 0;
   // Login Status
   static bool login = false;
   // Role of user
@@ -37,26 +37,17 @@ class MyVariable {
     'เครื่องดื่ม',
     'ของหวาน'
   ];
-  // Type of User Notification
-  static List<String> notisUser = ['โปรโมชั่น', 'ข่าวสาร'];
-  // Type of Customer Notification
-  static List<String> notisCustomer = [
-    'ออเดอร์',
-    'โปรโมชั่น',
-    'ข่าวสาร',
-    'ติดต่อ'
-  ];
-  // Type of Rider Notification
-  static List<String> notisRider = ['ออเดอร์', 'ข่าวสาร', 'ติดต่อ'];
-  // Type of Manager Notification
-  static List<String> notisManager = ['ออเดอร์', 'โปรโมชั่น', 'ข่าวสาร'];
-  // Type of Admin Notification
-  static List<String> notisAdmin = ['ติดต่อ', 'โปรโมชั่น', 'ข่าวสาร'];
+  // Type of Notification
+  static List<String> notiTypeList = ['โปรโมชั่น', 'ข่าวสาร'];
+  // Type of Role Target
+  static List<String> notiRoleTargetList = ['ทั้งหมด', 'คนขับ', 'ลูกค้า'];
+  // Type of Order
+  static List<String> orderTypeList = ['กำลังดำเนินการ', 'เสร็จสิ้น/ยกเลิก'];
   // List of Time Status
   static List<String> timeTypes = [
     'เปิดตามเวลาปกติ',
     'ปิดชั่วคราว',
-    'ปิดช่วงเทศกาล'
+    'ปิดกรณีพิเศษ'
   ];
   // List of type of address
   static List<String> locationTypes = [
@@ -86,7 +77,7 @@ class MyVariable {
     '16'
   ];
   // List of Order Receive Type
-  static List<String> orderReceiveTypeList = [
+  static List<String> orderReceiveList = [
     'มารับที่ร้านค้า',
     'จัดส่งตามที่อยู่',
   ];
@@ -101,7 +92,7 @@ class MyVariable {
     Colors.yellow.shade100,
     Colors.green.shade100,
     Colors.red.shade100,
-    Colors.grey.shade100,
+    Colors.grey.shade300,
   ];
   // List of Order Status
   static List<String> orderStatusList = [
@@ -115,4 +106,6 @@ class MyVariable {
     'ไม่มีคนขับสะดวกรับงาน',
     'ให้คะแนนเรียบร้อย'
   ];
+  // Tab Control of Page Navigation
+  static late TabController? tabController;
 }

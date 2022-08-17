@@ -56,6 +56,8 @@ class MyStyle {
   TextStyle normalRed18() => textStyle(FontWeight.normal, Colors.red, 18.sp);
   TextStyle normalPurple18() =>
       textStyle(FontWeight.normal, Colors.purple, 18.sp);
+  TextStyle normalWhite22() =>
+      textStyle(FontWeight.normal, Colors.white, 22.sp);
   TextStyle boldBlack12() => textStyle(FontWeight.bold, Colors.black, 12.sp);
   TextStyle boldBlack14() => textStyle(FontWeight.bold, Colors.black, 14.sp);
   TextStyle boldWhite14() => textStyle(FontWeight.bold, Colors.white, 14.sp);

@@ -17,13 +17,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-String role = MyVariable.role;
-
 class OrderDetail extends StatelessWidget {
   const OrderDetail({Key? key}) : super(key: key);
 
-  void getData(BuildContext context) {
-    Provider.of<ProductProvider>(context, listen: false).readProductAllList();
+  Future getData(BuildContext context) async {
+    await Provider.of<ProductProvider>(context, listen: false)
+        .readProductAllList();
   }
 
   @override
@@ -52,12 +51,14 @@ class OrderDetail extends StatelessWidget {
                       SizedBox(height: 1.h),
                       buildSuggest(),
                       ScreenWidget().buildSpacer(),
-                      if (role == 'manager') ...[
+                      if (MyVariable.role == 'manager') ...[
                         fragmentManagerDetail(context)
-                      ] else if (role == 'rider') ...[
+                      ] else if (MyVariable.role == 'rider') ...[
                         fragmentRiderDetail(context)
-                      ] else if (role == 'customer') ...[
+                      ] else if (MyVariable.role == 'customer') ...[
                         fragmentCustomerDetail(context)
+                      ] else if (MyVariable.role == 'admin') ...[
+                        fragmentAdminDetail(context)
                       ],
                     ],
                   ),
@@ -88,10 +89,14 @@ class OrderDetail extends StatelessWidget {
               padding: const EdgeInsets.only(top: 0),
               itemCount: productIdList.length,
               itemBuilder: (context, index) {
-                Provider.of<ProductProvider>(context, listen: false)
-                    .selectProductWhereId(productIdList[index]);
-                return buildOrderItem(pprovider.product,
-                    int.parse(productAmountList[index]), index);
+                if (pprovider.productAlls != null) {
+                  Provider.of<ProductProvider>(context, listen: false)
+                      .selectProductWhereId(productIdList[index]);
+                  return buildOrderItem(pprovider.product,
+                      int.parse(productAmountList[index]), index);
+                } else {
+                  return const ShowProgress();
+                }
               });
         }
       },
@@ -102,10 +107,17 @@ class OrderDetail extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        SizedBox(
-          width: 50.w,
-          child: Text('${index + 1}. ${product.name} x$amount',
-              style: MyStyle().normalBlack16()),
+        Row(
+          children: [
+            Text('${index + 1}. ${product.name} x$amount',
+                style: MyStyle().normalBlack16()),
+            SizedBox(width: 2.w),
+            SizedBox(
+              width: 12.w,
+              height: 12.w,
+              child: ShowImage().showImage(product.image),
+            ),
+          ],
         ),
         Text('${(product.price * amount).toStringAsFixed(0)} ฿',
             style: MyStyle().boldPrimary18()),
@@ -122,12 +134,27 @@ class OrderDetail extends StatelessWidget {
             children: [
               Row(
                 children: [
+                  Icon(Icons.restaurant_menu_rounded, size: 20.sp),
+                  SizedBox(width: 2.w),
+                  Text('ค่าอาหาร : ', style: MyStyle().boldBlack16()),
+                ],
+              ),
+              Text('${provider.order.total - provider.order.charge} ฿',
+                  style: MyStyle().boldPrimary18()),
+            ],
+          ),
+          SizedBox(height: 1.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
                   Icon(Icons.delivery_dining_rounded, size: 20.sp),
                   SizedBox(width: 2.w),
                   Text('ค่าขนส่ง : ', style: MyStyle().boldBlack16()),
                 ],
               ),
-              Text(provider.order.type == 0 ? '0 ฿' : '10 ฿',
+              Text('${provider.order.charge} ฿',
                   style: MyStyle().boldPrimary18()),
             ],
           ),
@@ -185,27 +212,32 @@ class OrderDetail extends StatelessWidget {
 
   Widget fragmentManagerDetail(BuildContext context) {
     return Consumer<OrderProvider>(
-      builder: (_, oprovider, __) => Column(
-        children: [
-          ScreenWidget().buildTitle('ข้อมูลลูกค้า'),
-          SizedBox(height: 1.h),
-          buildCustomerInformation(context, oprovider.order.customerid),
-          ScreenWidget().buildSpacer(),
-          if (oprovider.order.type == 1) ...[
-            ScreenWidget().buildTitle('ข้อมูลคนขับ'),
+      builder: (_, oprovider, __) {
+        return Column(
+          children: [
+            ScreenWidget().buildTitle('ข้อมูลลูกค้า'),
             SizedBox(height: 1.h),
-            buildRiderInformation(context, oprovider.order.riderid),
+            buildCustomerInformation(context, oprovider.order.customerid),
+            ScreenWidget().buildSpacer(),
+            if (oprovider.order.type == 1) ...[
+              ScreenWidget().buildTitle('ข้อมูลคนขับ'),
+              SizedBox(height: 1.h),
+              buildRiderInformation(context, oprovider.order.riderid),
+            ],
+            SizedBox(height: 5.h),
+            if (oprovider.order.status == 0) ...[
+              managerAcceptButton(
+                  context, oprovider.order.id, oprovider.order.type),
+            ] else if (oprovider.order.status == 2) ...[
+              managerFinishButton(context, oprovider.order.id),
+            ] else if (oprovider.order.type == 0 &&
+                oprovider.order.status == 3) ...[
+              managerCompleteButton(context, oprovider.order.id),
+            ],
+            SizedBox(height: 2.h),
           ],
-          SizedBox(height: 3.h),
-          if (oprovider.order.status == 0) ...[
-            managerAcceptButton(
-                context, oprovider.order.id, oprovider.order.type),
-          ] else if (oprovider.order.status == 2) ...[
-            managerFinishButton(context, oprovider.order.id),
-          ],
-          SizedBox(height: 2.h),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -252,10 +284,36 @@ class OrderDetail extends StatelessWidget {
               ScreenWidget().buildTitle('ที่อยู่ที่มาส่งอาหาร'),
               SizedBox(height: 1.h),
               buildUserAddress(context, oprovider.order.addressid),
-              SizedBox(height: 2.h),
+              SizedBox(height: 3.h),
             ],
-            if (oprovider.order.status == 5) ...[
-              customerScoreButton(context, oprovider.order.id),
+            // if (oprovider.order.status == 5) ...[
+            //   customerScoreButton(context, oprovider.order.id),
+            //   SizedBox(height: 2.h),
+            // ],
+          ],
+        );
+      },
+    );
+  }
+
+  Widget fragmentAdminDetail(BuildContext context) {
+    return Consumer<OrderProvider>(
+      builder: (_, oprovider, __) {
+        return Column(
+          children: [
+            ScreenWidget().buildTitle('ข้อมูลลูกค้า'),
+            SizedBox(height: 1.h),
+            buildCustomerInformation(context, oprovider.order.customerid),
+            ScreenWidget().buildSpacer(),
+            if (oprovider.order.type == 1) ...[
+              ScreenWidget().buildTitle('ข้อมูลคนขับ'),
+              SizedBox(height: 1.h),
+              buildRiderInformation(context, oprovider.order.riderid),
+              ScreenWidget().buildSpacer(),
+              ScreenWidget().buildTitle('ที่อยู่ที่ไปส่งอาหาร'),
+              SizedBox(height: 1.h),
+              buildUserAddress(context, oprovider.order.addressid),
+              SizedBox(height: 3.h),
             ],
           ],
         );
@@ -274,7 +332,9 @@ class OrderDetail extends StatelessWidget {
         child: ListTile(
           leading: riderid == ''
               ? Image.asset(MyImage.person)
-              : ShowImage().showCircleImage(uprovider.rider.image),
+              : uprovider.rider.image == ''
+                  ? Image.asset(MyImage.person)
+                  : ShowImage().showCircleImage(uprovider.rider.image),
           title: Row(
             children: [
               Text('ชื่อคนขับ  :  ', style: MyStyle().boldPrimary16()),
@@ -422,6 +482,20 @@ class OrderDetail extends StatelessWidget {
     );
   }
 
+  Widget managerCompleteButton(BuildContext context, String orderId) {
+    return SizedBox(
+      width: 80.w,
+      height: 5.h,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(primary: Colors.green),
+        onPressed: () =>
+            ManagerProcess().processCompleteOrder(context, orderId),
+        child:
+            Text('ลูกค้ารับอาหารเรียบร้อย', style: MyStyle().normalWhite16()),
+      ),
+    );
+  }
+
   Widget riderAcceptButton(BuildContext context, String orderId) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -472,8 +546,7 @@ class OrderDetail extends StatelessWidget {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(primary: Colors.green),
         onPressed: () {},
-        child: Text('จัดส่งและชำระเงินเสร็จสิ้น',
-            style: MyStyle().normalWhite16()),
+        child: Text('ให้คะแนนรายการนี้', style: MyStyle().normalWhite16()),
       ),
     );
   }

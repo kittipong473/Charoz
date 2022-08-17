@@ -15,6 +15,10 @@ class ShopModel {
   final double lng;
   final String image;
   final int freight;
+  final int choose;
+  final String open;
+  final String close;
+  final String timetype;
   final DateTime time;
   ShopModel({
     required this.id,
@@ -28,6 +32,10 @@ class ShopModel {
     required this.lng,
     required this.image,
     required this.freight,
+    required this.choose,
+    required this.open,
+    required this.close,
+    required this.timetype,
     required this.time,
   });
 
@@ -43,6 +51,10 @@ class ShopModel {
     double? lng,
     String? image,
     int? freight,
+    int? choose,
+    String? open,
+    String? close,
+    String? timetype,
     DateTime? time,
   }) {
     return ShopModel(
@@ -57,6 +69,10 @@ class ShopModel {
       lng: lng ?? this.lng,
       image: image ?? this.image,
       freight: freight ?? this.freight,
+      choose: choose ?? this.choose,
+      open: open ?? this.open,
+      close: close ?? this.close,
+      timetype: timetype ?? this.timetype,
       time: time ?? this.time,
     );
   }
@@ -74,6 +90,10 @@ class ShopModel {
       'lng': lng,
       'image': image,
       'freight': freight,
+      'choose': choose,
+      'open': open,
+      'close': close,
+      'timetype': timetype,
       'time': time.millisecondsSinceEpoch,
     };
   }
@@ -91,6 +111,10 @@ class ShopModel {
       lng: map['lng']?.toDouble() ?? 0.0,
       image: map['image'] ?? '',
       freight: map['freight']?.toInt() ?? 0,
+      choose: map['choose']?.toInt() ?? 0,
+      open: map['open'] ?? '',
+      close: map['close'] ?? '',
+      timetype: map['timetype'] ?? '',
       time: DateTime.fromMillisecondsSinceEpoch(map['time']),
     );
   }
@@ -101,7 +125,7 @@ class ShopModel {
 
   @override
   String toString() {
-    return 'ShopModel(id: $id, managerid: $managerid, name: $name, announce: $announce, detail: $detail, address: $address, phone: $phone, lat: $lat, lng: $lng, image: $image, freight: $freight, time: $time)';
+    return 'ShopModel(id: $id, managerid: $managerid, name: $name, announce: $announce, detail: $detail, address: $address, phone: $phone, lat: $lat, lng: $lng, image: $image, freight: $freight, choose: $choose, open: $open, close: $close, timetype: $timetype, time: $time)';
   }
 
   @override
@@ -120,6 +144,10 @@ class ShopModel {
       other.lng == lng &&
       other.image == image &&
       other.freight == freight &&
+      other.choose == choose &&
+      other.open == open &&
+      other.close == close &&
+      other.timetype == timetype &&
       other.time == time;
   }
 
@@ -136,6 +164,10 @@ class ShopModel {
       lng.hashCode ^
       image.hashCode ^
       freight.hashCode ^
+      choose.hashCode ^
+      open.hashCode ^
+      close.hashCode ^
+      timetype.hashCode ^
       time.hashCode;
   }
 }
@@ -153,6 +185,10 @@ ShopModel convertShop(dynamic item) {
     lng: item['lng'],
     image: item['image'],
     freight: item['freight'],
+    choose: item['choose'],
+    open: item['open'],
+    close: item['close'],
+    timetype: item['timetype'],
     time: (item['time'] as Timestamp).toDate(),
   );
 }

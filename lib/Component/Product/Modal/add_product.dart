@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:charoz/Model_Sub/product_sub.dart';
+import 'package:charoz/Model_Sub/product_modify.dart';
 import 'package:charoz/Provider/product_provider.dart';
 import 'package:charoz/Service/Database/Firebase/product_crud.dart';
 import 'package:charoz/Utilty/Constant/my_image.dart';
@@ -14,7 +14,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -22,9 +21,7 @@ class AddProduct {
   final formKey = GlobalKey<FormState>();
   TextEditingController nameController = TextEditingController();
   TextEditingController priceController = TextEditingController();
-  TextEditingController scoreController = TextEditingController();
   TextEditingController detailController = TextEditingController();
-  MaskTextInputFormatter scoreFormat = MaskTextInputFormatter(mask: '#.#');
   bool suggest = false;
   String? image;
   File? file;
@@ -60,8 +57,6 @@ class AddProduct {
                           buildName(),
                           SizedBox(height: 3.h),
                           buildPrice(),
-                          SizedBox(height: 3.h),
-                          buildScore(),
                           SizedBox(height: 3.h),
                           buildDetail(),
                           SizedBox(height: 1.h),
@@ -182,44 +177,6 @@ class AddProduct {
     );
   }
 
-  Widget buildScore() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      width: 80.w,
-      child: TextFormField(
-        inputFormatters: [scoreFormat],
-        style: MyStyle().normalBlack16(),
-        keyboardType: TextInputType.number,
-        controller: scoreController,
-        validator: (value) {
-          if (value!.isEmpty) {
-            return 'กรุณากรอก คะแนน';
-          } else {
-            return null;
-          }
-        },
-        decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
-          labelText: 'คะแนน :',
-          hintText: 'X.X',
-          hintStyle: MyStyle().normalGrey16(),
-          prefixIcon: const Icon(
-            Icons.score_rounded,
-            color: MyStyle.dark,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget buildDetail() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -314,7 +271,7 @@ class AddProduct {
 
   Future processInsert(BuildContext context) async {
     String chooseImage =
-        file == null ? await ProductCRUD().uploadImageProduct(file!) : '';
+        file != null ? await ProductCRUD().uploadImageProduct(file!) : '';
 
     bool status = await ProductCRUD().createProduct(
       ProductModify(

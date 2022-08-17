@@ -1,4 +1,4 @@
-import 'package:charoz/Model_Sub/user_sub.dart';
+import 'package:charoz/Model_Sub/user_modify.dart';
 import 'package:charoz/Model_Main/user_model.dart';
 import 'package:charoz/Utilty/my_variable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -89,6 +89,24 @@ class UserCRUD {
   Future<bool> createUser(UserModify model) async {
     try {
       await user.doc().set(model.toMap());
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> updateUserCode(String id, String code) async {
+    try {
+      await user.doc(id).update({'pincode': code});
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> updateUserStatus(String id, int status) async {
+    try {
+      await user.doc(id).update({'status': status});
       return true;
     } catch (e) {
       return false;

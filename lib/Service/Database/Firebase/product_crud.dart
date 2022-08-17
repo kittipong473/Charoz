@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:charoz/Model_Sub/product_sub.dart';
+import 'package:charoz/Model_Sub/product_modify.dart';
 import 'package:charoz/Model_Main/product_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';

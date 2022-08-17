@@ -1,4 +1,4 @@
-import 'package:charoz/Model_Sub/order_sub.dart';
+import 'package:charoz/Model_Sub/order_modify.dart';
 import 'package:charoz/Model_Main/order_model.dart';
 import 'package:charoz/Utilty/my_variable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -82,6 +82,20 @@ class OrderCRUD {
           .where('track', isGreaterThanOrEqualTo: 2)
           .where('riderid', isEqualTo: MyVariable.userTokenId)
           .get();
+      for (var item in snapshot.docs) {
+        result.add(convertOrder(item, null));
+      }
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future readOrderAdminListByFinish() async {
+    List<OrderModel> result = [];
+    try {
+      final snapshot =
+          await orderlist.where('track', isGreaterThanOrEqualTo: 2).get();
       for (var item in snapshot.docs) {
         result.add(convertOrder(item, null));
       }

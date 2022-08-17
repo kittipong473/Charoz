@@ -6,6 +6,7 @@ import 'package:charoz/Provider/shop_provider.dart';
 import 'package:charoz/Provider/user_provider.dart';
 import 'package:charoz/Service/Route/route_page.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
+import 'package:charoz/Utilty/Widget/screen_widget.dart';
 import 'package:charoz/Utilty/my_variable.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:charoz/Utilty/Widget/show_progress.dart';
@@ -22,6 +23,9 @@ class ShopDetail extends StatelessWidget {
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.colorBackGround,
+        appBar: MyVariable.role == 'customer'
+            ? ScreenWidget().appBarTheme('รายละเอียดร้านอาหาร')
+            : null,
         body: Stack(
           children: [
             Positioned.fill(
@@ -49,11 +53,11 @@ class ShopDetail extends StatelessWidget {
                     builder: (_, provider, __) => FloatingActionButton(
                       onPressed: () {
                         if (MyVariable.role == 'admin') {
-                          EditShopAdmin().openModalEditShopAdmin(
-                              context, provider.shop, provider.time);
+                          EditShopAdmin()
+                              .openModalEditShopAdmin(context, provider.shop);
                         } else if (MyVariable.role == 'manager') {
-                          EditShopManager().openModalEditShopManager(
-                              context, provider.shop, provider.time);
+                          EditShopManager()
+                              .openModalEditShopManager(context, provider.shop);
                         }
                       },
                       backgroundColor: MyStyle.bluePrimary,
@@ -116,17 +120,15 @@ class ShopDetail extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(10.sp),
       child: Consumer<ShopProvider>(
-        builder: (_, provider, __) => provider.time == null
-            ? const ShowProgress()
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(day, style: MyStyle().boldBlack16()),
-                  Text(
-                      '${MyFunction().convertToOpenClose(provider.time.open)} น. - ${MyFunction().convertToOpenClose(provider.time.close)} น.',
-                      style: MyStyle().normalBlack16()),
-                ],
-              ),
+        builder: (_, provider, __) => Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(day, style: MyStyle().boldBlack16()),
+            Text(
+                '${MyFunction().convertToOpenClose(provider.shop.open)} น. - ${MyFunction().convertToOpenClose(provider.shop.close)} น.',
+                style: MyStyle().normalBlack16()),
+          ],
+        ),
       ),
     );
   }

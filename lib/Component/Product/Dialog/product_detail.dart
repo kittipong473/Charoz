@@ -10,7 +10,6 @@ import 'package:charoz/Utilty/my_variable.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Widget/show_image.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -160,7 +159,7 @@ class ProductDetail {
             ? TextButton(
                 onPressed: () {
                   Provider.of<OrderProvider>(context, listen: false)
-                      .addOrderToCart(product.id, count);
+                      .addProductToCart(product, count);
                   MyFunction().toast('เพิ่มรายการ ${product.name} เรียบร้อย');
                   Navigator.pop(context);
                 },

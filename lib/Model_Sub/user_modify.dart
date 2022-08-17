@@ -12,6 +12,7 @@ class UserModify {
   final int status;
   final String tokenE;
   final String tokenP;
+  final String pincode;
   final Timestamp time;
   UserModify({
     required this.firstname,
@@ -23,6 +24,7 @@ class UserModify {
     required this.status,
     required this.tokenE,
     required this.tokenP,
+    required this.pincode,
     required this.time,
   });
 
@@ -36,6 +38,7 @@ class UserModify {
     int? status,
     String? tokenE,
     String? tokenP,
+    String? pincode,
     Timestamp? time,
   }) {
     return UserModify(
@@ -48,6 +51,7 @@ class UserModify {
       status: status ?? this.status,
       tokenE: tokenE ?? this.tokenE,
       tokenP: tokenP ?? this.tokenP,
+      pincode: pincode ?? this.pincode,
       time: time ?? this.time,
     );
   }
@@ -63,6 +67,7 @@ class UserModify {
       'status': status,
       'tokenE': tokenE,
       'tokenP': tokenP,
+      'pincode': pincode,
       'time': time,
     };
   }
@@ -78,47 +83,51 @@ class UserModify {
       status: map['status']?.toInt() ?? 0,
       tokenE: map['tokenE'] ?? '',
       tokenP: map['tokenP'] ?? '',
-      time: map['time'] as Timestamp,
+      pincode: map['pincode'] ?? '',
+      time: map['time'],
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory UserModify.fromJson(String source) => UserModify.fromMap(json.decode(source));
+  factory UserModify.fromJson(String source) =>
+      UserModify.fromMap(json.decode(source));
 
   @override
   String toString() {
-    return 'SubUserModel(firstname: $firstname, lastname: $lastname, email: $email, phone: $phone, image: $image, role: $role, status: $status, tokenE: $tokenE, tokenP: $tokenP, time: $time)';
+    return 'UserModify(firstname: $firstname, lastname: $lastname, email: $email, phone: $phone, image: $image, role: $role, status: $status, tokenE: $tokenE, tokenP: $tokenP, pincode: $pincode, time: $time)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is UserModify &&
-      other.firstname == firstname &&
-      other.lastname == lastname &&
-      other.email == email &&
-      other.phone == phone &&
-      other.image == image &&
-      other.role == role &&
-      other.status == status &&
-      other.tokenE == tokenE &&
-      other.tokenP == tokenP &&
-      other.time == time;
+        other.firstname == firstname &&
+        other.lastname == lastname &&
+        other.email == email &&
+        other.phone == phone &&
+        other.image == image &&
+        other.role == role &&
+        other.status == status &&
+        other.tokenE == tokenE &&
+        other.tokenP == tokenP &&
+        other.pincode == pincode &&
+        other.time == time;
   }
 
   @override
   int get hashCode {
     return firstname.hashCode ^
-      lastname.hashCode ^
-      email.hashCode ^
-      phone.hashCode ^
-      image.hashCode ^
-      role.hashCode ^
-      status.hashCode ^
-      tokenE.hashCode ^
-      tokenP.hashCode ^
-      time.hashCode;
+        lastname.hashCode ^
+        email.hashCode ^
+        phone.hashCode ^
+        image.hashCode ^
+        role.hashCode ^
+        status.hashCode ^
+        tokenE.hashCode ^
+        tokenP.hashCode ^
+        pincode.hashCode ^
+        time.hashCode;
   }
 }

@@ -19,22 +19,102 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 class OrderList extends StatelessWidget {
   const OrderList({Key? key}) : super(key: key);
 
+  void getData(BuildContext context) {
+    if (MyVariable.role == 'admin') {
+      Provider.of<OrderProvider>(context, listen: false)
+          .readOrderAdminListByFinish();
+    } else if (MyVariable.role == 'manager') {
+      Provider.of<OrderProvider>(context, listen: false)
+          .readOrderManagerListByFinish();
+    } else if (MyVariable.role == 'rider') {
+      Provider.of<OrderProvider>(context, listen: false)
+          .readOrderRiderListByFinish();
+    } else {
+      Provider.of<OrderProvider>(context, listen: false)
+          .readOrderCustomerListByFinish();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 100.w,
-      height: 77.h,
-      child: MyVariable.role == 'manager'
-          ? orderListManager()
-          : MyVariable.role == 'rider'
-              ? orderListRider()
-              : MyVariable.role == 'customer'
-                  ? orderListCustomer()
-                  : buildEmptyOrder(),
+    getData(context);
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+        backgroundColor: MyStyle.colorBackGround,
+        body: Stack(
+          children: [
+            Positioned.fill(
+              top: 2.h,
+              child: StatefulBuilder(
+                builder: (_, setState) => Column(
+                  children: [
+                    if (MyVariable.role == 'admin') ...[
+                      buildHistoryList(),
+                    ] else ...[
+                      buildChip(context, setState),
+                      if (MyVariable.indexOrderChip == 0) ...[
+                        SizedBox(
+                          width: 100.w,
+                          height: 77.h,
+                          child: MyVariable.role == 'manager'
+                              ? managerOrder()
+                              : MyVariable.role == 'rider'
+                                  ? riderOrder()
+                                  : MyVariable.role == 'customer'
+                                      ? customerOrder()
+                                      : buildEmptyOrder(),
+                        ),
+                      ] else ...[
+                        buildHistoryList(),
+                      ],
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  StreamBuilder orderListManager() {
+  Widget buildChip(BuildContext context, Function setState) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          for (var i = 0; i < MyVariable.orderTypeList.length; i++) ...[
+            chip(context, setState, MyVariable.orderTypeList[i], i),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget chip(
+      BuildContext context, Function setState, String title, int index) {
+    return ActionChip(
+      backgroundColor: MyVariable.indexOrderChip == index
+          ? MyStyle.primary
+          : Colors.grey.shade100,
+      label: Text(
+        MyVariable.role == 'rider' && index == 0 ? 'รายการจากลูกค้า' : title,
+        style: MyVariable.indexOrderChip == index
+            ? MyStyle().normalWhite16()
+            : MyStyle().normalBlack16(),
+      ),
+      onPressed: () {
+        setState(() => MyVariable.indexOrderChip = index);
+        if (index == 1) {
+          getData(context);
+        }
+      },
+    );
+  }
+
+  StreamBuilder managerOrder() {
     return StreamBuilder(
       stream: OrderCRUD().readOrderManagerListByProcess(),
       builder: (context, snapshot) {
@@ -43,7 +123,9 @@ class OrderList extends StatelessWidget {
         } else if (snapshot.hasData) {
           List<OrderModel> orderList = snapshot.data;
           orderList.sort((a, b) => b.time.compareTo(a.time));
-          return buildOrderList(orderList);
+          return orderList.isEmpty
+              ? buildEmptyOrder()
+              : buildOrderList(orderList);
         } else {
           return const ShowProgress();
         }
@@ -51,7 +133,7 @@ class OrderList extends StatelessWidget {
     );
   }
 
-  StreamBuilder orderListRider() {
+  StreamBuilder riderOrder() {
     return StreamBuilder(
       stream: OrderCRUD().readOrderRiderListByNotAccept(),
       builder: (context, snapshot) {
@@ -60,7 +142,9 @@ class OrderList extends StatelessWidget {
         } else if (snapshot.hasData) {
           List<OrderModel> orderList = snapshot.data;
           orderList.sort((a, b) => b.time.compareTo(a.time));
-          return buildOrderList(orderList);
+          return orderList.isEmpty
+              ? buildEmptyOrder()
+              : buildOrderList(orderList);
         } else {
           return const ShowProgress();
         }
@@ -68,7 +152,7 @@ class OrderList extends StatelessWidget {
     );
   }
 
-  StreamBuilder orderListCustomer() {
+  StreamBuilder customerOrder() {
     return StreamBuilder(
       stream: OrderCRUD().readOrderCustomerListByProcess(),
       builder: (context, snapshot) {
@@ -77,7 +161,9 @@ class OrderList extends StatelessWidget {
         } else if (snapshot.hasData) {
           List<OrderModel> orderList = snapshot.data;
           orderList.sort((a, b) => b.time.compareTo(a.time));
-          return buildOrderList(orderList);
+          return orderList.isEmpty
+              ? buildEmptyOrder()
+              : buildOrderList(orderList);
         } else {
           return const ShowProgress();
         }
@@ -91,9 +177,10 @@ class OrderList extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('ยังไม่มี ออเดอร์ ในขณะนี้', style: MyStyle().normalPrimary18()),
+          Text('ยังไม่มี รายการอาหาร ที่สั่ง',
+              style: MyStyle().normalPrimary18()),
           SizedBox(height: 3.h),
-          Text('กรุณารอรายการ ออเดอร์ ได้ในภายหลัง',
+          Text('กรุณารอรายการอาหาร จากลูกค้าได้ในภายหลัง',
               style: MyStyle().normalPrimary18()),
         ],
       ),
@@ -130,6 +217,17 @@ class OrderList extends StatelessWidget {
         await Provider.of<UserProvider>(context, listen: false)
             .readRiderById(order.riderid);
       }
+    } else if (MyVariable.role == 'admin') {
+      await Provider.of<UserProvider>(context, listen: false)
+          .readCustomerById(order.customerid);
+      if (order.type == 1) {
+        await Provider.of<AddressProvider>(context, listen: false)
+            .readAddressById(order.addressid);
+      }
+      if (order.riderid != '') {
+        await Provider.of<UserProvider>(context, listen: false)
+            .readRiderById(order.riderid);
+      }
     }
   }
 
@@ -146,28 +244,28 @@ class OrderList extends StatelessWidget {
         },
         child: Padding(
           padding: EdgeInsets.all(15.sp),
-          child: Consumer3<ShopProvider, UserProvider, AddressProvider>(
-            builder: (_, sprovider, uprovider, aprovider, __) => Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(MyVariable.orderStatusList[order.status],
-                        style: MyStyle().boldPrimary18()),
-                    Text(MyFunction().convertToDateTime(order.time),
-                        style: MyStyle().normalBlack14()),
-                  ],
-                ),
-                ScreenWidget().buildSpacer(),
-                if (MyVariable.role == 'manager') ...[
-                  fragmentManagerDetail(order)
-                ] else if (MyVariable.role == 'rider') ...[
-                  fragmentRiderDetail(order)
-                ] else if (MyVariable.role == 'customer') ...[
-                  fragmentCustomerDetail(order)
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(MyVariable.orderStatusList[order.status],
+                      style: MyStyle().boldPrimary18()),
+                  Text(MyFunction().convertToDateTime(order.time),
+                      style: MyStyle().normalBlack14()),
                 ],
+              ),
+              ScreenWidget().buildSpacer(),
+              if (MyVariable.role == 'manager') ...[
+                fragmentManagerDetail(order)
+              ] else if (MyVariable.role == 'rider') ...[
+                fragmentRiderDetail(order)
+              ] else if (MyVariable.role == 'customer') ...[
+                fragmentCustomerDetail(order)
+              ] else if (MyVariable.role == 'admin') ...[
+                fragmentAdminDetail(order)
               ],
-            ),
+            ],
           ),
         ),
       ),
@@ -192,7 +290,9 @@ class OrderList extends StatelessWidget {
                     'ชื่อคนขับ',
                     order.riderid == ''
                         ? 'ยังไม่มีคนขับรับงาน'
-                        : '${uprovider.rider.firstname} ${uprovider.rider.lastname}',
+                        : uprovider.rider == null
+                            ? ''
+                            : '${uprovider.rider.firstname} ${uprovider.rider.lastname}',
                   ),
                 ],
               ],
@@ -243,11 +343,41 @@ class OrderList extends StatelessWidget {
                     'ชื่อคนขับ',
                     order.riderid == ''
                         ? 'ยังไม่มีคนขับรับงาน'
-                        : '${uprovider.rider.firstname} ${uprovider.rider.lastname}',
+                        : uprovider.rider == null
+                            ? ''
+                            : '${uprovider.rider.firstname} ${uprovider.rider.lastname}',
                   ),
                 ],
               ],
             ),
+    );
+  }
+
+  Widget fragmentAdminDetail(OrderModel order) {
+    return Consumer3<UserProvider, ShopProvider, AddressProvider>(
+      builder: (_, uprovider, sprovider, aprovider, __) => Column(
+        children: [
+          fragmentEachRowDetail(
+              Icons.food_bank_rounded, 'ประเภท', order.type.toString()),
+          fragmentEachRowDetail(Icons.person_rounded, 'ชื่อลูกค้า',
+              '${uprovider.customer.firstname} ${uprovider.customer.lastname}'),
+          if (order.type == 1) ...[
+            fragmentEachRowDetail(
+              Icons.delivery_dining_rounded,
+              'ชื่อคนขับ',
+              order.riderid == ''
+                  ? 'ยังไม่มีคนขับรับงาน'
+                  : uprovider.rider == null
+                      ? ''
+                      : '${uprovider.rider.firstname} ${uprovider.rider.lastname}',
+            ),
+            fragmentEachRowDetail(
+                Icons.location_pin, 'สถานที่จัดส่ง', aprovider.address.name),
+          ],
+          fragmentEachRowDetail(
+              Icons.money_rounded, 'ราคา', '${order.total} ฿'),
+        ],
+      ),
     );
   }
 
@@ -263,12 +393,36 @@ class OrderList extends StatelessWidget {
           ],
         ),
         if (title == 'ประเภท') ...[
-          Text(MyVariable.orderReceiveTypeList[int.parse(detail)],
+          Text(MyVariable.orderReceiveList[int.parse(detail)],
               style: MyStyle().normalBlack16()),
         ] else ...[
           Text(detail, style: MyStyle().normalBlack16()),
         ],
       ],
+    );
+  }
+
+  Widget buildHistoryList() {
+    return SizedBox(
+      width: 100.w,
+      height: 77.h,
+      child: Consumer<OrderProvider>(
+        builder: (_, provider, __) => provider.orderList == null
+            ? const ShowProgress()
+            : provider.orderList.isEmpty
+                ? ScreenWidget().showEmptyData('ไม่มีประวัติรายการอาหารของคุณ',
+                    'จะมีข้อมูลรายการอาหาร เมื่อมีการสั่งอาหารแล้วทำรายการสำเร็จ')
+                : ListView.builder(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.only(top: 1.h),
+                    itemCount: provider.orderList.length,
+                    itemBuilder: (context, index) {
+                      getDetailOrderByRole(context, provider.orderList[index]);
+                      return buildOrderItem(
+                          context, provider.orderList[index], index);
+                    },
+                  ),
+      ),
     );
   }
 }

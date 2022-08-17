@@ -14,6 +14,7 @@ class UserModel {
   final int status;
   final String tokenE;
   final String tokenP;
+  final String pincode;
   final DateTime time;
   UserModel({
     required this.id,
@@ -26,6 +27,7 @@ class UserModel {
     required this.status,
     required this.tokenE,
     required this.tokenP,
+    required this.pincode,
     required this.time,
   });
 
@@ -40,6 +42,7 @@ class UserModel {
     int? status,
     String? tokenE,
     String? tokenP,
+    String? pincode,
     DateTime? time,
   }) {
     return UserModel(
@@ -53,6 +56,7 @@ class UserModel {
       status: status ?? this.status,
       tokenE: tokenE ?? this.tokenE,
       tokenP: tokenP ?? this.tokenP,
+      pincode: pincode ?? this.pincode,
       time: time ?? this.time,
     );
   }
@@ -69,6 +73,7 @@ class UserModel {
       'status': status,
       'tokenE': tokenE,
       'tokenP': tokenP,
+      'pincode': pincode,
       'time': time.millisecondsSinceEpoch,
     };
   }
@@ -85,6 +90,7 @@ class UserModel {
       status: map['status']?.toInt() ?? 0,
       tokenE: map['tokenE'] ?? '',
       tokenP: map['tokenP'] ?? '',
+      pincode: map['pincode'] ?? '',
       time: DateTime.fromMillisecondsSinceEpoch(map['time']),
     );
   }
@@ -96,7 +102,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, firstname: $firstname, lastname: $lastname, email: $email, phone: $phone, image: $image, role: $role, status: $status, tokenE: $tokenE, tokenP: $tokenP, time: $time)';
+    return 'UserModel(id: $id, firstname: $firstname, lastname: $lastname, email: $email, phone: $phone, image: $image, role: $role, status: $status, tokenE: $tokenE, tokenP: $tokenP, pincode: $pincode, time: $time)';
   }
 
   @override
@@ -114,6 +120,7 @@ class UserModel {
         other.status == status &&
         other.tokenE == tokenE &&
         other.tokenP == tokenP &&
+        other.pincode == pincode &&
         other.time == time;
   }
 
@@ -129,6 +136,7 @@ class UserModel {
         status.hashCode ^
         tokenE.hashCode ^
         tokenP.hashCode ^
+        pincode.hashCode ^
         time.hashCode;
   }
 }
@@ -145,6 +153,7 @@ UserModel convertUser(dynamic item, String? id) {
     status: item['status'],
     tokenE: item['tokenE'],
     tokenP: item['tokenP'],
+    pincode: item['pincode'],
     time: (item['time'] as Timestamp).toDate(),
   );
 }

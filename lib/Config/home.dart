@@ -25,7 +25,8 @@ class Home extends StatelessWidget {
     await Provider.of<ConfigProvider>(context, listen: false).readBannerList();
     await Provider.of<ProductProvider>(context, listen: false)
         .readProductSuggestList();
-    await Provider.of<ProductProvider>(context, listen: false).readProductAllList();
+    await Provider.of<ProductProvider>(context, listen: false)
+        .readProductAllList();
   }
 
   @override
@@ -142,16 +143,15 @@ class Home extends StatelessWidget {
               : ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: provider.productList.length,
-                  itemBuilder: (context, index) => buildSuggestItem(
-                      context, provider.productList[index], index),
+                  itemBuilder: (context, index) =>
+                      buildSuggestItem(context, provider.productList[index]),
                 ),
         ),
       ),
     );
   }
 
-  Widget buildSuggestItem(
-      BuildContext context, ProductModel product, int index) {
+  Widget buildSuggestItem(BuildContext context, ProductModel product) {
     return Card(
       color: product.status == 0 ? Colors.grey.shade400 : Colors.white,
       elevation: 5,

@@ -1,9 +1,9 @@
 import 'package:charoz/Component/Order/Modal/select_address.dart';
-import 'package:charoz/Model_Sub/order_sub.dart';
+import 'package:charoz/Model_Main/shop_model.dart';
+import 'package:charoz/Model_Sub/order_modify.dart';
 import 'package:charoz/Model_Main/product_model.dart';
 import 'package:charoz/Provider/address_provider.dart';
 import 'package:charoz/Provider/order_provider.dart';
-import 'package:charoz/Provider/product_provider.dart';
 import 'package:charoz/Provider/shop_provider.dart';
 import 'package:charoz/Service/Database/Firebase/order_crud.dart';
 import 'package:charoz/Service/Route/route_page.dart';
@@ -47,12 +47,11 @@ class ConfirmOrder extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(height: 8.h),
-                        if (oprovider.type ==
-                            MyVariable.orderReceiveTypeList[0]) ...[
+                        if (oprovider.type == 0) ...[
                           ScreenWidget().buildTitle('ที่อยู่ของร้านค้า'),
                           SizedBox(height: 1.h),
                           buildShopAddress(),
-                        ] else ...[
+                        ] else if (oprovider.type == 1) ...[
                           ScreenWidget().buildTitle('ที่อยู่สำหรับจัดส่ง'),
                           SizedBox(height: 1.h),
                           buildUserAddress(context),
@@ -68,7 +67,7 @@ class ConfirmOrder extends StatelessWidget {
                         SizedBox(height: 1.h),
                         buildSuggest(),
                         SizedBox(height: 3.h),
-                        buildButton(),
+                        buildButton(context),
                       ],
                     ),
                   ),
@@ -102,8 +101,7 @@ class ConfirmOrder extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(provider.shop.name,
-                          style: MyStyle().boldBlue16()),
+                      Text(provider.shop.name, style: MyStyle().boldBlue16()),
                       Text(provider.shop.address,
                           style: MyStyle().normalBlack14()),
                     ],
@@ -158,24 +156,15 @@ class ConfirmOrder extends StatelessWidget {
   }
 
   Widget buildOrderList() {
-    return Consumer2<ProductProvider, OrderProvider>(
-      builder: (_, pprovider, oprovider, __) {
-        List<String> productIdList =
-            MyFunction().convertToList(oprovider.productidList.toString());
-        List<String> productAmountList =
-            MyFunction().convertToList(oprovider.productamountList.toString());
-        return ListView.separated(
-            separatorBuilder: (context, index) => const Divider(),
-            shrinkWrap: true,
-            padding: const EdgeInsets.only(top: 0),
-            itemCount: productIdList.length,
-            itemBuilder: (context, index) {
-              Provider.of<ProductProvider>(context, listen: false)
-                  .selectProductWhereId(productIdList[index]);
-              return buildOrderItem(pprovider.product,
-                  int.parse(productAmountList[index]), index);
-            });
-      },
+    return Consumer<OrderProvider>(
+      builder: (_, provider, __) => ListView.separated(
+        separatorBuilder: (context, index) => const Divider(),
+        shrinkWrap: true,
+        padding: const EdgeInsets.only(top: 0),
+        itemCount: provider.productList.length,
+        itemBuilder: (context, index) => buildOrderItem(
+            provider.productList[index], provider.amountList[index], index),
+      ),
     );
   }
 
@@ -208,10 +197,7 @@ class ConfirmOrder extends StatelessWidget {
                   Text('ค่าขนส่ง : ', style: MyStyle().boldBlack16()),
                 ],
               ),
-              Text(
-                  oprovider.type == MyVariable.orderReceiveTypeList[0]
-                      ? '0 ฿'
-                      : '${sprovider.shop.freight} ฿',
+              Text(oprovider.type == 0 ? '0 ฿' : '${sprovider.shop.freight} ฿',
                   style: MyStyle().boldPrimary18()),
             ],
           ),
@@ -266,91 +252,85 @@ class ConfirmOrder extends StatelessWidget {
     );
   }
 
-  Widget buildButton() {
+  Widget buildButton(BuildContext context) {
     return SizedBox(
       width: 80.w,
       height: 5.h,
-      child: Consumer3<OrderProvider, AddressProvider, ShopProvider>(
-        builder: (context, oprovider, aprovider, sprovider, __) =>
-            aprovider.address == null
-                ? const ShowProgress()
-                : ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(primary: MyStyle.bluePrimary),
-                    onPressed: () => confirmDialog(
-                      context,
-                      oprovider,
-                      aprovider.address.id,
-                      sprovider.shop.id,
-                      sprovider.shop.id,
-                    ),
-                    child: Text('ยืนยันการสั่งอาหาร',
-                        style: MyStyle().normalWhite16()),
-                  ),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(primary: MyStyle.bluePrimary),
+        onPressed: () => confirmDialog(context),
+        child: Text('ยืนยันการสั่งอาหาร', style: MyStyle().normalWhite16()),
       ),
     );
   }
 
-  void confirmDialog(BuildContext context, OrderProvider oprovider,
-      String addressId, String shopId, String managerId) {
+  void confirmDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Icon(
-              Icons.receipt_rounded,
-              size: 25.sp,
-              color: MyStyle.primary,
-            ),
-            SizedBox(
-              width: 45.w,
-              child: Text(
-                'ยืนยันการสั่งอาหารหรือไม่ ?',
-                style: MyStyle().boldPrimary18(),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          Row(
+      builder: (dialogContext) =>
+          Consumer3<OrderProvider, AddressProvider, ShopProvider>(
+        builder: (_, oprovider, aprovider, sprovider, __) => AlertDialog(
+          title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(dialogContext);
-                  EasyLoading.show(status: 'loading...');
-                  processOrder(
-                      context, oprovider, addressId, shopId, managerId);
-                },
-                child: Text('ยืนยัน', style: MyStyle().boldGreen18()),
+              Icon(
+                Icons.receipt_rounded,
+                size: 25.sp,
+                color: MyStyle.primary,
               ),
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text('ยกเลิก', style: MyStyle().boldRed18()),
+              SizedBox(
+                width: 45.w,
+                child: Text(
+                  'ยืนยันการสั่งอาหารหรือไม่ ?',
+                  style: MyStyle().boldPrimary18(),
+                  textAlign: TextAlign.center,
+                ),
               ),
             ],
           ),
-        ],
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(dialogContext);
+                    EasyLoading.show(status: 'loading...');
+                    processOrder(context, oprovider, sprovider.shop,
+                        aprovider.address.id);
+                  },
+                  child: Text('ยืนยัน', style: MyStyle().boldGreen18()),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: Text('ยกเลิก', style: MyStyle().boldRed18()),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Future processOrder(BuildContext context, OrderProvider oprovider,
-      String addressId, String shopId, String managerId) async {
+      ShopModel shop, String addressId) async {
+    List<String> idList = [];
+    for (var item in oprovider.productList) {
+      idList.add(item.id);
+    }
+
     bool status1 = await OrderCRUD().createOrder(
       OrderModify(
-        shopid: shopId,
+        shopid: shop.id,
         riderid: '',
         customerid: MyVariable.userTokenId,
-        addressid: addressId,
-        productid: oprovider.productidList.toString(),
-        productamount: oprovider.productamountList.toString(),
-        charge: oprovider.type == 0 ? 0 : 10,
-        total: int.parse(oprovider.totalPay.toStringAsFixed(0)),
-        type: oprovider.type == MyVariable.orderReceiveTypeList[0] ? 0 : 1,
+        addressid: oprovider.type == 0 ? '' : addressId,
+        productid: idList.toString(),
+        productamount: oprovider.amountList.toString(),
+        charge: oprovider.type == 0 ? 0 : shop.freight,
+        total: oprovider.totalPay,
+        type: oprovider.type,
         commentshop: oprovider.commentshop,
         commentrider: oprovider.commentrider,
         status: 0,
@@ -361,10 +341,11 @@ class ConfirmOrder extends StatelessWidget {
 
     if (status1) {
       EasyLoading.dismiss();
+      idList.clear();
       MyFunction().toast('เพิ่มรายการสั่งซื้อ สำเร็จ');
-      Navigator.pushNamedAndRemoveUntil(
-          context, RoutePage.routePageNavigation, (route) => false);
-          MyVariable.indexPageNavigation = 3;
+      Navigator.pop(context);
+      Navigator.pop(context);
+      MyVariable.tabController!.animateTo(3);
       Provider.of<OrderProvider>(context, listen: false).clearOrderData();
     } else {
       EasyLoading.dismiss();

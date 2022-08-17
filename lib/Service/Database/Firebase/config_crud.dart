@@ -9,7 +9,7 @@ class ConfigCRUD {
   final banner = FirebaseFirestore.instance.collection('banner');
   final privacy = FirebaseFirestore.instance.collection('privacy');
 
-  Future readStatusFromAS() async {
+  Future<int?> readStatusFromAS() async {
     try {
       final snapshot = await appstatus.doc('bnRgar2MdG3dcS37OYLN').get();
       if (snapshot.exists) {

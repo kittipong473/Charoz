@@ -21,6 +21,52 @@ class UserProvider with ChangeNotifier {
   get manager => _manager;
   get userList => _userList;
 
+  Future getUserPreference(BuildContext context) async {
+    _user = await UserCRUD().readUserByToken();
+    MyVariable.login = true;
+    MyVariable.userTokenId = _user!.id;
+    MyVariable.role = _user!.role;
+    if (_user!.status == 0) {
+      DialogAlert().doubleDialog(context, 'คุณถูกระงับการใช้งาน',
+          'โปรดติดต่อสอบถามผู้ดูแลระบบเมื่อมีข้อสงสัย');
+      signOutFirebase(context);
+    } else if (_user!.pincode != '') {
+      Future.delayed(Duration.zero, () {
+        Navigator.pushNamedAndRemoveUntil(
+            context, RoutePage.routeCodeVerify, (route) => false);
+      });
+    } else {
+      Future.delayed(Duration.zero, () {
+        Navigator.pushNamedAndRemoveUntil(
+            context, RoutePage.routePageNavigation, (route) => false);
+      });
+    }
+  }
+
+  Future<bool> checkPhoneAndGetUser(String phone) async {
+    _user = await UserCRUD().readUserByPhone(phone);
+    if (_user != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future readUserById(String id) async {
+    _user = await UserCRUD().readUserById(id);
+    notifyListeners();
+  }
+
+  Future signOutFirebase(BuildContext context) async {
+    await MyVariable.auth
+        .signOut()
+        .then((value) => setLogoutVariable(context))
+        .catchError((e) {
+      EasyLoading.dismiss();
+      DialogAlert().singleDialog(context, e.code);
+    });
+  }
+
   Future readUserList() async {
     _userList = await UserCRUD().readUserList();
     notifyListeners();
@@ -41,44 +87,12 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future readUserById(String id) async {
-    _user = await UserCRUD().readUserById(id);
-    notifyListeners();
-  }
-
-  Future<String?> checkPhoneAndGetUser(String phone) async {
-    _user = await UserCRUD().readUserByPhone(phone);
-    if (_user != null) {
-      return _user!.email;
-    } else {
-      return null;
-    }
-  }
-
-  Future readUserByToken() async {
-    _user = await UserCRUD().readUserByToken();
-    MyVariable.login = true;
-    MyVariable.role = _user!.role;
-    MyVariable.userTokenId = _user!.id;
-    notifyListeners();
-  }
-
-  Future signOutFirebase(BuildContext context) async {
-    await MyVariable.auth
-        .signOut()
-        .then((value) => setLogoutVariable(context))
-        .catchError((e) {
-      EasyLoading.dismiss();
-      DialogAlert().singleDialog(context, e.code);
-    });
-  }
-
   void setLoginVariable(BuildContext context) {
     MyVariable.login = true;
-    MyVariable.indexPageNavigation = 0;
     MyVariable.role = _user!.role;
     MyVariable.userTokenId = _user!.id;
     MyVariable.indexNotiChip = 0;
+    MyVariable.indexOrderChip = 0;
     DataManager().clearAllData(context);
     EasyLoading.dismiss();
     MyFunction().toast('ยินดีต้อนรับสู่ Application');
@@ -87,20 +101,19 @@ class UserProvider with ChangeNotifier {
   }
 
   void setLogoutVariable(BuildContext context) {
+    _user = null;
     MyVariable.login = false;
-    MyVariable.indexPageNavigation = 0;
     MyVariable.role = '';
     MyVariable.userTokenId = '';
     MyVariable.indexNotiChip = 0;
     DataManager().clearAllData(context);
     EasyLoading.dismiss();
-    MyFunction().toast('ลงชื่อออก สำเร็จ');
+    MyFunction().toast('ลงชื่อออกจากระบบ สำเร็จ');
     Navigator.pushNamedAndRemoveUntil(
         context, RoutePage.routePageNavigation, (route) => false);
   }
 
   void clearUserData() {
-    _user = null;
     _customer = null;
     _rider = null;
     _manager = null;

@@ -2,7 +2,6 @@ import 'package:charoz/Component/Notification/Modal/add_noti.dart';
 import 'package:charoz/Component/Shop/Modal/edit_shop_admin.dart';
 import 'package:charoz/Component/Shop/Modal/edit_shop_manager.dart';
 import 'package:charoz/Model_Main/shop_model.dart';
-import 'package:charoz/Model_Main/time_model.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/my_variable.dart';
 import 'package:flutter/material.dart';
@@ -121,16 +120,16 @@ class ScreenWidget {
     );
   }
 
-  Positioned editShop(BuildContext context, ShopModel shop, TimeModel time) {
+  Positioned editShop(BuildContext context, ShopModel shop) {
     return Positioned(
       top: 2.h,
       right: 3.w,
       child: IconButton(
         onPressed: () {
           if (MyVariable.role == "admin") {
-            EditShopAdmin().openModalEditShopAdmin(context, shop, time);
+            EditShopAdmin().openModalEditShopAdmin(context, shop);
           } else if (MyVariable.role == "manager") {
-            EditShopManager().openModalEditShopManager(context, shop, time);
+            EditShopManager().openModalEditShopManager(context, shop);
           }
         },
         icon: Icon(
@@ -186,41 +185,4 @@ class ScreenWidget {
       height: 0.2.h,
     );
   }
-
-  // Widget buildQRcode() {
-  //   return Column(
-  //     children: [
-  //       QrImage(
-  //         data: controller.text,
-  //         size: 200,
-  //         backgroundColor: Colors.white,
-  //       ),
-  //       const SizedBox(height: 40),
-  //       TextField(
-  //         controller: controller,
-  //         decoration: InputDecoration(
-  //           hintText: "Enter the Data",
-  //           suffixIcon: IconButton(
-  //             icon: const Icon(Icons.send_rounded),
-  //             onPressed: () => setState(() {}),
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  // Widget buildOpenScanner() {
-  //   return ElevatedButton(
-  //     onPressed: () {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => const Scanner(),
-  //         ),
-  //       );
-  //     },
-  //     child: const Text('Open Scanner'),
-  //   );
-  // }
 }

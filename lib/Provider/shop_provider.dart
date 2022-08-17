@@ -1,5 +1,4 @@
 import 'package:charoz/Model_Main/shop_model.dart';
-import 'package:charoz/Model_Main/time_model.dart';
 import 'package:charoz/Service/Database/Firebase/shop_crud.dart';
 import 'package:charoz/Utilty/Function/location_service.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
@@ -10,22 +9,15 @@ class ShopProvider with ChangeNotifier {
   String? _shopStatus;
   bool? _allowLocation;
   ShopModel? _shop;
-  TimeModel? _time;
   List<ShopModel>? _shopList;
 
   get shopStatus => _shopStatus;
-  get allowLocation=> _allowLocation;
+  get allowLocation => _allowLocation;
   get shop => _shop;
-  get time => _time;
   get shopList => _shopList;
 
   Future readShopModel() async {
     _shop = await ShopCRUD().readShopModel();
-    notifyListeners();
-  }
-
-  Future readTimeModel() async {
-    _time = await ShopCRUD().readTimeModel();
     getTimeStatus();
     notifyListeners();
   }
@@ -36,14 +28,14 @@ class ShopProvider with ChangeNotifier {
   }
 
   void getTimeStatus() {
-    List<String> times = MyFunction().convertToList(_time!.status);
+    List<String> times = MyFunction().convertToList(_shop!.timetype);
     var now = DateTime.now();
     var timenow = DateFormat('HH.mm').format(DateTime.now());
     double cal = double.parse(timenow);
-    if (_time!.choose == 'เปิดตามเวลาปกติ') {
+    if (_shop!.choose == 0) {
       if (now.weekday >= 1 && now.weekday <= 6) {
-        if (cal >= convertTime(_time!.open) &&
-            cal <= convertTime(_time!.close)) {
+        if (cal >= convertTime(_shop!.open) &&
+            cal <= convertTime(_shop!.close)) {
           _shopStatus = times[0];
         } else {
           _shopStatus = times[1];
@@ -51,7 +43,7 @@ class ShopProvider with ChangeNotifier {
       } else {
         _shopStatus = times[1];
       }
-    } else if (_time!.choose == 'ปิดชั่วคราว') {
+    } else if (_shop!.choose == 1) {
       _shopStatus = times[2];
     } else {
       _shopStatus = times[3];
@@ -68,7 +60,6 @@ class ShopProvider with ChangeNotifier {
   void clearShopData() {
     _shopStatus = null;
     _shop = null;
-    _time = null;
     _shopList = null;
   }
 }

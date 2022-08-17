@@ -1,5 +1,6 @@
 import 'package:charoz/Model_Main/noti_model.dart';
 import 'package:charoz/Service/Database/Firebase/noti_crud.dart';
+import 'package:charoz/Utilty/my_variable.dart';
 import 'package:flutter/cupertino.dart';
 
 class NotiProvider with ChangeNotifier {
@@ -10,7 +11,13 @@ class NotiProvider with ChangeNotifier {
   get notiList => _notiList;
 
   Future readNotiTypeList(String type) async {
-    _notiList = await NotiCRUD().readNotiTypeList(type);
+    if (MyVariable.role == 'customer') {
+      _notiList = await NotiCRUD().readNotiByCustomer(type);
+    } else if (MyVariable.role == 'rider') {
+      _notiList = await NotiCRUD().readNotiByRider(type);
+    } else {
+      _notiList = await NotiCRUD().readAllNoti(type);
+    }
     notifyListeners();
   }
 
