@@ -117,7 +117,7 @@ class NotiList extends StatelessWidget {
         onTap: () => NotiDetail().dialogNoti(context, noti),
         onLongPress: () => NotiDelete().confirmDelete(context, noti.id),
         child: Padding(
-          padding: EdgeInsets.all(10.sp),
+          padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

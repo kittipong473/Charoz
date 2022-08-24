@@ -28,7 +28,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future checkMaintenance() async {
-    // int maintenance = 0;
+    // int maintenance = 1;
     int? maintenance = await ConfigCRUD().readStatusFromAS();
     if (maintenance == 0 || maintenance == 1) {
       appMaintenance(maintenance!);
@@ -57,7 +57,7 @@ class _SplashPageState extends State<SplashPage> {
     } else {
       Future.delayed(Duration.zero, () {
         Navigator.pushNamedAndRemoveUntil(
-            context, RoutePage.routeCodeVerify, (route) => false);
+            context, RoutePage.routePageNavigation, (route) => false);
       });
     }
   }
@@ -73,8 +73,14 @@ class _SplashPageState extends State<SplashPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(MyImage.logo3, width: 50.w, height: 50.w),
+              Text(
+                'Welcome to\nCharoz Application',
+                style: MyStyle().boldPrimary20(),
+                textAlign: TextAlign.center,
+              ),
               SizedBox(height: 3.h),
+              Image.asset(MyImage.logo3, width: 50.w, height: 50.w),
+              SizedBox(height: 5.h),
               Lottie.asset(MyImage.gifSplash, width: 40.w, height: 40.w),
             ],
           ),

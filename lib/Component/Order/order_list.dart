@@ -359,8 +359,12 @@ class OrderList extends StatelessWidget {
         children: [
           fragmentEachRowDetail(
               Icons.food_bank_rounded, 'ประเภท', order.type.toString()),
-          fragmentEachRowDetail(Icons.person_rounded, 'ชื่อลูกค้า',
-              '${uprovider.customer.firstname} ${uprovider.customer.lastname}'),
+          fragmentEachRowDetail(
+              Icons.person_rounded,
+              'ชื่อลูกค้า',
+              uprovider.customer == null
+                  ? ''
+                  : '${uprovider.customer.firstname} ${uprovider.customer.lastname}'),
           if (order.type == 1) ...[
             fragmentEachRowDetail(
               Icons.delivery_dining_rounded,
@@ -371,8 +375,8 @@ class OrderList extends StatelessWidget {
                       ? ''
                       : '${uprovider.rider.firstname} ${uprovider.rider.lastname}',
             ),
-            fragmentEachRowDetail(
-                Icons.location_pin, 'สถานที่จัดส่ง', aprovider.address.name),
+            fragmentEachRowDetail(Icons.location_pin, 'สถานที่จัดส่ง',
+                aprovider.address == null ? '' : aprovider.address.name ),
           ],
           fragmentEachRowDetail(
               Icons.money_rounded, 'ราคา', '${order.total} ฿'),

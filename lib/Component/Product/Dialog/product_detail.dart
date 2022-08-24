@@ -4,12 +4,14 @@ import 'package:charoz/Model_Main/product_model.dart';
 import 'package:charoz/Provider/order_provider.dart';
 import 'package:charoz/Provider/product_provider.dart';
 import 'package:charoz/Service/Database/Firebase/product_crud.dart';
+import 'package:charoz/Utilty/Constant/my_image.dart';
 import 'package:charoz/Utilty/Constant/my_style.dart';
 import 'package:charoz/Utilty/Function/my_function.dart';
 import 'package:charoz/Utilty/my_variable.dart';
 import 'package:charoz/Utilty/Function/dialog_alert.dart';
 import 'package:charoz/Utilty/Widget/show_image.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -30,7 +32,15 @@ class ProductDetail {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(product.name, style: MyStyle().boldPrimary18()),
+            Row(
+              children: [
+                Lottie.asset(getImageFoodName(product.type),
+                    width: 8.w, height: 8.w),
+                Text(product.name, style: MyStyle().boldPrimary18()),
+                Lottie.asset(getImageFoodName(product.type),
+                    width: 8.w, height: 8.w),
+              ],
+            ),
             Text('${product.price.toStringAsFixed(0)} ฿',
                 style: MyStyle().normalBlue18()),
             SizedBox(height: 3.h),
@@ -168,5 +178,19 @@ class ProductDetail {
             : Text('ขออภัย อาหารหมดสต็อก', style: MyStyle().boldRed16()),
       ],
     );
+  }
+
+  String getImageFoodName(String type) {
+    if (type == 'อาหาร') {
+      return MyImage.gifFood;
+    } else if (type == 'ทานเล่น') {
+      return MyImage.gifSnack;
+    } else if (type == 'เครื่องดื่ม') {
+      return MyImage.gifDrink;
+    } else if (type == 'ของหวาน') {
+      return MyImage.gifSweet;
+    } else {
+      return MyImage.error;
+    }
   }
 }

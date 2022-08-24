@@ -57,21 +57,27 @@ class _ProductListState extends State<ProductList> {
             buildSearch(),
           ],
         ),
-        floatingActionButton: MyVariable.role == 'manager'
-            ? FloatingActionButton(
-                backgroundColor: MyStyle.bluePrimary,
-                child: const Icon(Icons.add_rounded, color: Colors.white),
-                onPressed: () => AddProduct().openModalAddProduct(context),
-              )
-            : FloatingActionButton(
-                backgroundColor: MyStyle.bluePrimary,
-                child: const Icon(Icons.shopping_cart_rounded,
-                    color: Colors.white),
-                onPressed: () =>
-                    Navigator.pushNamed(context, RoutePage.routeOrderCart),
-              ),
+        floatingActionButton: buildFloatingButton(),
       ),
     );
+  }
+
+  FloatingActionButton? buildFloatingButton() {
+    if (MyVariable.role == 'manager') {
+      return FloatingActionButton(
+        backgroundColor: MyStyle.bluePrimary,
+        child: const Icon(Icons.add_rounded, color: Colors.white),
+        onPressed: () => AddProduct().openModalAddProduct(context),
+      );
+    } else if (MyVariable.role == 'customer') {
+      return FloatingActionButton(
+        backgroundColor: MyStyle.bluePrimary,
+        child: const Icon(Icons.shopping_cart_rounded, color: Colors.white),
+        onPressed: () => Navigator.pushNamed(context, RoutePage.routeOrderCart),
+      );
+    } else {
+      return null;
+    }
   }
 
   Widget buildChip() {

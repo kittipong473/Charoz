@@ -217,8 +217,7 @@ class Home extends StatelessWidget {
                       style: MyStyle().normalPurple18()),
             ),
           ),
-          Icon(Icons.store_mall_directory_rounded,
-              color: Colors.purple.shade700, size: 35.sp),
+          Lottie.asset(MyImage.gifShopDetail, width: 20.w, height: 20.w),
         ],
       ),
     );
@@ -232,7 +231,7 @@ class Home extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Icon(Icons.campaign_rounded, color: Colors.red.shade700, size: 35.sp),
+          Lottie.asset(MyImage.gifShopAnnounce, width: 20.w, height: 20.w),
           SizedBox(
             width: MyVariable.largeDevice ? 70.w : 60.w,
             child: Consumer<ShopProvider>(

@@ -175,7 +175,7 @@ class Login extends StatelessWidget {
           onPressed: () async {
             if (formKey.currentState!.validate()) {
               EasyLoading.show(status: 'loading...');
-              checkUser(context, provider.user);
+              checkUser(context, provider);
             }
           },
           child: Text('เข้าสู่ระบบ', style: MyStyle().normalWhite16()),
@@ -184,11 +184,11 @@ class Login extends StatelessWidget {
     );
   }
 
-  Future checkUser(BuildContext context, UserModel user) async {
+  Future checkUser(BuildContext context, UserProvider provider) async {
     bool status = await Provider.of<UserProvider>(context, listen: false)
         .checkPhoneAndGetUser(phoneController.text);
     if (status) {
-      processLogin(context, user);
+      processLogin(context, provider.user);
     } else {
       EasyLoading.dismiss();
       DialogAlert().doubleDialog(context, 'เบอร์โทรศัพท์นี้ไม่มีอยู่ในระบบ',

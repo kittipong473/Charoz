@@ -198,24 +198,24 @@ class _PageNavigationState extends State<PageNavigation>
                   Text(provider.user.role, style: MyStyle().normalWhite16()),
             ),
             if (MyVariable.role == 'customer') ...[
-              fragmentDrawerList(
-                Icons.edit_rounded,
-                'แก้ไขข้อมูล',
-                'เพิ่มรูป/แก้ไขชื่อนามสกุลผู้ใช้งาน',
-                () => EditUser().openModalEditUser(context, provider.user),
-              ),
+              // fragmentDrawerList(
+              //   Icons.edit_rounded,
+              //   'แก้ไขข้อมูล',
+              //   'เพิ่มรูป/แก้ไขชื่อนามสกุลผู้ใช้งาน',
+              //   () => EditUser().openModalEditUser(context, provider.user),
+              // ),
               fragmentDrawerList(
                 Icons.location_city_rounded,
                 'ที่อยู่ของฉัน',
                 'เพิ่ม/ลบ/แก้ไขที่อยู่ผู้ใช้งาน',
                 () => Navigator.pushNamed(context, RoutePage.routeLocationList),
               ),
-              fragmentDrawerList(
-                Icons.connect_without_contact_rounded,
-                'ติดต่อผู้ดูแล',
-                'ส่งข้อความ ปัญหา ข้อสงสัย ให้แอดมินทราบ',
-                () {},
-              ),
+              // fragmentDrawerList(
+              //   Icons.connect_without_contact_rounded,
+              //   'ติดต่อผู้ดูแล',
+              //   'ส่งข้อความ ปัญหา ข้อสงสัย ให้แอดมินทราบ',
+              //   () {},
+              // ),
             ] else if (MyVariable.role == 'manager' ||
                 MyVariable.role == 'role') ...[
               fragmentDrawerList(

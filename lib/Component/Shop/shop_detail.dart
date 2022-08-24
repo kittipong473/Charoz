@@ -180,7 +180,7 @@ class ShopDetail extends StatelessWidget {
                 Text('ติดต่อกับร้านค้า', style: MyStyle().boldPrimary18()),
                 SizedBox(height: 1.h),
                 Text(
-                  'คุณ ${uprovider.manager.firstname} ${uprovider.manager.lastname}',
+                  'คุณ ${uprovider.manager.firstname}',
                   style: MyStyle().normalBlack16(),
                 ),
                 Text(

@@ -24,10 +24,15 @@ class MyImage {
   static String gifZoom = 'assets/animates/zoom.json';
   static String gifTap = 'assets/animates/tap.json';
   static String gifScoreRate = 'assets/animates/scorerate.json';
-  static String gifName = 'assets/animates/name.json';
+  static String gifCooking = 'assets/animates/name.json';
+  static String gifFood = 'assets/animates/food.json';
+  static String gifSnack = 'assets/animates/snack.json';
   static String gifDrink = 'assets/animates/drink.json';
   static String gifSweet = 'assets/animates/sweet.json';
   static String gifFavorite = 'assets/animates/favorite.json';
   static String gifOpen = 'assets/animates/open.json';
   static String gifClosed = 'assets/animates/closed.json';
+  static String gifMaintenance = 'assets/animates/maintenance.json';
+  static String gifShopDetail = 'assets/animates/shopdetail.json';
+  static String gifShopAnnounce = 'assets/animates/shopannounce.json';
 }
