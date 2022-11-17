@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "739600533035-5cs6sdar41melvgack9kl3pg610ss1g1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kittipongkdev.charoz",
+            "certificate_hash": "fb44d137378da3501f86f37d1eeb2dee32c02742"
+          }
+        },
+        {
           "client_id": "739600533035-vpgmfi3mtoep0l7n7ccnorer122tt8kn.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
