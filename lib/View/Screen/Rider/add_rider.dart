@@ -1,11 +1,11 @@
-import 'package:charoz/Model/Api/Request/user_modify.dart';
-import 'package:charoz/Model/Service/CRUD/Firebase/user_crud.dart';
-import 'package:charoz/Util/Constant/my_image.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Api/Request/user_request.dart';
+import 'package:charoz/Service/Firebase/user_crud.dart';
+import 'package:charoz/Model/Util/Constant/my_image.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Function/my_function.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -27,7 +27,7 @@ class AddRider extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: MyStyle.colorBackGround,
+        backgroundColor: MyStyle.backgroundColor,
         appBar: ScreenWidget().appBarTheme('เพิ่มผู้ใช้งาน คนขับ'),
         body: GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
@@ -90,13 +90,14 @@ class AddRider extends StatelessWidget {
           labelStyle: MyStyle().normalBlack16(),
           labelText: 'เบอร์โทรศัพท์ :',
           errorStyle: MyStyle().normalRed14(),
-          prefixIcon: const Icon(Icons.phone_rounded, color: MyStyle.dark),
+          prefixIcon:
+              const Icon(Icons.phone_rounded, color: MyStyle.orangeDark),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -123,13 +124,13 @@ class AddRider extends StatelessWidget {
           labelText: 'ชื่อจริง :',
           errorStyle: MyStyle().normalRed14(),
           prefixIcon:
-              const Icon(Icons.description_rounded, color: MyStyle.dark),
+              const Icon(Icons.description_rounded, color: MyStyle.orangeDark),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -156,13 +157,13 @@ class AddRider extends StatelessWidget {
           labelText: 'นามสกุล :',
           errorStyle: MyStyle().normalRed14(),
           prefixIcon:
-              const Icon(Icons.description_rounded, color: MyStyle.dark),
+              const Icon(Icons.description_rounded, color: MyStyle.orangeDark),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -179,7 +180,7 @@ class AddRider extends StatelessWidget {
         onPressed: () {
           if (formKey.currentState!.validate()) {
             EasyLoading.show(status: 'loading...');
-            processInsert(context);
+            // processInsert(context);
           }
         },
         child: Text('สร้างบัญชีสำหรับคนขับ', style: MyStyle().normalWhite16()),
@@ -187,39 +188,38 @@ class AddRider extends StatelessWidget {
     );
   }
 
-  Future processInsert(BuildContext context) async {
-    String email = 'rider-${phoneController.text}@email.com';
-    String password = 'crzrd${phoneController.text.substring(6)}';
-    await VariableGeneral.auth
-        .createUserWithEmailAndPassword(email: email, password: password)
-        .then((value) async {
-      bool status = await UserCRUD().createUser(
-        UserManage(
-          firstname: firstnameController.text,
-          lastname: lastnameController.text,
-          email: email,
-          phone: phoneController.text,
-          image: '',
-          role: 'rider',
-          status: 1,
-          tokenE: value.user!.uid,
-          tokenP: '',
-          tokenDevice: '',
-          time: Timestamp.fromDate(DateTime.now()),
-        ),
-      );
-      if (status) {
-        await VariableGeneral.auth.signOut();
-        EasyLoading.dismiss();
-        Navigator.pop(context);
-        MyFunction().toast('เพิ่มบัญชีสำหรับ คนขับ สำเร็จ');
-      } else {
-        EasyLoading.dismiss();
-        MyDialog(context).addFailedDialog();
-      }
-    }).catchError((e) {
-      EasyLoading.dismiss();
-      MyDialog(context).singleDialog(MyFunction().authenAlert(e.code));
-    });
-  }
+  // Future processInsert(BuildContext context) async {
+  //   String email = 'rider-${phoneController.text}@email.com';
+  //   String password = 'crzrd${phoneController.text.substring(6)}';
+  //   await VariableGeneral.auth
+  //       .createUserWithEmailAndPassword(email: email, password: password)
+  //       .then((value) async {
+  //     bool status = await UserCRUD().createUser(
+  //       UserRequest(
+  //         firstname: firstnameController.text,
+  //         lastname: lastnameController.text,
+  //         email: email,
+  //         phone: phoneController.text,
+  //         role: 2,
+  //         status: true,
+  //         tokenE: value.user!.uid,
+  //         tokenP: '',
+  //         tokenDevice: '',
+  //         time: Timestamp.fromDate(DateTime.now()),
+  //       ),
+  //     );
+  //     if (status) {
+  //       await VariableGeneral.auth.signOut();
+  //       EasyLoading.dismiss();
+  //       Navigator.pop(context);
+  //       MyFunction().toast('เพิ่มบัญชีสำหรับ คนขับ สำเร็จ');
+  //     } else {
+  //       EasyLoading.dismiss();
+  //       MyDialog(context).addFailedDialog();
+  //     }
+  //   }).catchError((e) {
+  //     EasyLoading.dismiss();
+  //     MyDialog(context).singleDialog(MyFunction().authenAlert(e.code));
+  //   });
+  // }
 }

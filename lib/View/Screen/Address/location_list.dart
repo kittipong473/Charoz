@@ -1,8 +1,8 @@
 import 'package:charoz/View/Modal/add_location.dart';
 import 'package:charoz/View/Modal/edit_location.dart';
 import 'package:charoz/Model/Data/address_model.dart';
-import 'package:charoz/Model/Service/CRUD/Firebase/address_crud.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Service/Firebase/address_crud.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Function/my_function.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
@@ -27,7 +27,7 @@ class LocationList extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: MyStyle.colorBackGround,
+        backgroundColor: MyStyle.backgroundColor,
         appBar: ScreenWidget().appBarTheme('ที่อยู่ทั้งหมดของฉัน'),
         body: Stack(
           children: [
@@ -96,14 +96,14 @@ class LocationList extends StatelessWidget {
                     Text(
                         address.type.toString() == 'คอนโดถนอมมิตร'
                             ? 'ตึกหมายเลข ${address.detail}'
-                            : address.detail,
+                            : address.detail!,
                         style: MyStyle().normalBlack14()),
                   ],
                 ),
               ],
             ),
             Icon(Icons.compare_arrows_rounded,
-                size: 20.sp, color: MyStyle.primary),
+                size: 20.sp, color: MyStyle.orangePrimary),
           ],
         ),
       ),
@@ -144,7 +144,7 @@ class LocationList extends StatelessWidget {
       children: [
         InkWell(
           onTap: () async {
-            bool status = await AddressCRUD().deleteAddress(address.id);
+            bool status = await AddressCRUD().deleteAddress(address.id!);
             if (status) {
               MyFunction().toast('ลบที่อยู่เรียบร้อยแล้ว');
             } else {

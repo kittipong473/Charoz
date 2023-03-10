@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:charoz/Model/Api/Request/product_modify.dart';
-import 'package:charoz/Model/Service/CRUD/Firebase/product_crud.dart';
-import 'package:charoz/Util/Constant/my_image.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Api/Request/product_request.dart';
+import 'package:charoz/Service/Firebase/product_crud.dart';
+import 'package:charoz/Model/Util/Constant/my_image.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Util/Variable/var_data.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Model/Util/Variable/var_data.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Widget/dropdown_menu.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
@@ -75,7 +75,7 @@ class AddProduct {
                   ),
                 ),
               ),
-              ScreenWidget().modalTitle('เพิ่มรายการอาหาร'),
+              ScreenWidget().buildModalHeader('เพิ่มรายการอาหาร'),
             ],
           ),
         ),
@@ -93,12 +93,12 @@ class AddProduct {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: MyStyle.primary),
+            border: Border.all(color: MyStyle.orangePrimary),
           ),
           child: DropdownButton(
             iconSize: 24.sp,
-            icon:
-                const Icon(Icons.arrow_drop_down_outlined, color: MyStyle.dark),
+            icon: const Icon(Icons.arrow_drop_down_outlined,
+                color: MyStyle.orangeDark),
             isExpanded: true,
             value: chooseType,
             items: VariableData.productTypes
@@ -130,14 +130,14 @@ class AddProduct {
           labelText: 'ชื่ออาหาร :',
           prefixIcon: const Icon(
             Icons.description_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -165,14 +165,14 @@ class AddProduct {
           labelText: 'ราคา :',
           prefixIcon: const Icon(
             Icons.attach_money_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -193,14 +193,14 @@ class AddProduct {
           labelText: 'รายละเอียด : ',
           prefixIcon: const Icon(
             Icons.details_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -218,7 +218,7 @@ class AddProduct {
             file = await MyFunction().chooseImage(ImageSource.camera);
             setState(() {});
           },
-          icon: Icon(Icons.add_a_photo, size: 24.sp, color: MyStyle.dark),
+          icon: Icon(Icons.add_a_photo, size: 24.sp, color: MyStyle.orangeDark),
         ),
         SizedBox(
           width: 40.w,
@@ -232,8 +232,8 @@ class AddProduct {
             file = await MyFunction().chooseImage(ImageSource.gallery);
             setState(() {});
           },
-          icon:
-              Icon(Icons.add_photo_alternate, size: 24.sp, color: MyStyle.dark),
+          icon: Icon(Icons.add_photo_alternate,
+              size: 24.sp, color: MyStyle.orangeDark),
         ),
       ],
     );
@@ -245,7 +245,7 @@ class AddProduct {
       children: [
         Checkbox(
           value: suggest,
-          activeColor: MyStyle.primary,
+          activeColor: MyStyle.orangePrimary,
           onChanged: (check) => setState(() => suggest = check!),
         ),
         Text('แนะนำรายการอาหารที่หน้าหลัก', style: MyStyle().normalBlack16())
@@ -273,26 +273,24 @@ class AddProduct {
   }
 
   Future processInsert(BuildContext context) async {
-    String chooseImage =
+    String? chooseImage =
         file != null ? await ProductCRUD().uploadImageProduct(file!) : '';
 
     bool status = await ProductCRUD().createProduct(
-      ProductManage(
+      ProductRequest(
         name: nameController.text,
         type: chooseType!,
         price: int.parse(priceController.text),
         detail: detailController.text.isEmpty ? 'ไม่มี' : detailController.text,
         image: chooseImage,
-        status: 1,
-        suggest: suggest ? 1 : 0,
+        status: true,
+        suggest: suggest,
         time: Timestamp.fromDate(DateTime.now()),
       ),
     );
 
     if (status) {
       prodVM.readProductAllList();
-      prodVM.readProductTypeList(
-          VariableData.productTypes[VariableGeneral.indexProductChip]);
       EasyLoading.dismiss();
       MyFunction().toast('เพิ่มรายการอาหารเรียบร้อยแล้ว');
       Navigator.pop(context);

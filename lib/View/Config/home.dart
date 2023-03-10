@@ -1,41 +1,57 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:charoz/View/Dialog/product_detail.dart';
-import 'package:charoz/View/Dialog/carousel_detail.dart';
+import 'package:charoz/View/Modal/modal_product.dart';
+import 'package:charoz/View/Modal/modal_carousel.dart';
 import 'package:charoz/Model/Data/banner_model.dart';
 import 'package:charoz/Model/Data/product_model.dart';
-import 'package:charoz/Util/Constant/my_image.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Util/Constant/my_image.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:charoz/View/Widget/show_image.dart';
 import 'package:charoz/View/Widget/show_progress.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:charoz/View_Model/config_vm.dart';
 import 'package:charoz/View_Model/product_vm.dart';
 import 'package:charoz/View_Model/shop_vm.dart';
+import 'package:charoz/View_Model/time_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-final ConfigViewModel confVM = Get.find<ConfigViewModel>();
-final ProductViewModel prodVM = Get.find<ProductViewModel>();
-final ShopViewModel shopVM = Get.find<ShopViewModel>();
-
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
-  void getData() async {
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  final ConfigViewModel confVM = Get.find<ConfigViewModel>();
+  final ProductViewModel prodVM = Get.find<ProductViewModel>();
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  void getData() {
     confVM.readBannerList();
-    prodVM.readProductSuggestList();
+    prodVM.getProductSuggestList();
+  }
+
+  @override
+  void dispose() {
+    prodVM.clearSuggestData();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    getData();
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: MyStyle.colorBackGround,
+        backgroundColor: MyStyle.backgroundColor,
         body: Stack(
           children: [
             Positioned.fill(
@@ -65,21 +81,25 @@ class Home extends StatelessWidget {
   }
 
   Widget buildStatus() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (shopVM.shopStatus == 'เปิดบริการ') ...[
-          Lottie.asset(MyImage.gifOpen, width: 15.w, height: 15.w),
-          Text('สถานะร้านค้า : ${shopVM.shopStatus}',
-              style: MyStyle().boldGreen18()),
-          Lottie.asset(MyImage.gifOpen, width: 15.w, height: 15.w),
-        ] else ...[
-          Lottie.asset(MyImage.gifClosed, width: 15.w, height: 15.w),
-          Text('สถานะร้านค้า : ${shopVM.shopStatus}',
-              style: MyStyle().boldRed18()),
-          Lottie.asset(MyImage.gifClosed, width: 15.w, height: 15.w),
-        ]
-      ],
+    return GetBuilder<TimeViewModel>(
+      builder: (vm) => vm.shopStatus == ''
+          ? const ShowProgress()
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (vm.shopStatus == 'เปิดบริการ') ...[
+                  Lottie.asset(MyImage.gifOpen, width: 15.w, height: 15.w),
+                  Text('สถานะร้านค้า : ${vm.shopStatus}',
+                      style: MyStyle().boldGreen18()),
+                  Lottie.asset(MyImage.gifOpen, width: 15.w, height: 15.w),
+                ] else ...[
+                  Lottie.asset(MyImage.gifClosed, width: 15.w, height: 15.w),
+                  Text('สถานะร้านค้า : ${vm.shopStatus}',
+                      style: MyStyle().boldRed18()),
+                  Lottie.asset(MyImage.gifClosed, width: 15.w, height: 15.w),
+                ]
+              ],
+            ),
     );
   }
 
@@ -95,20 +115,20 @@ class Home extends StatelessWidget {
               ),
               itemCount: confVM.bannerList.length,
               itemBuilder: (context, index, realIndex) =>
-                  buildCarouselItem(context, vm.bannerList[index]),
+                  buildCarouselItem(vm.bannerList[index]),
             ),
     );
   }
 
-  Widget buildCarouselItem(BuildContext context, BannerModel banner) {
+  Widget buildCarouselItem(BannerModel banner) {
     return GestureDetector(
-      onTap: () => CarouselDetail().dialogCarousel(context, banner.url),
+      onTap: () => ModalCarousel().showModal(context, banner.url!),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 3.w),
-        width: VariableGeneral.largeDevice! ? 70.w : 100.w,
+        width: VariableGeneral.largeDevice ? 70.w : 100.w,
         decoration: BoxDecoration(
             color: Colors.grey, borderRadius: BorderRadius.circular(20)),
-        child: ShowImage().showImage(banner.url),
+        child: ShowImage().showImage(banner.url!, BoxFit.cover),
       ),
     );
   }
@@ -121,7 +141,7 @@ class Home extends StatelessWidget {
       child: GetBuilder<ShopViewModel>(
         builder: (vm) => vm.shop == null
             ? const ShowProgress()
-            : ShowImage().showImage(vm.shop.image),
+            : ShowImage().showImage(vm.shop.image, BoxFit.cover),
       ),
     );
   }
@@ -131,68 +151,77 @@ class Home extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 3.w),
       child: SizedBox(
         width: 100.w,
-        height: 25.h,
+        height: 23.h,
         child: GetBuilder<ProductViewModel>(
-          builder: (vm) => vm.productList.isEmpty
+          builder: (vm) => vm.productSuggestList.isEmpty
               ? const ShowProgress()
               : ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: vm.productList.length,
+                  itemCount: vm.productSuggestList.length,
                   itemBuilder: (context, index) =>
-                      buildSuggestItem(context, prodVM.productList[index]),
+                      buildSuggestItem(prodVM.productSuggestList[index]),
                 ),
         ),
       ),
     );
   }
 
-  Widget buildSuggestItem(BuildContext context, ProductModel product) {
+  Widget buildSuggestItem(ProductModel product) {
     return Card(
-      color: product.status == 0 ? Colors.grey.shade400 : Colors.white,
+      color: product.status! ? Colors.white : Colors.grey.shade400,
       elevation: 5,
       margin: const EdgeInsets.all(10),
-      child: InkWell(
-        onTap: () => ProductDetail().dialogProduct(context, product),
+      child: GestureDetector(
+        onTap: () {
+          prodVM.setProductModel(product);
+          ModalProduct().showModal(context);
+        },
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              width: 30.w,
-              height: 25.w,
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: ShowImage().showImage(product.image),
-                  ),
-                  Positioned(
-                    top: 5,
-                    right: 5,
-                    child: CircleAvatar(
-                      backgroundColor: Colors.white,
-                      radius: 15.sp,
-                      child: Lottie.asset(MyImage.gifStar),
+              width: VariableGeneral.largeDevice ? 25.w : 30.w,
+              height: 12.h,
+              child: SizedBox(
+                width: 30.w,
+                height: 12.h,
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: ShowImage().showImage(product.image, BoxFit.cover),
                     ),
+                    if (product.suggest!) ...[
+                      Positioned(
+                        top: 5,
+                        right: 5,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: 15.sp,
+                          child: Lottie.asset(MyImage.gifStar),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 1.h),
+            Column(
+              children: [
+                SizedBox(
+                  width: 25.w,
+                  child: Text(
+                    product.name ?? '',
+                    style: MyStyle().normalPrimary16(),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ],
-              ),
-            ),
-            SizedBox(
-              width: 25.w,
-              child: Text(
-                product.name,
-                style: MyStyle().normalPrimary16(),
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            Text(
-              'ราคา ${product.price.toStringAsFixed(0)}.-',
-              style: MyStyle().normalBlue16(),
-            ),
-            Text(
-              'สถานะ : ${product.status == 0 ? 'หมด' : 'ขาย'}',
-              style: MyStyle().normalBlack14(),
+                ),
+                Text(
+                  'ราคา ${product.price?.toStringAsFixed(0) ?? 0.00}.-',
+                  style: MyStyle().normalBlue16(),
+                ),
+              ],
             ),
           ],
         ),
@@ -212,7 +241,7 @@ class Home extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   SizedBox(
-                    width: VariableGeneral.largeDevice! ? 70.w : 60.w,
+                    width: VariableGeneral.largeDevice ? 70.w : 60.w,
                     child:
                         Text(vm.shop.detail, style: MyStyle().normalPurple18()),
                   ),
@@ -238,7 +267,7 @@ class Home extends StatelessWidget {
                   Lottie.asset(MyImage.gifShopAnnounce,
                       width: 20.w, height: 20.w),
                   SizedBox(
-                    width: VariableGeneral.largeDevice! ? 70.w : 60.w,
+                    width: VariableGeneral.largeDevice ? 70.w : 60.w,
                     child:
                         Text(vm.shop.announce, style: MyStyle().normalRed18()),
                   ),

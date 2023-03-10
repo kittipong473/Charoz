@@ -1,5 +1,5 @@
-import 'package:charoz/Util/Constant/my_image.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Util/Constant/my_image.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View_Model/config_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,7 +16,7 @@ class MaintenancePage extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: MyStyle.colorBackGround,
+        backgroundColor: MyStyle.backgroundColor,
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: Center(

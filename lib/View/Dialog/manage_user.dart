@@ -1,8 +1,8 @@
 import 'package:animations/animations.dart';
 import 'package:charoz/Model/Data/user_model.dart';
-import 'package:charoz/Model/Service/CRUD/Firebase/user_crud.dart';
-import 'package:charoz/Util/Constant/my_image.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Service/Firebase/user_crud.dart';
+import 'package:charoz/Model/Util/Constant/my_image.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Function/my_function.dart';
 import 'package:charoz/View_Model/user_vm.dart';
@@ -48,14 +48,8 @@ class ManageUser {
         children: [
           TextButton(
             onPressed: () async {
-              int? statusUser;
-              if (user.status == 1) {
-                statusUser = 0;
-              } else if (user.status == 0) {
-                statusUser = 1;
-              }
               bool status =
-                  await UserCRUD().updateUserStatus(user.id, statusUser!);
+                  await UserCRUD().updateUserStatus(user.id!, !user.status!);
               if (status) {
                 userVM.readUserList();
                 MyFunction().toast('เปลี่ยนสถานะเรียบร้อย');

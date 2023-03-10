@@ -1,6 +1,6 @@
-import 'package:charoz/View/Dialog/product_detail.dart';
+import 'package:charoz/View/Modal/modal_product.dart';
 import 'package:charoz/Model/Data/product_model.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Widget/show_image.dart';
 import 'package:charoz/View_Model/product_vm.dart';
 import 'package:flutter/material.dart';
@@ -32,11 +32,10 @@ class SearchProduct extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    List<ProductModel> suggestions = prodVM.productAlls.where((item) {
+    List<ProductModel> suggestions = prodVM.productList.where((item) {
       final name = item.name.toLowerCase();
-      final price = item.price.toLowerCase();
       final input = query.toLowerCase();
-      return name.contains(input) || price.contains(input) ? true : false;
+      return name.contains(input) ? true : false;
     }).toList();
     return SingleChildScrollView(
       child: Column(
@@ -64,21 +63,22 @@ class SearchProduct extends SearchDelegate {
   Widget buildItem(ProductModel product, BuildContext context) {
     return Card(
       elevation: 5,
-      color: product.status == 0 ? Colors.grey.shade400 : Colors.white,
+      color: product.status! ? Colors.white : Colors.grey.shade400,
       child: ListTile(
         leading: SizedBox(
           width: 15.w,
           height: 15.w,
-          child: ShowImage().showImage(product.image),
+          child: ShowImage().showImage(product.image, BoxFit.cover),
         ),
-        title: Text(product.name, style: MyStyle().normalPrimary16()),
+        title: Text(product.name ?? '', style: MyStyle().normalPrimary16()),
         subtitle: Text('${product.price} ฿', style: MyStyle().normalBlue16()),
-        trailing: Text(product.status == 1 ? 'ขาย' : 'หมด',
+        trailing: Text(product.status! ? 'ขาย' : 'หมด',
             style: MyStyle().normalGreen14()),
         onTap: () {
           query = '';
           Get.back();
-          ProductDetail().dialogProduct(context, product);
+          prodVM.setProductModel(product);
+          ModalProduct().showModal(context);
         },
       ),
     );

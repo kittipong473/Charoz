@@ -1,11 +1,11 @@
 import 'package:charoz/View/Modal/add_product.dart';
-import 'package:charoz/View/Dialog/product_detail.dart';
+import 'package:charoz/View/Modal/modal_product.dart';
 import 'package:charoz/Model/Data/product_model.dart';
-import 'package:charoz/Model/Service/Route/route_page.dart';
-import 'package:charoz/Util/Constant/my_image.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
-import 'package:charoz/Util/Variable/var_data.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Service/Initial/route_page.dart';
+import 'package:charoz/Model/Util/Constant/my_image.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Util/Variable/var_data.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:charoz/View/Widget/search_product.dart';
 import 'package:charoz/View/Widget/show_image.dart';
@@ -31,10 +31,14 @@ class _ProductListState extends State<ProductList> {
     getData();
   }
 
-  Future getData() async {
-    await prodVM.readProductAllList();
-    await prodVM.readProductTypeList(
-        VariableData.productTypes[VariableGeneral.indexProductChip]);
+  void getData() {
+    prodVM.getProductTypeList(0);
+  }
+
+  @override
+  void dispose() {
+    prodVM.clearProductData();
+    super.dispose();
   }
 
   @override
@@ -42,7 +46,7 @@ class _ProductListState extends State<ProductList> {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: MyStyle.colorBackGround,
+        backgroundColor: MyStyle.backgroundColor,
         body: Stack(
           children: [
             Positioned.fill(
@@ -63,13 +67,13 @@ class _ProductListState extends State<ProductList> {
   }
 
   FloatingActionButton? buildFloatingButton() {
-    if (VariableGeneral.role == 'manager') {
+    if (VariableGeneral.role == 2) {
       return FloatingActionButton(
         backgroundColor: MyStyle.bluePrimary,
         child: const Icon(Icons.add_rounded, color: Colors.white),
         onPressed: () => AddProduct().openModalAddProduct(context),
       );
-    } else if (VariableGeneral.role == 'customer') {
+    } else if (VariableGeneral.role == 1) {
       return FloatingActionButton(
         backgroundColor: MyStyle.bluePrimary,
         child: const Icon(Icons.shopping_cart_rounded, color: Colors.white),
@@ -88,10 +92,9 @@ class _ProductListState extends State<ProductList> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              chip(VariableData.productTypes[0], 0),
-              chip(VariableData.productTypes[1], 1),
-              chip(VariableData.productTypes[2], 2),
-              chip(VariableData.productTypes[3], 3),
+              for (var i = 0; i < VariableData.productTypes.length; i++) ...[
+                chip(VariableData.productTypes[i], i),
+              ],
             ],
           ),
         ],
@@ -102,7 +105,7 @@ class _ProductListState extends State<ProductList> {
   Widget chip(String title, int index) {
     return ActionChip(
       backgroundColor: VariableGeneral.indexProductChip == index
-          ? MyStyle.primary
+          ? MyStyle.orangePrimary
           : Colors.grey.shade300,
       label: Text(
         title,
@@ -112,7 +115,7 @@ class _ProductListState extends State<ProductList> {
       ),
       onPressed: () {
         setState(() => VariableGeneral.indexProductChip = index);
-        getData();
+        prodVM.getProductTypeList(index);
       },
     );
   }
@@ -129,12 +132,13 @@ class _ProductListState extends State<ProductList> {
           padding: EdgeInsets.symmetric(horizontal: 5.w),
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: MyStyle.primary),
+            border: Border.all(color: MyStyle.orangePrimary),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
             children: [
-              Icon(Icons.search_rounded, size: 20.sp, color: MyStyle.primary),
+              Icon(Icons.search_rounded,
+                  size: 20.sp, color: MyStyle.orangePrimary),
               SizedBox(width: 3.w),
               Text('ค้นหารายการอาหาร...', style: MyStyle().normalGrey16()),
             ],
@@ -145,38 +149,42 @@ class _ProductListState extends State<ProductList> {
   }
 
   Widget buildProductList() {
-    return SizedBox(
-      width: 100.w,
-      height: 68.h,
-      child: prodVM.productList == null
-          ? ScreenWidget().showEmptyData(
-              'ไม่มีรายการ ${VariableData.productTypes[VariableGeneral.indexProductChip]} ในขณะนี้',
-              'กรุณารอรายการได้ในภายหลัง')
-          : GridView.builder(
-              shrinkWrap: true,
-              padding: const EdgeInsets.only(top: 0),
-              itemCount: prodVM.productList.length,
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  childAspectRatio: 2 / 3, maxCrossAxisExtent: 160),
-              itemBuilder: (context, index) =>
-                  buildProductItem(prodVM.productList[index]),
-            ),
+    return GetBuilder<ProductViewModel>(
+      builder: (vm) => SizedBox(
+        width: 100.w,
+        height: 65.h,
+        child: vm.productTypeList == null
+            ? ScreenWidget().showEmptyData(
+                'ไม่มีรายการ ${VariableData.productTypes[VariableGeneral.indexProductChip]} ในขณะนี้',
+                'กรุณารอรายการได้ในภายหลัง')
+            : GridView.builder(
+                shrinkWrap: true,
+                padding: const EdgeInsets.only(top: 0),
+                itemCount: vm.productTypeList.length,
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    childAspectRatio: 3 / 4, maxCrossAxisExtent: 140),
+                itemBuilder: (context, index) =>
+                    buildProductItem(vm.productTypeList[index]),
+              ),
+      ),
     );
   }
 
   Widget buildProductItem(ProductModel product) {
     return Card(
-      color: product.status == 0 ? Colors.grey.shade400 : Colors.white,
+      color: product.status! ? Colors.white : Colors.grey.shade400,
       elevation: 5,
       margin: const EdgeInsets.all(10),
-      child: InkWell(
-        onTap: () => ProductDetail().dialogProduct(context, product),
+      child: GestureDetector(
+        onTap: () {
+          prodVM.setProductModel(product);
+          ModalProduct().showModal(context);
+        },
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              width: VariableGeneral.largeDevice! ? 25.w : 30.w,
+              width: VariableGeneral.largeDevice ? 25.w : 30.w,
               height: 12.h,
               child: SizedBox(
                 width: 30.w,
@@ -184,9 +192,9 @@ class _ProductListState extends State<ProductList> {
                 child: Stack(
                   children: [
                     Positioned.fill(
-                      child: ShowImage().showImage(product.image),
+                      child: ShowImage().showImage(product.image, BoxFit.cover),
                     ),
-                    if (product.suggest == 1) ...[
+                    if (product.suggest!) ...[
                       Positioned(
                         top: 5,
                         right: 5,
@@ -201,22 +209,23 @@ class _ProductListState extends State<ProductList> {
                 ),
               ),
             ),
-            SizedBox(
-              width: 25.w,
-              child: Text(
-                product.name,
-                style: MyStyle().normalPrimary16(),
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            Text(
-              'ราคา ${product.price.toStringAsFixed(0)}.-',
-              style: MyStyle().normalBlue16(),
-            ),
-            Text(
-              'สถานะ : ${product.status == 0 ? 'หมด' : 'ขาย'}',
-              style: MyStyle().normalBlack14(),
+            SizedBox(height: 1.h),
+            Column(
+              children: [
+                SizedBox(
+                  width: 25.w,
+                  child: Text(
+                    product.name ?? '',
+                    style: MyStyle().normalPrimary16(),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Text(
+                  'ราคา ${product.price?.toStringAsFixed(0) ?? 0.00}.-',
+                  style: MyStyle().normalBlue16(),
+                ),
+              ],
             ),
           ],
         ),

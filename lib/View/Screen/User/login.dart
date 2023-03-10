@@ -1,5 +1,5 @@
-import 'package:charoz/Model/Service/Route/route_page.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Service/Initial/route_page.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:charoz/View_Model/user_vm.dart';
@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+final formKey = GlobalKey<FormState>();
 TextEditingController phoneController = TextEditingController();
 MaskTextInputFormatter phoneFormat = MaskTextInputFormatter(mask: '##########');
 
@@ -21,7 +22,7 @@ class Login extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: MyStyle.colorBackGround,
+        backgroundColor: MyStyle.backgroundColor,
         appBar: ScreenWidget().appBarTheme('เข้าสู่ระบบ'),
         body: GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
@@ -33,17 +34,20 @@ class Login extends StatelessWidget {
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 5.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        ScreenWidget().buildLogoImage(),
-                        SizedBox(height: 5.h),
-                        buildTitle(),
-                        SizedBox(height: 5.h),
-                        buildPhone(),
-                        SizedBox(height: 5.h),
-                        buildButton(context),
-                      ],
+                    child: Form(
+                      key: formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          ScreenWidget().buildLogoImage(),
+                          SizedBox(height: 5.h),
+                          buildTitle(),
+                          SizedBox(height: 5.h),
+                          buildPhone(),
+                          SizedBox(height: 5.h),
+                          buildButton(context),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -88,14 +92,14 @@ class Login extends StatelessWidget {
           hintStyle: MyStyle().normalGrey16(),
           prefixIcon: const Icon(
             Icons.phone_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -110,9 +114,7 @@ class Login extends StatelessWidget {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(backgroundColor: MyStyle.bluePrimary),
         onPressed: () async {
-          if (phoneController.text.length != 10) {
-            MyDialog(context).singleDialog('กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง');
-          } else {
+          if (formKey.currentState!.validate()) {
             processLogin(context);
           }
         },
@@ -123,12 +125,6 @@ class Login extends StatelessWidget {
 
   Future processLogin(BuildContext context) async {
     userVM.setPhoneVerify(phoneController.text);
-    // bool status = await puser.requestOTP();
-    // if (status) {
     Navigator.pushNamed(context, RoutePage.routeVerifyToken);
-    // } else {
-    //   DialogAlert(context).doubleDialog('ไม่สามารถส่งรหัส OTP ได้',
-    //       'กรุณาเช็ค การอนุญาต หรือ อินเตอร์เน็ต ของคุณ');
-    // }
   }
 }

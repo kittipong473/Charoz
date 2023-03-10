@@ -4,37 +4,35 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OrderModel {
-  final String id;
-  final String shopid;
-  final String riderid;
-  final String customerid;
-  final String addressid;
-  final String productid;
-  final String productamount;
-  final int charge;
-  final int total;
-  final int type;
-  final String commentshop;
-  final String commentrider;
-  final int status;
-  final int track;
-  final DateTime time;
+  String? id;
+  String? shopid;
+  String? riderid;
+  String? customerid;
+  String? addressid;
+  String? productid;
+  String? productamount;
+  bool? delivery;
+  int? total;
+  String? commentshop;
+  String? commentrider;
+  int? status;
+  int? track;
+  DateTime? time;
   OrderModel({
-    required this.id,
-    required this.shopid,
-    required this.riderid,
-    required this.customerid,
-    required this.addressid,
-    required this.productid,
-    required this.productamount,
-    required this.charge,
-    required this.total,
-    required this.type,
-    required this.commentshop,
-    required this.commentrider,
-    required this.status,
-    required this.track,
-    required this.time,
+    this.id,
+    this.shopid,
+    this.riderid,
+    this.customerid,
+    this.addressid,
+    this.productid,
+    this.productamount,
+    this.delivery,
+    this.total,
+    this.commentshop,
+    this.commentrider,
+    this.status,
+    this.track,
+    this.time,
   });
 
   OrderModel copyWith({
@@ -45,9 +43,8 @@ class OrderModel {
     String? addressid,
     String? productid,
     String? productamount,
-    int? charge,
+    bool? delivery,
     int? total,
-    int? type,
     String? commentshop,
     String? commentrider,
     int? status,
@@ -62,9 +59,8 @@ class OrderModel {
       addressid: addressid ?? this.addressid,
       productid: productid ?? this.productid,
       productamount: productamount ?? this.productamount,
-      charge: charge ?? this.charge,
+      delivery: delivery ?? this.delivery,
       total: total ?? this.total,
-      type: type ?? this.type,
       commentshop: commentshop ?? this.commentshop,
       commentrider: commentrider ?? this.commentrider,
       status: status ?? this.status,
@@ -74,7 +70,7 @@ class OrderModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'shopid': shopid,
       'riderid': riderid,
@@ -82,62 +78,62 @@ class OrderModel {
       'addressid': addressid,
       'productid': productid,
       'productamount': productamount,
-      'charge': charge,
+      'delivery': delivery,
       'total': total,
-      'type': type,
       'commentshop': commentshop,
       'commentrider': commentrider,
       'status': status,
       'track': track,
-      'time': time.millisecondsSinceEpoch,
+      'time': time,
     };
   }
 
   factory OrderModel.fromMap(Map<String, dynamic> map) {
     return OrderModel(
-      id: map['id'] ?? '',
-      shopid: map['shopid'] ?? '',
-      riderid: map['riderid'] ?? '',
-      customerid: map['customerid'] ?? '',
-      addressid: map['addressid'] ?? '',
-      productid: map['productid'] ?? '',
-      productamount: map['productamount'] ?? '',
-      charge: map['charge']?.toInt() ?? 0,
-      total: map['total']?.toInt() ?? 0,
-      type: map['type']?.toInt() ?? 0,
-      commentshop: map['commentshop'] ?? '',
-      commentrider: map['commentrider'] ?? '',
-      status: map['status']?.toInt() ?? 0,
-      track: map['track']?.toInt() ?? 0,
-      time: DateTime.fromMillisecondsSinceEpoch(map['time']),
+      id: map['id'] != null ? map['id'] as String : null,
+      shopid: map['shopid'] != null ? map['shopid'] as String : null,
+      riderid: map['riderid'] != null ? map['riderid'] as String : null,
+      customerid:
+          map['customerid'] != null ? map['customerid'] as String : null,
+      addressid: map['addressid'] != null ? map['addressid'] as String : null,
+      productid: map['productid'] != null ? map['productid'] as String : null,
+      productamount:
+          map['productamount'] != null ? map['productamount'] as String : null,
+      delivery: map['delivery'] != null ? map['delivery'] as bool : null,
+      total: map['total'] != null ? map['total'] as int : null,
+      commentshop:
+          map['commentshop'] != null ? map['commentshop'] as String : null,
+      commentrider:
+          map['commentrider'] != null ? map['commentrider'] as String : null,
+      status: map['status'] != null ? map['status'] as int : null,
+      track: map['track'] != null ? map['track'] as int : null,
+      time: map['time'] != null ? (map['time'] as Timestamp).toDate() : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
   factory OrderModel.fromJson(String source) =>
-      OrderModel.fromMap(json.decode(source));
+      OrderModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
-    return 'OrderModel(id: $id, shopid: $shopid, riderid: $riderid, customerid: $customerid, addressid: $addressid, productid: $productid, productamount: $productamount, charge: $charge, total: $total, type: $type, commentshop: $commentshop, commentrider: $commentrider, status: $status, track: $track, time: $time)';
+    return 'OrderModel(id: $id, shopid: $shopid, riderid: $riderid, customerid: $customerid, addressid: $addressid, productid: $productid, productamount: $productamount, delivery: $delivery, total: $total, commentshop: $commentshop, commentrider: $commentrider, status: $status, track: $track, time: $time)';
   }
 
   @override
-  bool operator ==(Object other) {
+  bool operator ==(covariant OrderModel other) {
     if (identical(this, other)) return true;
 
-    return other is OrderModel &&
-        other.id == id &&
+    return other.id == id &&
         other.shopid == shopid &&
         other.riderid == riderid &&
         other.customerid == customerid &&
         other.addressid == addressid &&
         other.productid == productid &&
         other.productamount == productamount &&
-        other.charge == charge &&
+        other.delivery == delivery &&
         other.total == total &&
-        other.type == type &&
         other.commentshop == commentshop &&
         other.commentrider == commentrider &&
         other.status == status &&
@@ -154,9 +150,8 @@ class OrderModel {
         addressid.hashCode ^
         productid.hashCode ^
         productamount.hashCode ^
-        charge.hashCode ^
+        delivery.hashCode ^
         total.hashCode ^
-        type.hashCode ^
         commentshop.hashCode ^
         commentrider.hashCode ^
         status.hashCode ^
@@ -174,9 +169,8 @@ OrderModel convertOrder(dynamic item, String? id) {
     addressid: item['addressid'],
     productid: item['productid'],
     productamount: item['productamount'],
-    charge: item['charge'],
+    delivery: item['delivery'],
     total: item['total'],
-    type: item['type'],
     commentshop: item['commentshop'],
     commentrider: item['commentrider'],
     status: item['status'],

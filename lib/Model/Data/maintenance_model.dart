@@ -2,15 +2,15 @@
 import 'dart:convert';
 
 class MaintenanceModel {
-  final String id;
-  final String name;
-  final String detail;
-  final int status;
+  String? id;
+  String? name;
+  String? detail;
+  int? status;
   MaintenanceModel({
-    required this.id,
-    required this.name,
-    required this.detail,
-    required this.status,
+    this.id,
+    this.name,
+    this.detail,
+    this.status,
   });
 
   MaintenanceModel copyWith({
@@ -28,7 +28,7 @@ class MaintenanceModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'name': name,
       'detail': detail,
@@ -38,17 +38,17 @@ class MaintenanceModel {
 
   factory MaintenanceModel.fromMap(Map<String, dynamic> map) {
     return MaintenanceModel(
-      id: map['id'] ?? '',
-      name: map['name'] ?? '',
-      detail: map['detail'] ?? '',
-      status: map['status']?.toInt() ?? 0,
+      id: map['id'] != null ? map['id'] as String : null,
+      name: map['name'] != null ? map['name'] as String : null,
+      detail: map['detail'] != null ? map['detail'] as String : null,
+      status: map['status'] != null ? map['status'] as int : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
   factory MaintenanceModel.fromJson(String source) =>
-      MaintenanceModel.fromMap(json.decode(source));
+      MaintenanceModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -56,11 +56,10 @@ class MaintenanceModel {
   }
 
   @override
-  bool operator ==(Object other) {
+  bool operator ==(covariant MaintenanceModel other) {
     if (identical(this, other)) return true;
 
-    return other is MaintenanceModel &&
-        other.id == id &&
+    return other.id == id &&
         other.name == name &&
         other.detail == detail &&
         other.status == status;
@@ -72,9 +71,9 @@ class MaintenanceModel {
   }
 }
 
-MaintenanceModel convertMaintenance(dynamic item) {
+MaintenanceModel convertMaintenance(dynamic item, String? id) {
   return MaintenanceModel(
-    id: item.id,
+    id: id ?? item.id,
     name: item['name'],
     detail: item['detail'],
     status: item['status'],

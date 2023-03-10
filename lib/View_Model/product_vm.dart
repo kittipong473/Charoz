@@ -1,37 +1,47 @@
 import 'package:charoz/Model/Data/product_model.dart';
-import 'package:charoz/Model/Service/CRUD/Firebase/product_crud.dart';
+import 'package:charoz/Service/Firebase/product_crud.dart';
 import 'package:get/get.dart';
 
 class ProductViewModel extends GetxController {
+  final RxList<ProductModel> _productList = <ProductModel>[].obs;
+  final RxList<ProductModel> _productTypeList = <ProductModel>[].obs;
+  final RxList<ProductModel> _productSuggestList = <ProductModel>[].obs;
   ProductModel? _product;
-  RxList<ProductModel> _productAlls = <ProductModel>[].obs;
-  RxList<ProductModel> _productList = <ProductModel>[].obs;
 
   get product => _product;
-  get productAlls => _productAlls;
   get productList => _productList;
+  get productTypeList => _productTypeList;
+  get productSuggestList => _productSuggestList;
 
   Future readProductAllList() async {
-    _productAlls = await ProductCRUD().readProductAllList();
+    _productList.value = await ProductCRUD().readProductAllList();
   }
 
-  Future readProductSuggestList() async {
-    if (_productList.isNotEmpty) {
-      _productList.clear();
-    }
-    _productList.value = await ProductCRUD().readProductSuggestList();
+  void getProductSuggestList() {
+    print(_productList.length);
+    _productSuggestList.value =
+        _productList.where((item) => item.suggest == true).toList();
+  }
+
+  void getProductTypeList(int type) {
+    _productTypeList.value =
+        _productList.where((item) => item.type == type).toList();
+  }
+
+  void setProductModel(ProductModel model) {
+    _product = model;
     update();
   }
 
-  Future readProductTypeList(String type) async {
-    if (_productList.isNotEmpty) {
-      _productList.clear();
-    }
-    _productList = await ProductCRUD().readProductTypeList(type);
-  }
+  // Future readProductTypeList(String type) async {
+  //   if (_productList.isNotEmpty) {
+  //     _productList.clear();
+  //   }
+  //   _productList = await ProductCRUD().readProductTypeList(type);
+  // }
 
   void selectProductWhereId(String id) {
-    _product = _productAlls.firstWhere((element) => element.id == id);
+    _product = _productList.firstWhere((element) => element.id == id);
   }
 
   void deleteProductWhereId(String id) {
@@ -39,8 +49,12 @@ class ProductViewModel extends GetxController {
   }
 
   void clearProductData() {
+    _productTypeList.clear();
     _product = null;
-    _productList.clear();
-    _productAlls.clear();
+  }
+
+  void clearSuggestData() {
+    _productSuggestList.clear();
+    _product = null;
   }
 }

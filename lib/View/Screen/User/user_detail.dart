@@ -1,8 +1,8 @@
 import 'package:charoz/View/Modal/edit_user.dart';
-import 'package:charoz/Model/Service/Route/route_page.dart';
-import 'package:charoz/Util/Constant/my_image.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Service/Initial/route_page.dart';
+import 'package:charoz/Model/Util/Constant/my_image.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:charoz/View/Widget/show_image.dart';
 import 'package:charoz/View_Model/user_vm.dart';
@@ -16,7 +16,7 @@ class UserProfile extends StatelessWidget {
   const UserProfile({Key? key}) : super(key: key);
 
   void getData() async {
-    await userVM.readUserById(VariableGeneral.userTokenId!);
+    await userVM.getUserById(VariableGeneral.userTokenId!);
   }
 
   @override
@@ -25,7 +25,7 @@ class UserProfile extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: MyStyle.colorBackGround,
+        backgroundColor: MyStyle.backgroundColor,
         body: Stack(
           children: [
             Positioned.fill(
@@ -67,7 +67,7 @@ class UserProfile extends StatelessWidget {
   Widget buildImage() {
     return userVM.user!.userImage == 'null'
         ? Image.asset(MyImage.person, width: 30.w, height: 30.w)
-        : ShowImage().showImage(userVM.user!.userImage);
+        : ShowImage().showImage(userVM.user!.userImage, BoxFit.cover);
   }
 
   Widget buildFirstName() {
@@ -138,7 +138,9 @@ class UserProfile extends StatelessWidget {
           height: 5.h,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () => userVM.signOutFirebase(context),
+            onPressed: () {
+              // userVM.signOutFirebase(context);
+            },
             child: Text('ลงชื่อออก', style: MyStyle().normalWhite16()),
           ),
         ),

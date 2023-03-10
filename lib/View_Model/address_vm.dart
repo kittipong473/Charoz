@@ -1,18 +1,18 @@
 import 'package:charoz/Model/Data/address_model.dart';
-import 'package:charoz/Model/Service/CRUD/Firebase/address_crud.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Service/Firebase/address_crud.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:get/get.dart';
 
 class AddressViewModel extends GetxController {
+  final RxList<AddressModel> _addressList = <AddressModel>[].obs;
   AddressModel? _address;
-  RxList<AddressModel> _addressList = <AddressModel>[].obs;
 
   get address => _address;
   get addressList => _addressList;
 
   Future readAddressList() async {
-    _addressList = await AddressCRUD().readAddressList();
-    _addressList.sort((a, b) => b.time.compareTo(a.time));
+    _addressList.value = await AddressCRUD().readAddressList();
+    _addressList.sort((a, b) => b.time!.compareTo(a.time!));
     update();
   }
 

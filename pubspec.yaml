@@ -35,46 +35,50 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.5
   http: ^0.13.5
-  dio: ^4.0.6
-  google_maps_flutter: ^2.2.1
-  fluttertoast: ^8.1.1
-  url_launcher: ^6.1.6
+  dio: ^5.0.1
+  google_maps_flutter: ^2.2.5
+  fluttertoast: ^8.2.1
+  url_launcher: ^6.1.10
   flutter_launcher_icons: ^0.10.0
   intl: ^0.17.0
-  carousel_slider: ^4.1.1
+  carousel_slider: ^4.2.1
   geolocator: ^9.0.2
-  cached_network_image: ^3.2.2
+  cached_network_image: ^3.2.3
   responsive_sizer: ^3.1.1
   expandable: ^5.0.1
-  rxdart: ^0.27.5
-  flutter_rating_bar: ^4.0.1
-  qr_flutter: ^4.0.0
-  video_player: ^2.4.7
+  rxdart: ^0.27.7
+  # flutter_rating_bar: ^4.0.1
+  # qr_flutter: ^4.0.0
+  # video_player: ^2.4.7
   flutter_slidable: ^2.0.0
-  google_fonts: ^3.0.1
-  lottie: ^1.4.3
-  firebase_core: ^2.1.1
-  firebase_auth: ^4.1.0
-  cloud_firestore: ^4.0.3
-  firebase_messaging: ^14.0.3
-  firebase_storage: ^11.0.3
-  firebase_remote_config: ^3.0.3
+  google_fonts: ^4.0.3
+  lottie: ^2.2.0
+  firebase_core: ^2.7.1
+  firebase_auth: ^4.2.10
+  cloud_firestore: ^4.4.4
+  firebase_messaging: ^14.2.6
+  firebase_storage: ^11.0.15
+  firebase_remote_config: ^3.0.14
   mask_text_input_formatter: ^2.4.0
-  image_picker: ^0.8.6
+  image_picker: ^0.8.6+4
   flutter_easyloading: ^3.0.5
-  local_auth: ^2.1.2
-  flutter_svg: ^1.1.6
-  overlay_support: ^2.0.1
+  # local_auth: ^2.1.6
+  flutter_svg: ^2.0.2
+  # overlay_support: ^2.0.1
   encrypt: ^5.0.1
-  package_info_plus: ^3.0.1
+  package_info_plus: ^3.0.3
+  device_info_plus: ^8.1.0
   pull_to_refresh: ^2.0.0
-  sms_autofill: ^2.2.0
-  mobile_scanner: ^2.0.0
+  mobile_scanner: ^3.0.0
   timeago: ^3.3.0
   get: ^4.6.5
   toggle_switch: ^2.0.1
   animations: ^2.0.7
-  flutter_local_notifications: ^9.6.1
+  flutter_local_notifications: ^13.0.0
+  badges: ^3.0.2
+  pin_code_fields: ^7.4.0
+  smooth_page_indicator: ^1.0.1
+  shared_preferences: ^2.0.18
 
 flutter_icons:
   android: true

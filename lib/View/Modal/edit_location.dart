@@ -1,10 +1,10 @@
 import 'package:charoz/Model/Data/address_model.dart';
-import 'package:charoz/Model/Api/Request/address_modify.dart';
-import 'package:charoz/Model/Service/CRUD/Firebase/address_crud.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Api/Request/address_request.dart';
+import 'package:charoz/Service/Firebase/address_crud.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Util/Variable/var_data.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Model/Util/Variable/var_data.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Widget/dropdown_menu.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
@@ -28,10 +28,10 @@ class EditLocation {
     if (chooseAddress == 'คอนโดถนอมมิตร') {
       chooseNumber = address.detail;
     } else {
-      descController.text = address.detail;
+      descController.text = address.detail!;
     }
     return showModalBottomSheet(
-        context: context, builder: (_) => modalEditAddress(address.id));
+        context: context, builder: (_) => modalEditAddress(address.id!));
   }
 
   Widget modalEditAddress(String id) {
@@ -68,7 +68,7 @@ class EditLocation {
                   ),
                 ),
               ),
-              ScreenWidget().modalTitle('แก้ไขที่อยู่'),
+              ScreenWidget().buildModalHeader('แก้ไขที่อยู่'),
               buildEditButton(context, id),
             ],
           ),
@@ -87,12 +87,12 @@ class EditLocation {
           padding: EdgeInsets.symmetric(horizontal: 3.w),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: MyStyle.dark),
+            border: Border.all(color: MyStyle.orangeDark),
           ),
           child: DropdownButton(
             iconSize: 24.sp,
             icon: const Icon(Icons.arrow_drop_down_outlined,
-                color: MyStyle.primary),
+                color: MyStyle.orangePrimary),
             isExpanded: true,
             value: chooseAddress,
             items: VariableData.locationTypes
@@ -117,13 +117,13 @@ class EditLocation {
           padding: EdgeInsets.symmetric(horizontal: 3.w),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: MyStyle.dark),
+            border: Border.all(color: MyStyle.orangeDark),
           ),
           child: DropdownButton(
             iconSize: 24.sp,
             icon: const Icon(
               Icons.arrow_drop_down_outlined,
-              color: MyStyle.primary,
+              color: MyStyle.orangePrimary,
             ),
             isExpanded: true,
             value: chooseNumber,
@@ -152,14 +152,14 @@ class EditLocation {
           labelText: 'ข้อมูลที่อยู่ :',
           prefixIcon: const Icon(
             Icons.description_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -200,7 +200,7 @@ class EditLocation {
   Future processEdit(BuildContext context, String id) async {
     bool status = await AddressCRUD().updateAddress(
       id,
-      AddressManage(
+      AddressRequest(
         userid: VariableGeneral.userTokenId!,
         type: VariableData.locationTypes.indexOf(chooseAddress!),
         detail: descController.text,

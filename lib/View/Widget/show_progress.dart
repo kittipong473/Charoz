@@ -1,4 +1,4 @@
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:flutter/material.dart';
 
 class ShowProgress extends StatelessWidget {
@@ -7,7 +7,7 @@ class ShowProgress extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: CircularProgressIndicator(color: MyStyle.primary),
+      child: CircularProgressIndicator(color: MyStyle.orangePrimary),
     );
   }
 }

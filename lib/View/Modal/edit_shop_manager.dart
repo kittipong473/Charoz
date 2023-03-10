@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:charoz/Model/Data/shop_model.dart';
-import 'package:charoz/Model/Api/Request/shop_manager_modify.dart';
-import 'package:charoz/Model/Service/CRUD/Firebase/shop_crud.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Api/Request/shop_manager_request.dart';
+import 'package:charoz/Service/Firebase/shop_crud.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Util/Variable/var_data.dart';
+import 'package:charoz/Model/Util/Variable/var_data.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Widget/dropdown_menu.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
@@ -35,16 +35,16 @@ class EditShopManager {
   final ShopViewModel shopVM = Get.find<ShopViewModel>();
 
   Future<dynamic> openModalEditShopManager(context, ShopModel shop) {
-    nameController.text = shop.name;
-    phoneController.text = shop.phone;
-    announceController.text = shop.announce;
-    detailController.text = shop.detail;
+    nameController.text = shop.name!;
+    phoneController.text = shop.phone!;
+    announceController.text = shop.announce!;
+    detailController.text = shop.detail!;
     freightController.text = shop.freight.toString();
     image = shop.image;
     return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        builder: (context) => modalEditShop(shop.id));
+        builder: (context) => modalEditShop(shop.id!));
   }
 
   Widget modalEditShop(String shopid) {
@@ -92,7 +92,7 @@ class EditShopManager {
                   ),
                 ),
               ),
-              ScreenWidget().modalTitle('แก้ไขข้อมูลร้านค้า'),
+              ScreenWidget().buildModalHeader('แก้ไขข้อมูลร้านค้า'),
               ScreenWidget().backPage(context),
             ],
           ),
@@ -152,14 +152,14 @@ class EditShopManager {
           labelText: 'ชื่อร้านค้า :',
           prefixIcon: const Icon(
             Icons.table_restaurant_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -185,13 +185,14 @@ class EditShopManager {
         decoration: InputDecoration(
           labelStyle: MyStyle().normalBlack16(),
           labelText: 'เบอร์โทรร้าน :',
-          prefixIcon: const Icon(Icons.phone_rounded, color: MyStyle.dark),
+          prefixIcon:
+              const Icon(Icons.phone_rounded, color: MyStyle.orangeDark),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -219,14 +220,14 @@ class EditShopManager {
           labelText: 'ประกาศร้านค้า :',
           prefixIcon: const Icon(
             Icons.campaign_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -254,14 +255,14 @@ class EditShopManager {
           labelText: 'รายละเอียดร้านค้า :',
           prefixIcon: const Icon(
             Icons.description_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -369,14 +370,14 @@ class EditShopManager {
         decoration: InputDecoration(
           labelStyle: MyStyle().boldBlack16(),
           labelText: 'ค่าส่งอาหาร(บาท) :',
-          prefixIcon:
-              const Icon(Icons.delivery_dining_rounded, color: MyStyle.dark),
+          prefixIcon: const Icon(Icons.delivery_dining_rounded,
+              color: MyStyle.orangeDark),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -394,13 +395,15 @@ class EditShopManager {
             file = await MyFunction().chooseImage(ImageSource.camera);
             setState(() {});
           },
-          icon: const Icon(Icons.add_a_photo, size: 36, color: MyStyle.dark),
+          icon: const Icon(Icons.add_a_photo,
+              size: 36, color: MyStyle.orangeDark),
         ),
         SizedBox(
           width: 50.w,
           height: 50.w,
-          child:
-              file == null ? ShowImage().showImage(image!) : Image.file(file!),
+          child: file == null
+              ? ShowImage().showImage(image!, BoxFit.cover)
+              : Image.file(file!),
         ),
         IconButton(
           onPressed: () async {
@@ -408,7 +411,7 @@ class EditShopManager {
             setState(() {});
           },
           icon: const Icon(Icons.add_photo_alternate,
-              size: 36, color: MyStyle.dark),
+              size: 36, color: MyStyle.orangeDark),
         ),
       ],
     );
@@ -461,12 +464,12 @@ class EditShopManager {
   }
 
   Future processUpdate(BuildContext context, String shopid) async {
-    String chooseImage =
+    String? chooseImage =
         file != null ? await ShopCRUD().uploadImageShop(file!) : image!;
 
     bool status = await ShopCRUD().updateShopByManager(
       shopid,
-      ShopManagerManage(
+      ShopManagerRequest(
         name: nameController.text,
         announce: announceController.text,
         detail: detailController.text,

@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:charoz/Model/Data/user_model.dart';
-import 'package:charoz/Util/Constant/my_image.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Model/Util/Constant/my_image.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -20,13 +20,12 @@ class EditUser {
   String? image;
 
   Future<dynamic> openModalEditUser(context, UserModel user) {
-    firstnameController.text = user.firstname;
-    lastnameController.text = user.lastname;
-    image = user.image;
+    firstnameController.text = user.firstname!;
+    lastnameController.text = user.lastname!;
     return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        builder: (context) => modalEditUser(user.id));
+        builder: (context) => modalEditUser(user.id!));
   }
 
   Widget modalEditUser(String id) {
@@ -42,7 +41,7 @@ class EditUser {
               Positioned.fill(
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: VariableGeneral.largeDevice!
+                    padding: VariableGeneral.largeDevice
                         ? EdgeInsets.symmetric(horizontal: 10.w)
                         : EdgeInsets.symmetric(horizontal: 5.w),
                     child: Form(
@@ -65,7 +64,7 @@ class EditUser {
                   ),
                 ),
               ),
-              ScreenWidget().modalTitle('แก้ไขข้อมูลผู้ใช้งาน'),
+              ScreenWidget().buildModalHeader('แก้ไขข้อมูลผู้ใช้งาน'),
               ScreenWidget().backPage(context),
             ],
           ),
@@ -131,14 +130,14 @@ class EditUser {
           labelText: 'ชื่อ :',
           prefixIcon: const Icon(
             Icons.description_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -165,14 +164,14 @@ class EditUser {
           labelText: 'นามสกุล :',
           prefixIcon: const Icon(
             Icons.description_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),

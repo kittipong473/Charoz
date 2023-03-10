@@ -4,15 +4,15 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BannerModel {
-  final String id;
-  final String name;
-  final String url;
-  final DateTime time;
+  String? id;
+  String? name;
+  String? url;
+  DateTime? time;
   BannerModel({
-    required this.id,
-    required this.name,
-    required this.url,
-    required this.time,
+    this.id,
+    this.name,
+    this.url,
+    this.time,
   });
 
   BannerModel copyWith({
@@ -30,27 +30,27 @@ class BannerModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'name': name,
       'url': url,
-      'time': time.millisecondsSinceEpoch,
+      'time': time,
     };
   }
 
   factory BannerModel.fromMap(Map<String, dynamic> map) {
     return BannerModel(
-      id: map['id'] ?? '',
-      name: map['name'] ?? '',
-      url: map['url'] ?? '',
-      time: DateTime.fromMillisecondsSinceEpoch(map['time']),
+      id: map['id'] != null ? map['id'] as String : null,
+      name: map['name'] != null ? map['name'] as String : null,
+      url: map['url'] != null ? map['url'] as String : null,
+      time: map['time'] != null ? (map['time'] as Timestamp).toDate() : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
   factory BannerModel.fromJson(String source) =>
-      BannerModel.fromMap(json.decode(source));
+      BannerModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -58,11 +58,10 @@ class BannerModel {
   }
 
   @override
-  bool operator ==(Object other) {
+  bool operator ==(covariant BannerModel other) {
     if (identical(this, other)) return true;
 
-    return other is BannerModel &&
-        other.id == id &&
+    return other.id == id &&
         other.name == name &&
         other.url == url &&
         other.time == time;
@@ -74,9 +73,9 @@ class BannerModel {
   }
 }
 
-BannerModel convertBanner(dynamic item) {
+BannerModel convertBanner(dynamic item, String? id) {
   return BannerModel(
-    id: item.id,
+    id: id ?? item.id,
     name: item['name'],
     url: item['url'],
     time: (item['time'] as Timestamp).toDate(),

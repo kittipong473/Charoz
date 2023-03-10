@@ -1,8 +1,8 @@
 import 'package:charoz/View/Dialog/manage_user.dart';
 import 'package:charoz/Model/Data/user_model.dart';
-import 'package:charoz/Model/Service/Route/route_page.dart';
-import 'package:charoz/Util/Constant/my_image.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Service/Initial/route_page.dart';
+import 'package:charoz/Model/Util/Constant/my_image.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Widget/show_image.dart';
 import 'package:charoz/View/Widget/show_progress.dart';
 import 'package:charoz/View_Model/user_vm.dart';
@@ -24,7 +24,7 @@ class UserList extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: MyStyle.colorBackGround,
+        backgroundColor: MyStyle.backgroundColor,
         body: Stack(
           children: [
             Positioned.fill(
@@ -80,13 +80,11 @@ class UserList extends StatelessWidget {
             SizedBox(
               width: 20.w,
               height: 20.w,
-              child: user.image == ''
-                  ? Image.asset(MyImage.person)
-                  : ShowImage().showImage(user.image),
+              child: Image.asset(MyImage.person),
             ),
-            Text(user.phone, style: MyStyle().normalPrimary16()),
-            Text(user.role, style: MyStyle().normalBlack14()),
-            Text(user.status == 1 ? 'อยู่ในระบบ' : 'ปิดการใช้งาน',
+            Text(user.phone!, style: MyStyle().normalPrimary16()),
+            Text(user.role.toString(), style: MyStyle().normalBlack14()),
+            Text(user.status! ? 'อยู่ในระบบ' : 'ปิดการใช้งาน',
                 style: MyStyle().normalBlue14()),
           ],
         ),

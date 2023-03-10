@@ -1,29 +1,34 @@
 import 'dart:async';
 
 import 'package:charoz/Model/Data/user_model.dart';
-import 'package:charoz/Model/Service/CRUD/api_controller.dart';
-import 'package:charoz/Model/Service/CRUD/Firebase/user_crud.dart';
-import 'package:charoz/Model/Service/Route/route_page.dart';
+import 'package:charoz/Service/Library/preference.dart';
+import 'package:charoz/Service/Restful/api_controller.dart';
+import 'package:charoz/Service/Firebase/user_crud.dart';
+import 'package:charoz/Service/Initial/route_page.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class UserViewModel extends GetxController {
-  RxBool _otpInTimeVerify = false.obs;
-  RxString _minutes = ''.obs;
-  RxString _seconds = ''.obs;
-  RxString _phoneNumber = ''.obs;
-  RxString _otpToken = ''.obs;
-  RxString _otpRefNo = ''.obs;
+  final RxBool _otpInTimeVerify = false.obs;
+  final RxBool _delayResend = false.obs;
+  final RxInt _countResend = 0.obs;
+  final RxString _minutes = ''.obs;
+  final RxString _seconds = ''.obs;
+  final RxString _phoneNumber = ''.obs;
+  final RxString _otpToken = ''.obs;
+  final RxString _otpRefNo = ''.obs;
+  final RxList<UserModel> _userList = <UserModel>[].obs;
   UserModel? _user;
   UserModel? _customer;
   UserModel? _rider;
   UserModel? _manager;
-  RxList<UserModel>? _userList = <UserModel>[].obs;
 
   get otpInTimeVerify => _otpInTimeVerify.value;
+  get delayResend => _delayResend.value;
+  get countResend => _countResend.value;
   get minutes => _minutes.value;
   get seconds => _seconds.value;
   get phoneNumber => _phoneNumber.value;
@@ -36,21 +41,31 @@ class UserViewModel extends GetxController {
   get userList => _userList;
 
   Duration? otpDuration;
-  Timer? otpTImer;
+  Timer? otpTimer;
+  List<String> roleUserList = [
+    'Administrator',
+    'Customer',
+    'Rider',
+    'Shop Manager',
+    'Guest'
+  ];
 
   void initOTPTime() {
     otpDuration = const Duration(minutes: 3);
+    _countResend.value = 0;
     _minutes.value = '03';
     _seconds.value = '00';
   }
 
   void startOTPTime() {
     _otpInTimeVerify.value = true;
-    otpTImer = Timer.periodic(const Duration(seconds: 1), (_) {
+    otpTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       otpDuration = Duration(seconds: otpDuration!.inSeconds - 1);
       _minutes.value = otpDuration!.inMinutes.toString().padLeft(2, '0');
       _seconds.value =
           otpDuration!.inSeconds.remainder(60).toString().padLeft(2, '0');
+      _countResend.value++;
+      if (_countResend.value > 10) setDelayResend(true);
       update();
       if (otpDuration == const Duration(minutes: 0, seconds: 0)) stopOTPTime();
     });
@@ -60,12 +75,16 @@ class UserViewModel extends GetxController {
     _otpInTimeVerify.value = false;
     _minutes.value = '00';
     _seconds.value = '00';
-    otpTImer!.cancel();
+    otpTimer!.cancel();
     update();
   }
 
   void setPhoneVerify(String phone) {
     _phoneNumber.value = phone;
+  }
+
+  void setDelayResend(bool status) {
+    _delayResend.value = status;
   }
 
   // void sendNotiToAllRider(String token) {
@@ -76,55 +95,63 @@ class UserViewModel extends GetxController {
   //   );
   // }
 
-  void setLoginVariable() {
+  void setLoginVariable() async {
+    await Preferences().init();
+    _user = await UserCRUD().readUserByPhone(_phoneNumber.value);
     VariableGeneral.isLogin = true;
     VariableGeneral.role = _user!.role;
     VariableGeneral.userTokenId = _user!.id;
+    Preferences().setString('id', _user!.id!);
     VariableGeneral.indexProductChip = 0;
     VariableGeneral.indexNotiChip = 0;
     VariableGeneral.indexOrderChip = 0;
     clearUserData();
-    MyFunction().toast('ยินดีต้อนรับสู่ Application');
     Get.offAllNamed(RoutePage.routePageNavigation);
+    MyFunction().toast('ยินดีต้อนรับสู่ Application');
   }
 
-  void setLogoutVariable() {
+  void setLogoutVariable() async {
+    await Preferences().init();
     _user = null;
     VariableGeneral.isLogin = false;
     VariableGeneral.role = null;
     VariableGeneral.userTokenId = null;
-    MyFunction().toast('ลงชื่อออกจากระบบ สำเร็จ');
+    Preferences().clearAll();
+    VariableGeneral.indexProductChip = 0;
+    VariableGeneral.indexNotiChip = 0;
+    VariableGeneral.indexOrderChip = 0;
     Get.offAllNamed(RoutePage.routePageNavigation);
+    MyFunction().toast('ลงชื่อออกจากระบบ สำเร็จ');
   }
 
   void clearUserData() {
-    _customer = null;
-    _rider = null;
-    _manager = null;
-    _userList = null;
+    _otpInTimeVerify.value = false;
+    _delayResend.value = false;
+    _countResend.value = 0;
     _minutes.value = '';
     _seconds.value = '';
     _phoneNumber.value = '';
     _otpToken.value = '';
     _otpRefNo.value = '';
+    _userList.clear();
+    _customer = null;
+    _rider = null;
+    _manager = null;
   }
 
-  Future getUserPreference(BuildContext context, String uid) async {
-    _user = await UserCRUD().readUserByToken(uid);
-    VariableGeneral.isLogin = true;
+  Future<bool> getUserPreference(BuildContext context, String id) async {
+    _user = await UserCRUD().readUserById(id);
     VariableGeneral.userTokenId = _user!.id;
     VariableGeneral.role = _user!.role;
-    bool status = await UserCRUD().updateUserTokenDevice(_user!.id);
+    bool status = await UserCRUD().updateUserTokenDevice(_user!.id!);
     if (!status) {
-      MyDialog(context).doubleDialog(
-          'ไม่สามารถเก็บ token ได้', 'ปิดการใช้งาน notification ชั่วคราว');
+      MyFunction()
+          .toast('ไม่สามารถเก็บ token ได้\nปิดการใช้งาน notification ชั่วคราว');
     }
-    if (_user!.status == 0) {
-      MyDialog(context).doubleDialog(
-          'คุณถูกระงับการใช้งาน', 'โปรดติดต่อสอบถามผู้ดูแลระบบเมื่อมีข้อสงสัย');
-      signOutFirebase(context);
+    if (_user!.status != null && _user!.status == true) {
+      return true;
     } else {
-      Get.offNamed(RoutePage.routePageNavigation);
+      return false;
     }
   }
 
@@ -137,46 +164,51 @@ class UserViewModel extends GetxController {
     }
   }
 
-  Future readUserById(String id) async {
+  Future<void> getUserById(String id) async {
     _user = await UserCRUD().readUserById(id);
   }
 
-  Future signOutFirebase(BuildContext context) async {
-    final ApiController capi = Get.find<ApiController>();
-    capi.loadingPage(true);
-    await VariableGeneral.auth
-        .signOut()
-        .then((value) => setLogoutVariable())
-        .catchError((e) => MyDialog(context).singleDialog(e.code));
-    capi.loadingPage(false);
+  Future<void> getUserByPhone(String phone) async {
+    _user = await UserCRUD().readUserByPhone(phone);
   }
 
-  Future readUserList() async {
-    _userList = await UserCRUD().readUserList();
+  // Future signOutFirebase(BuildContext context) async {
+  //   final ApiController capi = Get.find<ApiController>();
+  //   capi.loadingPage(true);
+  //   await VariableGeneral.auth
+  //       .signOut()
+  //       .then((value) => setLogoutVariable())
+  //       .catchError((e) => MyDialog(context).singleDialog(e.code));
+  //   capi.loadingPage(false);
+  // }
+
+  Future<void> readUserList() async {
+    _userList.value = await UserCRUD().readUserList();
+    update();
   }
 
-  Future readCustomerById(String id) async {
+  Future<void> readCustomerById(String id) async {
     _customer = await UserCRUD().readUserById(id);
+    update();
   }
 
-  Future readRiderById(String id) async {
+  Future<void> readRiderById(String id) async {
     _rider = await UserCRUD().readUserById(id);
+    update();
   }
 
-  Future readManagerById(String id) async {
+  Future<void> readManagerById(String id) async {
     _manager = await UserCRUD().readUserById(id);
+    update();
   }
 
-  Future<bool> requestOTP() async {
+  Future<void> requestOTP() async {
     final ApiController capi = Get.find<ApiController>();
     bool status = await capi.requestOTP(_phoneNumber.value);
     if (status) {
-      _otpToken = capi.responseSendOTP.token;
-      _otpRefNo = capi.responseSendOTP.refno;
+      _otpToken.value = capi.responseSendOTP.token;
+      _otpRefNo.value = capi.responseSendOTP.refno;
       update();
-      return true;
-    } else {
-      return false;
     }
   }
 

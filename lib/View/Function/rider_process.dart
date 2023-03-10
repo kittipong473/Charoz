@@ -1,8 +1,8 @@
-import 'package:charoz/Model/Service/CRUD/Firebase/order_crud.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Service/Firebase/order_crud.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -22,7 +22,7 @@ class RiderProcess {
             Icon(
               Icons.receipt_rounded,
               size: 25.sp,
-              color: MyStyle.primary,
+              color: MyStyle.orangePrimary,
             ),
             SizedBox(
               width: 45.w,
@@ -58,12 +58,12 @@ class RiderProcess {
   }
 
   Future checkDuplicateAcceptOrder() async {
-    bool status = await OrderCRUD().checkRiderIdById(id);
-    if (status) {
+    bool? status = await OrderCRUD().checkRiderIdById(id);
+    if (status != null && status) {
       processAcceptOrder();
     } else {
-      MyDialog(context).doubleDialog('ออเดอร์นี้มีคนอื่นรับไปแล้ว',
-          'โปรดรอออเดอร์อื่นๆในภายหลัง');
+      MyDialog(context).doubleDialog(
+          'ออเดอร์นี้มีคนอื่นรับไปแล้ว', 'โปรดรอออเดอร์อื่นๆในภายหลัง');
     }
   }
 

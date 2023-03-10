@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -92,10 +93,6 @@ class MyFunction {
     }
   }
 
-  String parseMoney(double money) {
-    return NumberFormat('#,##0.00', 'en_US').format(money);
-  }
-
   String getDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     String hours = twoDigits(duration.inHours);
@@ -104,7 +101,14 @@ class MyFunction {
     return '$hours:$minutes:$seconds';
   }
 
+  String parseMoney(double money) =>
+      NumberFormat('#,##0.00', 'en_US').format(money);
+
+  DateTime getDateTimeNow() => DateTime.now().add(const Duration(hours: 7));
+
   String getTimeAgo(DateTime time) => timeago.format(time);
+
+  Timestamp getTimeStamp() => Timestamp.fromDate(getDateTimeNow());
 
   List<String> convertToList(String value) {
     List<String> result = [];
@@ -114,11 +118,6 @@ class MyFunction {
       result.add(item.trim());
     }
     return result;
-  }
-
-  String convertToOpenClose(String time) {
-    DateTime convert = DateTime.parse("2022-01-01T$time.000Z");
-    return DateFormat('HH:mm').format(convert);
   }
 
   String convertToDate(DateTime time) {

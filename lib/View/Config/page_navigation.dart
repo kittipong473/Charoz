@@ -5,19 +5,18 @@ import 'package:charoz/View/Screen/Shop/shop_detail.dart';
 import 'package:charoz/View/Config/home.dart';
 import 'package:charoz/View/Screen/Product/product_list.dart';
 import 'package:charoz/View/Screen/User/user_list.dart';
-import 'package:charoz/Model/Service/Route/route_page.dart';
-import 'package:charoz/Util/Constant/my_image.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
-import 'package:charoz/Util/Variable/var_data.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Service/Initial/route_page.dart';
+import 'package:charoz/Model/Util/Constant/my_image.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Util/Variable/var_data.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/View_Model/product_vm.dart';
 import 'package:charoz/View_Model/shop_vm.dart';
+import 'package:charoz/View_Model/time_vm.dart';
 import 'package:charoz/View_Model/user_vm.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:overlay_support/overlay_support.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class PageNavigation extends StatefulWidget {
@@ -32,20 +31,15 @@ class _PageNavigationState extends State<PageNavigation>
   List<Widget>? screens;
   List<Tab>? icons;
 
-  final ShopViewModel shopVM = Get.find<ShopViewModel>();
-  final UserViewModel userVM = Get.find<UserViewModel>();
-
   @override
   void initState() {
     super.initState();
     VariableGeneral.tabController = TabController(length: 4, vsync: this);
     getBottomNavigationBar();
-    getData();
-    // getNotification(context);
   }
 
   void getBottomNavigationBar() {
-    if (VariableGeneral.role == 'admin') {
+    if (VariableGeneral.role == 0) {
       screens = [
         const NotiList(),
         const UserList(),
@@ -58,7 +52,7 @@ class _PageNavigationState extends State<PageNavigation>
         buildTabs(Icons.receipt_rounded),
         buildTabs(Icons.store_mall_directory_rounded),
       ];
-    } else if (VariableGeneral.role == 'manager') {
+    } else if (VariableGeneral.role == 3) {
       screens = [
         const OrderList(),
         const ProductList(),
@@ -71,7 +65,7 @@ class _PageNavigationState extends State<PageNavigation>
         buildTabs(Icons.notifications_active_rounded),
         buildTabs(Icons.store_mall_directory_rounded),
       ];
-    } else if (VariableGeneral.role == 'rider') {
+    } else if (VariableGeneral.role == 2) {
       screens = [
         const OrderList(),
         const RiderWorking(),
@@ -84,7 +78,7 @@ class _PageNavigationState extends State<PageNavigation>
         buildTabs(Icons.notifications_active_rounded),
         buildTabs(Icons.store_mall_directory_rounded),
       ];
-    } else if (VariableGeneral.role == 'customer') {
+    } else if (VariableGeneral.role == 1) {
       screens = [
         const Home(),
         const ProductList(),
@@ -113,41 +107,6 @@ class _PageNavigationState extends State<PageNavigation>
     }
   }
 
-  void getData() async {
-    await shopVM.readShopModel();
-  }
-
-  void getNotification(BuildContext context) {
-    FirebaseMessaging.onMessage.listen((event) {
-      String? title = event.notification!.title;
-      showSimpleNotification(
-        Text(title!, style: MyStyle().normalWhite16()),
-        background: MyStyle.bluePrimary,
-        autoDismiss: true,
-        trailing: TextButton(
-          onPressed: () {
-            OverlaySupportEntry.of(context)!.dismiss();
-          },
-          child: Text('Dismiss', style: MyStyle().boldRed16()),
-        ),
-      );
-    });
-    FirebaseMessaging.onMessageOpenedApp.listen((event) {
-      String? title = event.notification!.title;
-      showSimpleNotification(
-        Text(title!, style: MyStyle().normalWhite16()),
-        background: MyStyle.light,
-        autoDismiss: true,
-        trailing: TextButton(
-          onPressed: () {
-            OverlaySupportEntry.of(context)!.dismiss();
-          },
-          child: Text('Dismiss', style: MyStyle().boldRed16()),
-        ),
-      );
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -155,7 +114,7 @@ class _PageNavigationState extends State<PageNavigation>
       child: DefaultTabController(
         length: screens!.length,
         child: Scaffold(
-          backgroundColor: MyStyle.colorBackGround,
+          backgroundColor: MyStyle.backgroundColor,
           appBar: AppBar(
             title: Text(VariableData.mainTitle, style: MyStyle().boldBlue18()),
             backgroundColor: Colors.transparent,
@@ -178,51 +137,57 @@ class _PageNavigationState extends State<PageNavigation>
               tabs: icons!,
             ),
             actions: [
-              if (VariableGeneral.role == 'customer') ...[
+              if (VariableGeneral.role == 1) ...[
                 buildAction(Icons.store_mall_directory_rounded,
                     RoutePage.routeShopDetail),
               ],
             ],
           ),
-          drawer: VariableGeneral.isLogin!
-              ? buildDrawerMember()
-              : buildDrawerGuest(),
+          drawer: Drawer(
+            child: GetBuilder<UserViewModel>(
+              builder: (vm) => Column(
+                children: [
+                  UserAccountsDrawerHeader(
+                    currentAccountPicture: Image.asset(MyImage.person),
+                    accountName: Text(
+                        'สวัสดี. ${vm.user?.firstname ?? 'ผู้มาเยี่ยมชม'}',
+                        style: MyStyle().normalWhite16()),
+                    accountEmail: Text(vm.roleUserList[vm.user?.role ?? 4],
+                        style: MyStyle().normalWhite16()),
+                  ),
+                  if (VariableGeneral.role == null) ...[
+                    fragmentDrawerGuest(),
+                  ],
+                ],
+              ),
+            ),
+          ),
           body: TabBarView(
             children: screens!,
             controller: VariableGeneral.tabController,
+            physics: const NeverScrollableScrollPhysics(),
           ),
         ),
       ),
     );
   }
 
-  Drawer buildDrawerGuest() {
-    return Drawer(
-      child: Column(
-        children: [
-          UserAccountsDrawerHeader(
-            currentAccountPicture: Image.asset(MyImage.person),
-            accountName: Text('สวัสดี!', style: MyStyle().normalWhite16()),
-            accountEmail:
-                Text('ผู้มาเยี่ยมชม', style: MyStyle().normalWhite16()),
-          ),
-          fragmentDrawerList(
-              Icons.login_rounded,
-              'เข้าสู่ระบบ หรือ สมัครสมาชิก',
-              'ด้วยการยืนยันรหัส OTP ผ่าน SMS',
-              () => Navigator.pushNamed(context, RoutePage.routeLogin)),
-          fragmentDrawerList(
-              Icons.difference_rounded,
-              'คำถามที่เกี่ยวข้อง',
-              'คำถามข้อสงสัยการทำงานของ application',
-              () => Navigator.pushNamed(context, RoutePage.routeRegister)),
-          fragmentDrawerList(
-              Icons.privacy_tip_rounded,
-              'ข้อกำหนดการเป็นสมาชิก',
-              'เงื่อนไขการให้บริการ และ นโยบายความเป็นส่วนตัว',
-              () => Navigator.pushNamed(context, RoutePage.routePrivacyPolicy)),
-        ],
-      ),
+  Widget fragmentDrawerGuest() {
+    return Column(
+      children: [
+        fragmentDrawerList(
+            Icons.login_rounded,
+            'เข้าสู่ระบบ หรือ สมัครสมาชิก',
+            'ด้วยการยืนยันรหัส OTP ผ่าน SMS',
+            () => Navigator.pushNamed(context, RoutePage.routeLogin)),
+        fragmentDrawerList(Icons.difference_rounded, 'คำถามที่เกี่ยวข้อง',
+            'คำถามข้อสงสัยการทำงานของ application', () {}),
+        fragmentDrawerList(
+            Icons.privacy_tip_rounded,
+            'ข้อกำหนดการเป็นสมาชิก',
+            'เงื่อนไขการให้บริการ และ นโยบายความเป็นส่วนตัว',
+            () => Navigator.pushNamed(context, RoutePage.routePrivacyPolicy)),
+      ],
     );
   }
 
@@ -230,14 +195,7 @@ class _PageNavigationState extends State<PageNavigation>
     return Drawer(
       child: Column(
         children: [
-          UserAccountsDrawerHeader(
-            currentAccountPicture: Image.asset(MyImage.person),
-            accountName: Text('สวัสดี. ${userVM.user.firstname ?? ''}',
-                style: MyStyle().normalWhite16()),
-            accountEmail:
-                Text(userVM.user.role ?? '', style: MyStyle().normalWhite16()),
-          ),
-          if (VariableGeneral.role == 'customer') ...[
+          if (VariableGeneral.role == 1) ...[
             // fragmentDrawerList(
             //   Icons.edit_rounded,
             //   'แก้ไขข้อมูล',
@@ -256,8 +214,8 @@ class _PageNavigationState extends State<PageNavigation>
             //   'ส่งข้อความ ปัญหา ข้อสงสัย ให้แอดมินทราบ',
             //   () {},
             // ),
-          ] else if (VariableGeneral.role == 'manager' ||
-              VariableGeneral.role == 'role') ...[
+          ] else if (VariableGeneral.role == 2 ||
+              VariableGeneral.role == 0) ...[
             fragmentDrawerList(
               Icons.description_rounded,
               'เพิ่มผู้ใช้งาน ไรเดอร์',
@@ -284,7 +242,7 @@ class _PageNavigationState extends State<PageNavigation>
       leading: Icon(
         icon,
         size: 25.sp,
-        color: MyStyle.primary,
+        color: MyStyle.orangePrimary,
       ),
       title: Text(title, style: MyStyle().boldBlue18()),
       subtitle: Text(subtitle, style: MyStyle().normalBlack16()),
@@ -340,7 +298,7 @@ class _PageNavigationState extends State<PageNavigation>
                       backgroundColor: Colors.green.shade100),
                   onPressed: () {
                     Get.back();
-                    userVM.signOutFirebase(context);
+                    // userVM.signOutFirebase(context);
                   },
                   child: Text('ยืนยัน', style: MyStyle().boldGreen16()),
                 ),

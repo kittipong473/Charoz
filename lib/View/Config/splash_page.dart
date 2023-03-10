@@ -1,12 +1,17 @@
 import 'dart:io';
 
-import 'package:charoz/Model/Service/CRUD/Firebase/config_crud.dart';
-import 'package:charoz/Model/Service/Route/route_page.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Service/Firebase/config_crud.dart';
+import 'package:charoz/Service/Initial/route_page.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Service/Library/preference.dart';
+import 'package:charoz/View/Dialog/dialog_alert.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
-import 'package:charoz/Util/Constant/my_image.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Util/Constant/my_image.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View_Model/config_vm.dart';
+import 'package:charoz/View_Model/product_vm.dart';
+import 'package:charoz/View_Model/shop_vm.dart';
+import 'package:charoz/View_Model/time_vm.dart';
 import 'package:charoz/View_Model/user_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,6 +28,9 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   final ConfigViewModel confVM = Get.find<ConfigViewModel>();
   final UserViewModel userVM = Get.find<UserViewModel>();
+  final ShopViewModel shopVM = Get.find<ShopViewModel>();
+  final TimeViewModel timeVM = Get.find<TimeViewModel>();
+  final ProductViewModel prodVM = Get.find<ProductViewModel>();
 
   @override
   void initState() {
@@ -30,16 +38,16 @@ class _SplashPageState extends State<SplashPage> {
     checkMaintenance();
   }
 
-  Future checkMaintenance() async {
-    // int maintenance = 1;
+  void checkMaintenance() async {
+    // int maintenance = 0;
     int? maintenance = await ConfigCRUD().readStatusFromAS();
-    if (maintenance == 0 || maintenance == 1) {
+    if (maintenance == 1 || maintenance == 2) {
       appMaintenance(maintenance!);
-    } else if (maintenance == 2) {
+    } else if (maintenance == 0) {
       checkLogin();
     } else {
-      MyDialog(context).doubleDialog(
-          'แอพพลิเคชั่นเกิดความผิดพลาด', 'กรุณาเข้าใช้งานในภายหลัง');
+      DialogAlert(context).dialogStatus(
+          2, 'แอพพลิเคชั่นเกิดความผิดพลาด', 'กรุณาเข้าใช้งานในภายหลัง');
       exit(0);
     }
   }
@@ -50,14 +58,31 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future checkLogin() async {
-    VariableGeneral.auth.authStateChanges().listen((event) {
-      if (event != null) {
-        userVM.getUserPreference(context, event.uid);
+    await Preferences().init();
+    String? id = Preferences().getString('id');
+    if (id != null) {
+      bool status = await userVM.getUserPreference(context, id);
+      if (status) {
+        VariableGeneral.isLogin = true;
+        initData();
       } else {
         VariableGeneral.isLogin = false;
-        Get.offNamed(RoutePage.routePageNavigation);
+        Preferences().clearValue('id');
+        initData();
+        MyDialog(context).doubleDialog('คุณถูกระงับการใช้งาน',
+            'โปรดติดต่อสอบถามผู้ดูแลระบบเมื่อมีข้อสงสัย');
       }
-    });
+    } else {
+      VariableGeneral.isLogin = false;
+      initData();
+    }
+  }
+
+  void initData() async {
+    await shopVM.readShopModel();
+    await timeVM.readTimeModel();
+    await prodVM.readProductAllList();
+    Get.offNamed(RoutePage.routePageNavigation);
   }
 
   @override
@@ -65,7 +90,7 @@ class _SplashPageState extends State<SplashPage> {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: MyStyle.colorBackGround,
+        backgroundColor: MyStyle.backgroundColor,
         body: Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,

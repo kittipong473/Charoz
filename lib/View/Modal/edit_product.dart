@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:charoz/Model/Data/product_model.dart';
-import 'package:charoz/Model/Api/Request/product_modify.dart';
-import 'package:charoz/Model/Service/CRUD/Firebase/product_crud.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Api/Request/product_request.dart';
+import 'package:charoz/Service/Firebase/product_crud.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Util/Variable/var_data.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Model/Util/Variable/var_data.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Widget/dropdown_menu.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
@@ -32,20 +32,16 @@ class EditProduct {
   final ProductViewModel prodVM = Get.find<ProductViewModel>();
 
   Future<dynamic> openModalEditProduct(context, ProductModel product) {
-    chooseType = product.type;
-    nameController.text = product.name;
+    chooseType = product.type!.toString();
+    nameController.text = product.name!;
     priceController.text = product.price.toString();
-    detailController.text = product.detail;
+    detailController.text = product.detail!;
     image = product.image;
-    if (product.suggest == 1) {
-      suggest = true;
-    } else {
-      suggest = false;
-    }
+    suggest = product.suggest!;
     return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        builder: (context) => modalEditProduct(product.id));
+        builder: (context) => modalEditProduct(product.id!));
   }
 
   Widget modalEditProduct(String id) {
@@ -61,7 +57,7 @@ class EditProduct {
               Positioned.fill(
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: VariableGeneral.largeDevice!
+                    padding: VariableGeneral.largeDevice
                         ? EdgeInsets.symmetric(horizontal: 10.w)
                         : EdgeInsets.symmetric(horizontal: 5.w),
                     child: Form(
@@ -89,7 +85,7 @@ class EditProduct {
                   ),
                 ),
               ),
-              ScreenWidget().modalTitle('แก้ไขรายการอาหาร'),
+              ScreenWidget().buildModalHeader('แก้ไขรายการอาหาร'),
               ScreenWidget().backPage(context),
             ],
           ),
@@ -108,12 +104,12 @@ class EditProduct {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: MyStyle.primary),
+            border: Border.all(color: MyStyle.orangePrimary),
           ),
           child: DropdownButton(
             iconSize: 24.sp,
-            icon:
-                const Icon(Icons.arrow_drop_down_outlined, color: MyStyle.dark),
+            icon: const Icon(Icons.arrow_drop_down_outlined,
+                color: MyStyle.orangeDark),
             isExpanded: true,
             value: chooseType,
             items: VariableData.productTypes
@@ -145,14 +141,14 @@ class EditProduct {
           labelText: 'ชื่ออาหาร :',
           prefixIcon: const Icon(
             Icons.description_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -180,14 +176,14 @@ class EditProduct {
           labelText: 'ราคา :',
           prefixIcon: const Icon(
             Icons.attach_money_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -208,14 +204,14 @@ class EditProduct {
           labelText: 'รายละเอียด : ',
           prefixIcon: const Icon(
             Icons.details_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -233,21 +229,22 @@ class EditProduct {
             file = await MyFunction().chooseImage(ImageSource.camera);
             setState(() {});
           },
-          icon: Icon(Icons.add_a_photo, size: 24.sp, color: MyStyle.dark),
+          icon: Icon(Icons.add_a_photo, size: 24.sp, color: MyStyle.orangeDark),
         ),
         SizedBox(
           width: 40.w,
           height: 40.w,
-          child:
-              file == null ? ShowImage().showImage(image!) : Image.file(file!),
+          child: file == null
+              ? ShowImage().showImage(image!, BoxFit.cover)
+              : Image.file(file!),
         ),
         IconButton(
           onPressed: () async {
             file = await MyFunction().chooseImage(ImageSource.gallery);
             setState(() {});
           },
-          icon:
-              Icon(Icons.add_photo_alternate, size: 24.sp, color: MyStyle.dark),
+          icon: Icon(Icons.add_photo_alternate,
+              size: 24.sp, color: MyStyle.orangeDark),
         ),
       ],
     );
@@ -259,7 +256,7 @@ class EditProduct {
       children: [
         Checkbox(
           value: suggest,
-          activeColor: MyStyle.primary,
+          activeColor: MyStyle.orangePrimary,
           onChanged: (check) {
             setState(() => suggest = check!);
           },
@@ -292,27 +289,25 @@ class EditProduct {
   }
 
   Future processUpdate(BuildContext context, String id) async {
-    String chooseImage =
+    String? chooseImage =
         file != null ? await ProductCRUD().uploadImageProduct(file!) : image!;
 
     bool status = await ProductCRUD().updateProduct(
       id,
-      ProductManage(
+      ProductRequest(
         name: nameController.text,
         type: chooseType!,
         price: int.parse(priceController.text),
         detail: detailController.text.isEmpty ? 'ไม่มี' : detailController.text,
         image: chooseImage,
-        status: 1,
-        suggest: suggest ? 1 : 0,
+        status: true,
+        suggest: suggest,
         time: Timestamp.fromDate(DateTime.now()),
       ),
     );
 
     if (status) {
       prodVM.readProductAllList();
-      prodVM.readProductTypeList(
-          VariableData.productTypes[VariableGeneral.indexProductChip]);
       EasyLoading.dismiss();
       MyFunction().toast('แก้ไขรายการอาหารเรียบร้อยแล้ว');
       Navigator.pop(context);

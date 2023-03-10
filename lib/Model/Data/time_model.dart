@@ -1,33 +1,28 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class TimeModel {
-  final String id;
-  final String shopid;
-  final String mon;
-  final String tue;
-  final String wed;
-  final String thu;
-  final String fri;
-  final String sat;
-  final String sun;
-  final String type;
-  final int choose;
-  final DateTime time;
+  String? id;
+  String? shopid;
+  String? mon;
+  String? tue;
+  String? wed;
+  String? thu;
+  String? fri;
+  String? sat;
+  String? sun;
+  int? choose;
   TimeModel({
-    required this.id,
-    required this.shopid,
-    required this.mon,
-    required this.tue,
-    required this.wed,
-    required this.thu,
-    required this.fri,
-    required this.sat,
-    required this.sun,
-    required this.type,
-    required this.choose,
-    required this.time,
+    this.id,
+    this.shopid,
+    this.mon,
+    this.tue,
+    this.wed,
+    this.thu,
+    this.fri,
+    this.sat,
+    this.sun,
+    this.choose,
   });
 
   TimeModel copyWith({
@@ -40,9 +35,7 @@ class TimeModel {
     String? fri,
     String? sat,
     String? sun,
-    String? type,
     int? choose,
-    DateTime? time,
   }) {
     return TimeModel(
       id: id ?? this.id,
@@ -54,14 +47,12 @@ class TimeModel {
       fri: fri ?? this.fri,
       sat: sat ?? this.sat,
       sun: sun ?? this.sun,
-      type: type ?? this.type,
       choose: choose ?? this.choose,
-      time: time ?? this.time,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'shopid': shopid,
       'mon': mon,
@@ -71,45 +62,40 @@ class TimeModel {
       'fri': fri,
       'sat': sat,
       'sun': sun,
-      'type': type,
       'choose': choose,
-      'time': time.millisecondsSinceEpoch,
     };
   }
 
   factory TimeModel.fromMap(Map<String, dynamic> map) {
     return TimeModel(
-      id: map['id'] ?? '',
-      shopid: map['shopid'] ?? '',
-      mon: map['mon'] ?? '',
-      tue: map['tue'] ?? '',
-      wed: map['wed'] ?? '',
-      thu: map['thu'] ?? '',
-      fri: map['fri'] ?? '',
-      sat: map['sat'] ?? '',
-      sun: map['sun'] ?? '',
-      type: map['type'] ?? '',
-      choose: map['choose']?.toInt() ?? 0,
-      time: DateTime.fromMillisecondsSinceEpoch(map['time']),
+      id: map['id'] != null ? map['id'] as String : null,
+      shopid: map['shopid'] != null ? map['shopid'] as String : null,
+      mon: map['mon'] != null ? map['mon'] as String : null,
+      tue: map['tue'] != null ? map['tue'] as String : null,
+      wed: map['wed'] != null ? map['wed'] as String : null,
+      thu: map['thu'] != null ? map['thu'] as String : null,
+      fri: map['fri'] != null ? map['fri'] as String : null,
+      sat: map['sat'] != null ? map['sat'] as String : null,
+      sun: map['sun'] != null ? map['sun'] as String : null,
+      choose: map['choose'] != null ? map['choose'] as int : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
   factory TimeModel.fromJson(String source) =>
-      TimeModel.fromMap(json.decode(source));
+      TimeModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
-    return 'TimeModel(id: $id, shopid: $shopid, mon: $mon, tue: $tue, wed: $wed, thu: $thu, fri: $fri, sat: $sat, sun: $sun, type: $type, choose: $choose, time: $time)';
+    return 'TimeModel(id: $id, shopid: $shopid, mon: $mon, tue: $tue, wed: $wed, thu: $thu, fri: $fri, sat: $sat, sun: $sun, choose: $choose)';
   }
 
   @override
-  bool operator ==(Object other) {
+  bool operator ==(covariant TimeModel other) {
     if (identical(this, other)) return true;
 
-    return other is TimeModel &&
-        other.id == id &&
+    return other.id == id &&
         other.shopid == shopid &&
         other.mon == mon &&
         other.tue == tue &&
@@ -118,9 +104,7 @@ class TimeModel {
         other.fri == fri &&
         other.sat == sat &&
         other.sun == sun &&
-        other.type == type &&
-        other.choose == choose &&
-        other.time == time;
+        other.choose == choose;
   }
 
   @override
@@ -134,15 +118,13 @@ class TimeModel {
         fri.hashCode ^
         sat.hashCode ^
         sun.hashCode ^
-        type.hashCode ^
-        choose.hashCode ^
-        time.hashCode;
+        choose.hashCode;
   }
 }
 
-TimeModel convertTime(dynamic item) {
+TimeModel convertTime(dynamic item, String? id) {
   return TimeModel(
-    id: item.id,
+    id: id ?? item.id,
     shopid: item['shopid'],
     mon: item['mon'],
     tue: item['tue'],
@@ -151,8 +133,6 @@ TimeModel convertTime(dynamic item) {
     fri: item['fri'],
     sat: item['sat'],
     sun: item['sun'],
-    type: item['type'],
     choose: item['choose'],
-    time: (item['time'] as Timestamp).toDate(),
   );
 }

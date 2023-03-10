@@ -1,9 +1,9 @@
 import 'package:charoz/Model/Data/order_model.dart';
-import 'package:charoz/Model/Service/CRUD/Firebase/order_crud.dart';
-import 'package:charoz/Model/Service/Route/route_page.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Service/Firebase/order_crud.dart';
+import 'package:charoz/Service/Initial/route_page.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Util/Variable/var_data.dart';
+import 'package:charoz/Model/Util/Variable/var_data.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:charoz/View/Widget/show_progress.dart';
 import 'package:charoz/View_Model/address_vm.dart';
@@ -27,7 +27,7 @@ class RiderWorking extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: MyStyle.colorBackGround,
+        backgroundColor: MyStyle.backgroundColor,
         body: Stack(
           children: [
             Positioned.fill(
@@ -48,7 +48,7 @@ class RiderWorking extends StatelessWidget {
           return buildEmptyOrder();
         } else if (snapshot.hasData) {
           List<OrderModel> orderList = snapshot.data;
-          orderList.sort((a, b) => b.time.compareTo(a.time));
+          orderList.sort((a, b) => b.time!.compareTo(a.time!));
           return orderList.isEmpty
               ? buildEmptyOrder()
               : buildOrderList(orderList);
@@ -88,8 +88,8 @@ class RiderWorking extends StatelessWidget {
   }
 
   Future getDetailOrder(BuildContext context, OrderModel order) async {
-    await userVM.readCustomerById(order.customerid);
-    await addVM.readAddressById(order.addressid);
+    await userVM.readCustomerById(order.customerid!);
+    await addVM.readAddressById(order.addressid!);
   }
 
   Widget buildOrderItem(BuildContext context, OrderModel order, int index) {
@@ -109,9 +109,9 @@ class RiderWorking extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(VariableData.orderStatusList[order.status],
+                  Text(VariableData.orderStatusList[order.status!],
                       style: MyStyle().boldPrimary18()),
-                  Text(MyFunction().convertToDateTime(order.time),
+                  Text(MyFunction().convertToDateTime(order.time!),
                       style: MyStyle().normalBlack14()),
                 ],
               ),
@@ -134,9 +134,9 @@ class RiderWorking extends StatelessWidget {
         fragmentEachRowDetail(
             Icons.location_pin, 'สถานที่จัดส่ง', addVM.address.name),
         fragmentEachRowDetail(Icons.money_rounded, 'ค่าอาหารลูกค้า',
-            '${order.total - order.charge} ฿'),
+            '${order.total! - shopVM.shop.freight} ฿'),
         fragmentEachRowDetail(
-            Icons.money_rounded, 'ค่าส่งอาหาร', '${order.charge} ฿'),
+            Icons.money_rounded, 'ค่าส่งอาหาร', '${shopVM.shop.freight} ฿'),
       ],
     );
   }

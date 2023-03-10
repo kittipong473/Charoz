@@ -1,4 +1,4 @@
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -44,8 +44,8 @@ class MyDialog {
       context: context,
       builder: (dialogContext) => SimpleDialog(
         title: ListTile(
-          leading:
-              Icon(Icons.info_outlined, color: MyStyle.primary, size: 30.sp),
+          leading: Icon(Icons.info_outlined,
+              color: MyStyle.orangePrimary, size: 30.sp),
           title: Text(
             title,
             style: MyStyle().boldPrimary16(),
@@ -67,8 +67,8 @@ class MyDialog {
       context: context,
       builder: (dialogContext) => SimpleDialog(
         title: ListTile(
-          leading:
-              Icon(Icons.info_outlined, color: MyStyle.primary, size: 30.sp),
+          leading: Icon(Icons.info_outlined,
+              color: MyStyle.orangePrimary, size: 30.sp),
           title: Text(
             title,
             style: MyStyle().boldPrimary16(),

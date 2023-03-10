@@ -1,19 +1,19 @@
 import 'package:charoz/Model/Data/order_model.dart';
 import 'package:charoz/Model/Data/product_model.dart';
-import 'package:charoz/Model/Service/CRUD/Firebase/order_crud.dart';
+import 'package:charoz/Service/Firebase/order_crud.dart';
 import 'package:get/get.dart';
 
 class OrderViewModel extends GetxController {
-  RxString _commentshop = ''.obs;
-  RxString _commentrider = ''.obs;
-  RxInt _type = 0.obs;
-  RxInt _freight = 0.obs;
-  RxInt _totalPay = 0.obs;
+  final RxString _commentshop = ''.obs;
+  final RxString _commentrider = ''.obs;
+  final RxInt _type = 0.obs;
+  final RxInt _freight = 0.obs;
+  final RxInt _totalPay = 0.obs;
+  final RxList<int> _amountList = <int>[].obs;
+  final RxList<String> _statusList = <String>[].obs;
+  final RxList<OrderModel> _orderList = <OrderModel>[].obs;
+  final RxList<ProductModel> _productList = <ProductModel>[].obs;
   OrderModel? _order;
-  RxList<int> _amountList = <int>[].obs;
-  RxList<String> _statusList = <String>[].obs;
-  RxList<OrderModel> _orderList = <OrderModel>[].obs;
-  RxList<ProductModel> _productList = <ProductModel>[].obs;
 
   get commentshop => _commentshop.value;
   get commentrider => _commentrider.value;
@@ -27,36 +27,36 @@ class OrderViewModel extends GetxController {
   get amountList => _amountList;
 
   Future readOrderCustomerListByFinish() async {
-    _orderList = await OrderCRUD().readOrderCustomerListByFinish();
-    _orderList.sort((a, b) => b.time.compareTo(a.time));
+    _orderList.value = await OrderCRUD().readOrderCustomerListByFinish();
+    _orderList.sort((a, b) => b.time!.compareTo(a.time!));
     update();
   }
 
   Future readOrderManagerListByFinish() async {
-    _orderList = await OrderCRUD().readOrderManagerListByFinish();
-    _orderList.sort((a, b) => b.time.compareTo(a.time));
+    _orderList.value = await OrderCRUD().readOrderManagerListByFinish();
+    _orderList.sort((a, b) => b.time!.compareTo(a.time!));
     update();
   }
 
   Future readOrderRiderListByFinish() async {
-    _orderList = await OrderCRUD().readOrderRiderListByFinish();
-    _orderList.sort((a, b) => b.time.compareTo(a.time));
+    _orderList.value = await OrderCRUD().readOrderRiderListByFinish();
+    _orderList.sort((a, b) => b.time!.compareTo(a.time!));
     update();
   }
 
   Future readOrderAdminListByFinish() async {
-    _orderList = await OrderCRUD().readOrderAdminListByFinish();
-    _orderList.sort((a, b) => b.time.compareTo(a.time));
+    _orderList.value = await OrderCRUD().readOrderAdminListByFinish();
+    _orderList.sort((a, b) => b.time!.compareTo(a.time!));
     update();
   }
 
   void calculateTotalPay(int type, int freight) {
     _totalPay.value = 0;
     for (var i = 0; i < _productList.length; i++) {
-      _totalPay = totalPay + _productList[i].price * _amountList[i];
+      _totalPay.value = totalPay + _productList[i].price! * _amountList[i];
     }
     if (type == 1) {
-      _totalPay = _totalPay + freight;
+      _totalPay.value = _totalPay.value + freight;
     }
     update();
   }
@@ -81,12 +81,15 @@ class OrderViewModel extends GetxController {
   }
 
   void clearOrderData() {
-    _productList.clear();
-    _amountList.clear();
     _commentrider.value = '';
     _commentshop.value = '';
     _type.value = 0;
+    _freight.value = 0;
     _totalPay.value = 0;
+    _amountList.clear();
+    _statusList.clear();
+    _productList.clear();
+    _order = null;
   }
 
   void setOrderModel(OrderModel order) {

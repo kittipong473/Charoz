@@ -1,13 +1,13 @@
 import 'package:charoz/Model/Data/banner_model.dart';
 import 'package:charoz/Model/Data/maintenance_model.dart';
 import 'package:charoz/Model/Data/privacy_model.dart';
-import 'package:charoz/Model/Service/CRUD/Firebase/config_crud.dart';
+import 'package:charoz/Service/Firebase/config_crud.dart';
 import 'package:get/get.dart';
 
 class ConfigViewModel extends GetxController {
+  final RxList<BannerModel> _bannerList = <BannerModel>[].obs;
+  final RxList<PrivacyModel> _privacyList = <PrivacyModel>[].obs;
   MaintenanceModel? _maintenance;
-  RxList<BannerModel> _bannerList = <BannerModel>[].obs;
-  RxList<PrivacyModel> _privacyList = <PrivacyModel>[].obs;
 
   get maintenance => _maintenance;
   get bannerList => _bannerList;
@@ -21,10 +21,8 @@ class ConfigViewModel extends GetxController {
   }
 
   Future readPrivacyList() async {
-    if (_privacyList.isEmpty) {
-      _privacyList = await ConfigCRUD().readPrivacyList();
-      update();
-    }
+    _privacyList.value = await ConfigCRUD().readPrivacyList();
+    update();
   }
 
   Future readMaintenanceFromStatus(int status) async {
@@ -32,9 +30,13 @@ class ConfigViewModel extends GetxController {
     update();
   }
 
-  void clearConfigData() {
+  void clearBannerData() {
     _maintenance = null;
     _bannerList.clear();
+    _privacyList.clear();
+  }
+
+  void clearPrivacyData() {
     _privacyList.clear();
   }
 }

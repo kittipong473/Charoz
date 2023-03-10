@@ -4,21 +4,21 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddressModel {
-  final String id;
-  final String userid;
-  final int type;
-  final String detail;
-  final int lat;
-  final int lng;
-  final DateTime time;
+  String? id;
+  String? userid;
+  int? type;
+  String? detail;
+  double? lat;
+  double? lng;
+  DateTime? time;
   AddressModel({
-    required this.id,
-    required this.userid,
-    required this.type,
-    required this.detail,
-    required this.lat,
-    required this.lng,
-    required this.time,
+    this.id,
+    this.userid,
+    this.type,
+    this.detail,
+    this.lat,
+    this.lng,
+    this.time,
   });
 
   AddressModel copyWith({
@@ -26,8 +26,8 @@ class AddressModel {
     String? userid,
     int? type,
     String? detail,
-    int? lat,
-    int? lng,
+    double? lat,
+    double? lng,
     DateTime? time,
   }) {
     return AddressModel(
@@ -42,32 +42,33 @@ class AddressModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'userid': userid,
       'type': type,
       'detail': detail,
       'lat': lat,
       'lng': lng,
-      'time': time.millisecondsSinceEpoch,
+      'time': time,
     };
   }
 
   factory AddressModel.fromMap(Map<String, dynamic> map) {
     return AddressModel(
-      id: map['id'] ?? '',
-      userid: map['userid'] ?? '',
-      type: map['type']?.toInt() ?? 0,
-      detail: map['detail'] ?? '',
-      lat: map['lat']?.toInt() ?? 0,
-      lng: map['lng']?.toInt() ?? 0,
-      time: DateTime.fromMillisecondsSinceEpoch(map['time']),
+      id: map['id'] != null ? map['id'] as String : null,
+      userid: map['userid'] != null ? map['userid'] as String : null,
+      type: map['type'] != null ? map['type'] as int : null,
+      detail: map['detail'] != null ? map['detail'] as String : null,
+      lat: map['lat'] != null ? map['lat'] as double : null,
+      lng: map['lng'] != null ? map['lng'] as double : null,
+      time: map['time'] != null ? (map['time'] as Timestamp).toDate() : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory AddressModel.fromJson(String source) => AddressModel.fromMap(json.decode(source));
+  factory AddressModel.fromJson(String source) =>
+      AddressModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -75,28 +76,27 @@ class AddressModel {
   }
 
   @override
-  bool operator ==(Object other) {
+  bool operator ==(covariant AddressModel other) {
     if (identical(this, other)) return true;
-  
-    return other is AddressModel &&
-      other.id == id &&
-      other.userid == userid &&
-      other.type == type &&
-      other.detail == detail &&
-      other.lat == lat &&
-      other.lng == lng &&
-      other.time == time;
+
+    return other.id == id &&
+        other.userid == userid &&
+        other.type == type &&
+        other.detail == detail &&
+        other.lat == lat &&
+        other.lng == lng &&
+        other.time == time;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      userid.hashCode ^
-      type.hashCode ^
-      detail.hashCode ^
-      lat.hashCode ^
-      lng.hashCode ^
-      time.hashCode;
+        userid.hashCode ^
+        type.hashCode ^
+        detail.hashCode ^
+        lat.hashCode ^
+        lng.hashCode ^
+        time.hashCode;
   }
 }
 

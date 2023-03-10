@@ -1,14 +1,14 @@
 import 'package:charoz/View/Modal/select_address.dart';
 import 'package:charoz/Model/Data/product_model.dart';
-import 'package:charoz/Model/Api/Request/order_modify.dart';
-import 'package:charoz/Model/Service/CRUD/Firebase/order_crud.dart';
-import 'package:charoz/Model/Service/CRUD/Firebase/user_crud.dart';
-import 'package:charoz/Model/Service/Route/route_page.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Api/Request/order_request.dart';
+import 'package:charoz/Service/Firebase/order_crud.dart';
+import 'package:charoz/Service/Firebase/user_crud.dart';
+import 'package:charoz/Service/Initial/route_page.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Function/my_function.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:charoz/View_Model/address_vm.dart';
 import 'package:charoz/View_Model/order_vm.dart';
 import 'package:charoz/View_Model/product_vm.dart';
@@ -39,7 +39,7 @@ class ConfirmOrder extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: MyStyle.colorBackGround,
+        backgroundColor: MyStyle.backgroundColor,
         body: Stack(
           children: [
             Positioned.fill(
@@ -169,7 +169,7 @@ class ConfirmOrder extends StatelessWidget {
           child: Text('${index + 1}. ${product.name} x$amount',
               style: MyStyle().normalBlack16()),
         ),
-        Text('${(product.price * amount).toStringAsFixed(0)} ฿',
+        Text('${(product.price! * amount).toStringAsFixed(0)} ฿',
             style: MyStyle().boldPrimary18()),
       ],
     );
@@ -257,7 +257,7 @@ class ConfirmOrder extends StatelessWidget {
             Icon(
               Icons.receipt_rounded,
               size: 25.sp,
-              color: MyStyle.primary,
+              color: MyStyle.orangePrimary,
             ),
             SizedBox(
               width: 45.w,
@@ -299,16 +299,15 @@ class ConfirmOrder extends StatelessWidget {
     }
 
     bool status1 = await OrderCRUD().createOrder(
-      OrderManage(
+      OrderRequest(
         shopid: shopVM.shop.id,
         riderid: '',
         customerid: VariableGeneral.userTokenId!,
         addressid: orderVM.type == 0 ? '' : addVM.address.id,
         productid: idList.toString(),
         productamount: orderVM.amountList.toString(),
-        charge: orderVM.type == 0 ? 0 : shopVM.shop.freight,
         total: orderVM.totalPay,
-        type: orderVM.type,
+        delivery: orderVM.type,
         commentshop: orderVM.commentshop,
         commentrider: orderVM.commentrider,
         status: 0,

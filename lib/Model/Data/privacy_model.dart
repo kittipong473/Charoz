@@ -1,15 +1,16 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 class PrivacyModel {
-  final String id;
-  final String name;
-  final String detail;
-  final int number;
+  String? id;
+  String? name;
+  String? detail;
+  int? number;
   PrivacyModel({
-    required this.id,
-    required this.name,
-    required this.detail,
-    required this.number,
+    this.id,
+    this.name,
+    this.detail,
+    this.number,
   });
 
   PrivacyModel copyWith({
@@ -27,7 +28,7 @@ class PrivacyModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'name': name,
       'detail': detail,
@@ -37,17 +38,17 @@ class PrivacyModel {
 
   factory PrivacyModel.fromMap(Map<String, dynamic> map) {
     return PrivacyModel(
-      id: map['id'] ?? '',
-      name: map['name'] ?? '',
-      detail: map['detail'] ?? '',
-      number: map['number']?.toInt() ?? 0,
+      id: map['id'] != null ? map['id'] as String : null,
+      name: map['name'] != null ? map['name'] as String : null,
+      detail: map['detail'] != null ? map['detail'] as String : null,
+      number: map['number'] != null ? map['number'] as int : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
   factory PrivacyModel.fromJson(String source) =>
-      PrivacyModel.fromMap(json.decode(source));
+      PrivacyModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -55,11 +56,10 @@ class PrivacyModel {
   }
 
   @override
-  bool operator ==(Object other) {
+  bool operator ==(covariant PrivacyModel other) {
     if (identical(this, other)) return true;
 
-    return other is PrivacyModel &&
-        other.id == id &&
+    return other.id == id &&
         other.name == name &&
         other.detail == detail &&
         other.number == number;
@@ -71,9 +71,9 @@ class PrivacyModel {
   }
 }
 
-PrivacyModel convertPrivacy(dynamic item) {
+PrivacyModel convertPrivacy(dynamic item, String? id) {
   return PrivacyModel(
-    id: item.id,
+    id: id ?? item.id,
     name: item['name'],
     detail: item['detail'],
     number: item['number'],

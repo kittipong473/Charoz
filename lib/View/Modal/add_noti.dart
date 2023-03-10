@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:charoz/Model/Api/Request/noti_modify.dart';
-import 'package:charoz/Model/Service/CRUD/Firebase/noti_crud.dart';
-import 'package:charoz/Util/Constant/my_image.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Api/Request/noti_request.dart';
+import 'package:charoz/Service/Firebase/noti_crud.dart';
+import 'package:charoz/Model/Util/Constant/my_image.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Util/Variable/var_data.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Model/Util/Variable/var_data.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Widget/dropdown_menu.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
@@ -89,7 +89,7 @@ class AddNoti {
                   ),
                 ),
               ),
-              ScreenWidget().modalTitle('เพิ่มการแจ้งเตือน'),
+              ScreenWidget().buildModalHeader('เพิ่มการแจ้งเตือน'),
               ScreenWidget().backPage(context),
             ],
           ),
@@ -108,12 +108,12 @@ class AddNoti {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: MyStyle.primary),
+            border: Border.all(color: MyStyle.orangePrimary),
           ),
           child: DropdownButton(
             iconSize: 24.sp,
             icon: const Icon(Icons.arrow_drop_down_outlined,
-                color: MyStyle.primary),
+                color: MyStyle.orangePrimary),
             isExpanded: true,
             value: chooseType,
             items: VariableData.notiTypeList
@@ -145,14 +145,14 @@ class AddNoti {
           labelText: 'หัวข้อ :',
           prefixIcon: const Icon(
             Icons.description_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
+            borderSide: const BorderSide(color: MyStyle.orangePrimary),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
+            borderSide: const BorderSide(color: MyStyle.orangePrimary),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -180,14 +180,14 @@ class AddNoti {
           labelText: 'รายละเอียด :',
           prefixIcon: const Icon(
             Icons.details_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
+            borderSide: const BorderSide(color: MyStyle.orangePrimary),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
+            borderSide: const BorderSide(color: MyStyle.orangePrimary),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -216,14 +216,14 @@ class AddNoti {
           labelText: 'เวลาเริ่ม :',
           prefixIcon: const Icon(
             Icons.calendar_today_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
+            borderSide: const BorderSide(color: MyStyle.orangePrimary),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
+            borderSide: const BorderSide(color: MyStyle.orangePrimary),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -252,14 +252,14 @@ class AddNoti {
           labelText: 'เวลาสิ้นสุด :',
           prefixIcon: const Icon(
             Icons.calendar_today_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
+            borderSide: const BorderSide(color: MyStyle.orangePrimary),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.primary),
+            borderSide: const BorderSide(color: MyStyle.orangePrimary),
             borderRadius: BorderRadius.circular(10),
           ),
           suffixIcon: IconButton(
@@ -279,7 +279,7 @@ class AddNoti {
             },
             icon: const Icon(
               Icons.calendar_today_rounded,
-              color: MyStyle.primary,
+              color: MyStyle.orangePrimary,
             ),
           ),
         ),
@@ -297,12 +297,12 @@ class AddNoti {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: MyStyle.primary),
+            border: Border.all(color: MyStyle.orangePrimary),
           ),
           child: DropdownButton(
             iconSize: 24.sp,
             icon: const Icon(Icons.arrow_drop_down_outlined,
-                color: MyStyle.primary),
+                color: MyStyle.orangePrimary),
             isExpanded: true,
             value: chooseRole,
             items: VariableData.notiRoleTargetList
@@ -325,7 +325,7 @@ class AddNoti {
             file = await MyFunction().chooseImage(ImageSource.camera);
             setState(() {});
           },
-          icon: Icon(Icons.add_a_photo, size: 24.sp, color: MyStyle.dark),
+          icon: Icon(Icons.add_a_photo, size: 24.sp, color: MyStyle.orangeDark),
         ),
         SizedBox(
           width: 40.w,
@@ -339,8 +339,8 @@ class AddNoti {
             file = await MyFunction().chooseImage(ImageSource.gallery);
             setState(() {});
           },
-          icon:
-              Icon(Icons.add_photo_alternate, size: 24.sp, color: MyStyle.dark),
+          icon: Icon(Icons.add_photo_alternate,
+              size: 24.sp, color: MyStyle.orangeDark),
         ),
       ],
     );
@@ -368,23 +368,19 @@ class AddNoti {
   }
 
   Future processInsert(BuildContext context) async {
-    String chooseImage =
-        file != null ? await NotiCRUD().uploadImageNoti(file!) : '';
     bool status = await NotiCRUD().createNoti(
-      NotiManage(
-        type: chooseType!,
+      NotiRequest(
+        type: VariableData.notiRoleTargetList.indexOf(chooseType!),
         name: nameController.text,
         detail: detailController.text,
-        image: chooseImage,
         receive: VariableData.notiRoleTargetList.indexOf(chooseRole!),
-        status: 1,
+        status: true,
         time: Timestamp.fromDate(DateTime.now()),
       ),
     );
 
     if (status) {
-      notiVM.readNotiTypeList(
-          VariableData.notiTypeList[VariableGeneral.indexNotiChip]);
+      notiVM.readNotiList();
       EasyLoading.dismiss();
       MyFunction().toast('เพิ่มการแจ้งเตือนเรียบร้อย');
       Navigator.pop(context);

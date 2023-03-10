@@ -4,36 +4,36 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProductModel {
-  final String id;
-  final String name;
-  final String type;
-  final int price;
-  final String detail;
-  final String image;
-  final int status;
-  final int suggest;
-  final DateTime time;
+  String? id;
+  String? name;
+  int? type;
+  int? price;
+  String? detail;
+  String? image;
+  bool? status;
+  bool? suggest;
+  DateTime? time;
   ProductModel({
-    required this.id,
-    required this.name,
-    required this.type,
-    required this.price,
-    required this.detail,
-    required this.image,
-    required this.status,
-    required this.suggest,
-    required this.time,
+    this.id,
+    this.name,
+    this.type,
+    this.price,
+    this.detail,
+    this.image,
+    this.status,
+    this.suggest,
+    this.time,
   });
 
   ProductModel copyWith({
     String? id,
     String? name,
-    String? type,
+    int? type,
     int? price,
     String? detail,
     String? image,
-    int? status,
-    int? suggest,
+    bool? status,
+    bool? suggest,
     DateTime? time,
   }) {
     return ProductModel(
@@ -50,7 +50,7 @@ class ProductModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'name': name,
       'type': type,
@@ -59,27 +59,28 @@ class ProductModel {
       'image': image,
       'status': status,
       'suggest': suggest,
-      'time': time.millisecondsSinceEpoch,
+      'time': time,
     };
   }
 
   factory ProductModel.fromMap(Map<String, dynamic> map) {
     return ProductModel(
-      id: map['id'] ?? '',
-      name: map['name'] ?? '',
-      type: map['type'] ?? '',
-      price: map['price']?.toInt() ?? 0,
-      detail: map['detail'] ?? '',
-      image: map['image'] ?? '',
-      status: map['status']?.toInt() ?? 0,
-      suggest: map['suggest']?.toInt() ?? 0,
-      time: DateTime.fromMillisecondsSinceEpoch(map['time']),
+      id: map['id'] != null ? map['id'] as String : null,
+      name: map['name'] != null ? map['name'] as String : null,
+      type: map['type'] != null ? map['type'] as int : null,
+      price: map['price'] != null ? map['price'] as int : null,
+      detail: map['detail'] != null ? map['detail'] as String : null,
+      image: map['image'] != null ? map['image'] as String : null,
+      status: map['status'] != null ? map['status'] as bool : null,
+      suggest: map['suggest'] != null ? map['suggest'] as bool : null,
+      time: map['time'] != null ? (map['time'] as Timestamp).toDate() : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory ProductModel.fromJson(String source) => ProductModel.fromMap(json.decode(source));
+  factory ProductModel.fromJson(String source) =>
+      ProductModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -87,45 +88,44 @@ class ProductModel {
   }
 
   @override
-  bool operator ==(Object other) {
+  bool operator ==(covariant ProductModel other) {
     if (identical(this, other)) return true;
-  
-    return other is ProductModel &&
-      other.id == id &&
-      other.name == name &&
-      other.type == type &&
-      other.price == price &&
-      other.detail == detail &&
-      other.image == image &&
-      other.status == status &&
-      other.suggest == suggest &&
-      other.time == time;
+
+    return other.id == id &&
+        other.name == name &&
+        other.type == type &&
+        other.price == price &&
+        other.detail == detail &&
+        other.image == image &&
+        other.status == status &&
+        other.suggest == suggest &&
+        other.time == time;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      name.hashCode ^
-      type.hashCode ^
-      price.hashCode ^
-      detail.hashCode ^
-      image.hashCode ^
-      status.hashCode ^
-      suggest.hashCode ^
-      time.hashCode;
+        name.hashCode ^
+        type.hashCode ^
+        price.hashCode ^
+        detail.hashCode ^
+        image.hashCode ^
+        status.hashCode ^
+        suggest.hashCode ^
+        time.hashCode;
   }
 }
 
-ProductModel convertProduct(dynamic item) {
-    return ProductModel(
-      id: item.id,
-      name: item['name'],
-      type: item['type'],
-      price: item['price'],
-      detail: item['detail'],
-      image: item['image'],
-      status: item['status'],
-      suggest: item['suggest'],
-      time: (item['time'] as Timestamp).toDate(),
-    );
-  }
+ProductModel convertProduct(dynamic item, String? id) {
+  return ProductModel(
+    id: id ?? item.id,
+    name: item['name'],
+    type: item['type'],
+    price: item['price'],
+    detail: item['detail'],
+    image: item['image'],
+    status: item['status'],
+    suggest: item['suggest'],
+    time: (item['time'] as Timestamp).toDate(),
+  );
+}

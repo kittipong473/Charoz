@@ -1,33 +1,48 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:charoz/View/Dialog/carousel_detail.dart';
 import 'package:charoz/View/Modal/edit_shop_admin.dart';
 import 'package:charoz/View/Modal/edit_shop_manager.dart';
-import 'package:charoz/Model/Service/Route/route_page.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
-import 'package:charoz/Util/Variable/var_data.dart';
+import 'package:charoz/Service/Initial/route_page.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Util/Variable/var_data.dart';
+import 'package:charoz/View/Modal/modal_shop.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/View/Widget/show_progress.dart';
 import 'package:charoz/View_Model/shop_vm.dart';
+import 'package:charoz/View_Model/time_vm.dart';
 import 'package:charoz/View_Model/user_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-final ShopViewModel shopVM = Get.find<ShopViewModel>();
-final UserViewModel userVM = Get.find<UserViewModel>();
-
-class ShopDetail extends StatelessWidget {
+class ShopDetail extends StatefulWidget {
   const ShopDetail({Key? key}) : super(key: key);
+
+  @override
+  State<ShopDetail> createState() => _ShopDetailState();
+}
+
+class _ShopDetailState extends State<ShopDetail> {
+  final ShopViewModel shopVM = Get.find<ShopViewModel>();
+  final UserViewModel userVM = Get.find<UserViewModel>();
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  void getData() {
+    userVM.readManagerById(shopVM.shop.managerid);
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: MyStyle.colorBackGround,
-        appBar: VariableGeneral.role == 'customer'
+        backgroundColor: MyStyle.backgroundColor,
+        appBar: VariableGeneral.role == 1
             ? ScreenWidget().appBarTheme('รายละเอียดร้านอาหาร')
             : null,
         body: Stack(
@@ -52,13 +67,13 @@ class ShopDetail extends StatelessWidget {
           ],
         ),
         floatingActionButton:
-            VariableGeneral.role == 'manager' || VariableGeneral.role == 'admin'
+            VariableGeneral.role == 3 || VariableGeneral.role == 0
                 ? FloatingActionButton(
                     onPressed: () {
-                      if (VariableGeneral.role == 'admin') {
+                      if (VariableGeneral.role == 0) {
                         EditShopAdmin()
                             .openModalEditShopAdmin(context, shopVM.shop);
-                      } else if (VariableGeneral.role == 'manager') {
+                      } else if (VariableGeneral.role == 3) {
                         EditShopManager()
                             .openModalEditShopManager(context, shopVM.shop);
                       }
@@ -88,7 +103,7 @@ class ShopDetail extends StatelessWidget {
 
   Widget buildShopImageItem(BuildContext context, String shopimage, int index) {
     return InkWell(
-      onTap: () => CarouselDetail().dialogShop(context, shopimage),
+      onTap: () => ModalShop().showModal(context, shopimage),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 3.w),
         child: ClipRRect(
@@ -102,48 +117,52 @@ class ShopDetail extends StatelessWidget {
   Widget buildTime() {
     return SizedBox(
       width: 80.w,
-      child: Column(
-        children: [
-          Text('ตารางเวลาเปิด-ปิดของร้านค้า', style: MyStyle().boldPrimary18()),
-          SizedBox(height: 2.h),
-          fragmentShopOpen('วันจันทร์'),
-          fragmentShopOpen('วันอังคาร'),
-          fragmentShopOpen('วันพุธ'),
-          fragmentShopOpen('วันพฤหัสบดี'),
-          fragmentShopOpen('วันศุกร์'),
-          fragmentShopOpen('วันเสาร์'),
-          fragmentShopClose('วันอาทิตย์'),
-        ],
+      child: GetBuilder<TimeViewModel>(
+        builder: (vm) => Column(
+          children: [
+            Text('ตารางเวลาเปิด-ปิดของร้านค้า',
+                style: MyStyle().boldPrimary18()),
+            SizedBox(height: 2.h),
+            fragmentShop('วันจันทร์', vm.time.mon),
+            fragmentShop('วันอังคาร', vm.time.tue),
+            fragmentShop('วันพุธ', vm.time.wed),
+            fragmentShop('วันพฤหัสบดี', vm.time.thu),
+            fragmentShop('วันศุกร์', vm.time.fri),
+            fragmentShop('วันเสาร์', vm.time.sat),
+            fragmentShop('วันอาทิตย์', vm.time.sun),
+          ],
+        ),
       ),
     );
   }
 
-  Widget fragmentShopOpen(String day) {
-    return Padding(
-      padding: EdgeInsets.all(10.sp),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(day, style: MyStyle().boldBlack16()),
-          Text(
-              '${MyFunction().convertToOpenClose(shopVM.shop.open)} น. - ${MyFunction().convertToOpenClose(shopVM.shop.close)} น.',
-              style: MyStyle().normalBlack16()),
-        ],
-      ),
-    );
-  }
-
-  Widget fragmentShopClose(String day) {
-    return Padding(
-      padding: EdgeInsets.all(10.sp),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(day, style: MyStyle().boldBlack16()),
-          Text('ปิดบริการ', style: MyStyle().normalBlack16()),
-        ],
-      ),
-    );
+  Widget fragmentShop(String dayThai, String? dayValue) {
+    if (dayValue == null) {
+      return Padding(
+        padding: EdgeInsets.all(10.sp),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(dayThai, style: MyStyle().boldBlack16()),
+            Text('ปิดบริการ', style: MyStyle().normalBlack16()),
+          ],
+        ),
+      );
+    } else {
+      List<String> periodTime = MyFunction().convertToList(dayValue);
+      return Padding(
+        padding: EdgeInsets.all(10.sp),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(dayThai, style: MyStyle().boldBlack16()),
+            Text(
+                '${periodTime[0].substring(0, 5)} น. - ${periodTime[1].substring(0, 5)} น.',
+                style: MyStyle().normalBlack16()),
+          ],
+        ),
+      );
+    }
   }
 
   Widget buildAddress() {
@@ -164,22 +183,23 @@ class ShopDetail extends StatelessWidget {
   }
 
   Widget buildContact() {
-    userVM.readManagerById(shopVM.shop.managerid);
     return SizedBox(
       width: 60.w,
-      child: Column(
-        children: [
-          Text('ติดต่อกับร้านค้า', style: MyStyle().boldPrimary18()),
-          SizedBox(height: 1.h),
-          Text(
-            'คุณ ${userVM.manager.firstname}',
-            style: MyStyle().normalBlack16(),
-          ),
-          Text(
-            'เบอร์โทร : ${userVM.manager.phone}',
-            style: MyStyle().normalBlack16(),
-          ),
-        ],
+      child: GetBuilder<UserViewModel>(
+        builder: (vm) => Column(
+          children: [
+            Text('ติดต่อกับร้านค้า', style: MyStyle().boldPrimary18()),
+            SizedBox(height: 1.h),
+            Text(
+              'คุณ ${vm.manager?.firstname ?? ''}',
+              style: MyStyle().normalBlack16(),
+            ),
+            Text(
+              'เบอร์โทร : ${vm.manager?.phone ?? ''}',
+              style: MyStyle().normalBlack16(),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,13 +1,13 @@
 import 'package:charoz/View/Function/manager_process.dart';
 import 'package:charoz/View/Function/rider_process.dart';
 import 'package:charoz/Model/Data/product_model.dart';
-import 'package:charoz/Util/Constant/my_image.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Util/Constant/my_image.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Function/my_function.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:charoz/View/Widget/show_image.dart';
 import 'package:charoz/View/Widget/show_progress.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:charoz/View_Model/address_vm.dart';
 import 'package:charoz/View_Model/order_vm.dart';
 import 'package:charoz/View_Model/product_vm.dart';
@@ -36,7 +36,7 @@ class OrderDetail extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: MyStyle.colorBackGround,
+        backgroundColor: MyStyle.backgroundColor,
         body: Stack(
           children: [
             Positioned.fill(
@@ -108,11 +108,11 @@ class OrderDetail extends StatelessWidget {
             SizedBox(
               width: 12.w,
               height: 12.w,
-              child: ShowImage().showImage(product.image),
+              child: ShowImage().showImage(product.image, BoxFit.cover),
             ),
           ],
         ),
-        Text('${(product.price * amount).toStringAsFixed(0)} ฿',
+        Text('${(product.price! * amount).toStringAsFixed(0)} ฿',
             style: MyStyle().boldPrimary18()),
       ],
     );
@@ -350,7 +350,7 @@ class OrderDetail extends StatelessWidget {
         SizedBox(
           width: 80.w,
           height: 30.h,
-          child: ShowImage().showImage(shopVM.shop.image),
+          child: ShowImage().showImage(shopVM.shop.image, BoxFit.cover),
         ),
         SizedBox(height: 3.h),
         Text(shopVM.shop.name, style: MyStyle().boldBlue18()),

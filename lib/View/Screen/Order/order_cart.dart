@@ -1,9 +1,9 @@
 import 'package:charoz/Model/Data/product_model.dart';
-import 'package:charoz/Model/Service/Route/route_page.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Service/Initial/route_page.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Util/Variable/var_data.dart';
+import 'package:charoz/Model/Util/Variable/var_data.dart';
 import 'package:charoz/View/Widget/dropdown_menu.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:charoz/View/Widget/show_image.dart';
@@ -28,7 +28,7 @@ class OrderCart extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: MyStyle.colorBackGround,
+        backgroundColor: MyStyle.backgroundColor,
         appBar: ScreenWidget().appBarTheme('ตะกร้าของคุณ'),
         body: GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
@@ -107,12 +107,12 @@ class OrderCart extends StatelessWidget {
               SizedBox(
                 width: 15.w,
                 height: 15.w,
-                child: ShowImage().showImage(product.image),
+                child: ShowImage().showImage(product.image, BoxFit.cover),
               ),
               SizedBox(width: 3.w),
               SizedBox(
                 width: 30.w,
-                child: Text(product.name, style: MyStyle().boldPrimary16()),
+                child: Text(product.name!, style: MyStyle().boldPrimary16()),
               ),
             ],
           ),
@@ -122,7 +122,7 @@ class OrderCart extends StatelessWidget {
           child: Column(
             children: [
               Text('จำนวน : $amount', style: MyStyle().normalBlack16()),
-              Text('${(product.price * amount).toStringAsFixed(0)} ฿',
+              Text('${(product.price! * amount).toStringAsFixed(0)} ฿',
                   style: MyStyle().normalBlack16()),
             ],
           ),
@@ -153,14 +153,14 @@ class OrderCart extends StatelessWidget {
           errorStyle: MyStyle().normalRed14(),
           prefixIcon: const Icon(
             Icons.mode_edit_outline_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -182,14 +182,14 @@ class OrderCart extends StatelessWidget {
           errorStyle: MyStyle().normalRed14(),
           prefixIcon: const Icon(
             Icons.mode_edit_outline_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -203,13 +203,13 @@ class OrderCart extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 3.w),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: MyStyle.dark),
+        border: Border.all(color: MyStyle.orangeDark),
       ),
       child: StatefulBuilder(
         builder: (context, setState) => DropdownButton(
           iconSize: 24.sp,
           icon: const Icon(Icons.arrow_drop_down_outlined,
-              color: MyStyle.primary),
+              color: MyStyle.orangePrimary),
           isExpanded: true,
           value: chooseType,
           items: VariableData.orderReceiveList

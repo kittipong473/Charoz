@@ -1,12 +1,12 @@
-import 'package:charoz/Model/Api/Request/user_modify.dart';
-import 'package:charoz/Model/Service/CRUD/api_controller.dart';
-import 'package:charoz/Model/Service/CRUD/Firebase/user_crud.dart';
-import 'package:charoz/Model/Service/Route/route_page.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Api/Request/user_request.dart';
+import 'package:charoz/Service/Restful/api_controller.dart';
+import 'package:charoz/Service/Firebase/user_crud.dart';
+import 'package:charoz/Service/Initial/route_page.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Function/my_function.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:charoz/View_Model/user_vm.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -32,7 +32,7 @@ class Register extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: MyStyle.colorBackGround,
+        backgroundColor: MyStyle.backgroundColor,
         appBar: ScreenWidget().appBarTheme('สมัครสมาชิก'),
         body: GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
@@ -88,13 +88,14 @@ class Register extends StatelessWidget {
         decoration: InputDecoration(
           labelStyle: MyStyle().boldBlack16(),
           labelText: 'เบอร์โทร :',
-          prefixIcon: const Icon(Icons.phone_rounded, color: MyStyle.dark),
+          prefixIcon:
+              const Icon(Icons.phone_rounded, color: MyStyle.orangeDark),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -120,13 +121,13 @@ class Register extends StatelessWidget {
           labelStyle: MyStyle().boldBlack16(),
           labelText: 'ชื่อจริง :',
           prefixIcon:
-              const Icon(Icons.description_rounded, color: MyStyle.dark),
+              const Icon(Icons.description_rounded, color: MyStyle.orangeDark),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -152,13 +153,13 @@ class Register extends StatelessWidget {
           labelStyle: MyStyle().boldBlack16(),
           labelText: 'นามสกุล :',
           prefixIcon:
-              const Icon(Icons.description_rounded, color: MyStyle.dark),
+              const Icon(Icons.description_rounded, color: MyStyle.orangeDark),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -186,14 +187,14 @@ class Register extends StatelessWidget {
           labelText: 'อีเมลล์ :',
           prefixIcon: const Icon(
             Icons.email_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -222,7 +223,7 @@ class Register extends StatelessWidget {
         children: [
           Checkbox(
             value: allow,
-            activeColor: MyStyle.primary,
+            activeColor: MyStyle.orangePrimary,
             onChanged: (check) => setState(() => allow = check!),
           ),
           Text('ฉันยอมรับข้อกำหนด', style: MyStyle().normalBlack16())
@@ -248,60 +249,56 @@ class Register extends StatelessWidget {
   }
 
   Future validateInformation(BuildContext context) async {
-    capi.loadingPage(true);
     bool status1 = allow;
-    bool status2 = await UserCRUD().checkUserByEmail(emailController.text);
+    bool? status2 = await UserCRUD().checkDuplicateEmail(emailController.text);
     if (!status1) {
-      capi.loadingPage(false);
       MyDialog(context)
           .singleDialog('กรุณายอมรับข้อกำหนด เมื่อทำการสมัครเป็นสมาชิก');
-    } else if (!status2) {
-      capi.loadingPage(false);
+    } else if (status2 != null && status2) {
       MyDialog(context).singleDialog('อีเมลล์ถูกใช้งานแล้ว');
     } else {
-      processRegister(context);
+      // processRegister(context);
     }
   }
 
-  Future processRegister(BuildContext context) async {
-    await VariableGeneral.auth
-        .createUserWithEmailAndPassword(
-            email: emailController.text,
-            password: MyFunction().encryption(userVM.phoneNumber))
-        .then((value) async {
-      FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-      String? token = await firebaseMessaging.getToken();
-      bool status = await UserCRUD().createUser(
-        UserManage(
-          firstname: firstNameController.text,
-          lastname: lastNameController.text,
-          email: emailController.text,
-          phone: userVM.phoneNumber,
-          image: '',
-          role: 'customer',
-          status: 1,
-          tokenE: value.user!.uid,
-          tokenP: '',
-          tokenDevice: token ?? '',
-          time: Timestamp.fromDate(DateTime.now()),
-        ),
-      );
-      if (status) {
-        bool statusUser = await userVM.checkPhoneAndGetUser();
-        if (statusUser) {
-          userVM.setLoginVariable();
-        } else {
-          MyDialog(context).doubleDialog('ไม่สามารถดึงข้อมูลผู้ใช้งานได้',
-              'กรุณาลองใหม่อีกครั้งในภายหลัง');
-        }
-      } else {
-        EasyLoading.dismiss();
-        MyDialog(context).addFailedDialog();
-      }
-    }).catchError((e) {
-      EasyLoading.dismiss();
-      MyDialog(context).singleDialog(MyFunction().authenAlert(e.code));
-    });
-    capi.loadingPage(false);
-  }
+  // Future processRegister(BuildContext context) async {
+  //   await VariableGeneral.auth
+  //       .createUserWithEmailAndPassword(
+  //           email: emailController.text,
+  //           password: MyFunction().encryption(userVM.phoneNumber))
+  //       .then((value) async {
+  //     FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+  //     String? token = await firebaseMessaging.getToken();
+  //     bool status = await UserCRUD().createUser(
+  //       UserRequest(
+  //         firstname: firstNameController.text,
+  //         lastname: lastNameController.text,
+  //         email: emailController.text,
+  //         phone: userVM.phoneNumber,
+  //         role: 1,
+  //         status: true,
+  //         tokenE: value.user!.uid,
+  //         tokenP: '',
+  //         tokenDevice: token ?? '',
+  //         time: Timestamp.fromDate(DateTime.now()),
+  //       ),
+  //     );
+  //     if (status) {
+  //       bool statusUser = await userVM.checkPhoneAndGetUser();
+  //       if (statusUser) {
+  //         userVM.setLoginVariable();
+  //       } else {
+  //         MyDialog(context).doubleDialog('ไม่สามารถดึงข้อมูลผู้ใช้งานได้',
+  //             'กรุณาลองใหม่อีกครั้งในภายหลัง');
+  //       }
+  //     } else {
+  //       EasyLoading.dismiss();
+  //       MyDialog(context).addFailedDialog();
+  //     }
+  //   }).catchError((e) {
+  //     EasyLoading.dismiss();
+  //     MyDialog(context).singleDialog(MyFunction().authenAlert(e.code));
+  //   });
+  //   capi.loadingPage(false);
+  // }
 }

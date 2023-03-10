@@ -1,14 +1,13 @@
-import 'package:charoz/Model/Api/Request/address_modify.dart';
-import 'package:charoz/Model/Service/CRUD/Firebase/address_crud.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Api/Request/address_request.dart';
+import 'package:charoz/Service/Firebase/address_crud.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Util/Variable/var_data.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Model/Util/Variable/var_data.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Widget/dropdown_menu.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:charoz/View_Model/address_vm.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
@@ -24,13 +23,15 @@ class AddLocation {
 
   final AddressViewModel addVM = Get.find<AddressViewModel>();
 
-  Future<dynamic> openModalAddAddress(context) =>
-      showModalBottomSheet(context: context, builder: (_) => modalAddAddress());
+  Future<dynamic> openModalAddAddress(context) => showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => modalAddAddress());
 
   Widget modalAddAddress() {
     return SizedBox(
       width: 100.w,
-      height: 50.h,
+      height: 85.h,
       child: StatefulBuilder(
         builder: (context, setState) => GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
@@ -61,7 +62,7 @@ class AddLocation {
                   ),
                 ),
               ),
-              ScreenWidget().modalTitle('เพิ่มที่อยู่ใหม่'),
+              ScreenWidget().buildModalHeader('เพิ่มที่อยู่ใหม่'),
               buildAddButton(context),
             ],
           ),
@@ -80,12 +81,12 @@ class AddLocation {
           padding: EdgeInsets.symmetric(horizontal: 3.w),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: MyStyle.dark),
+            border: Border.all(color: MyStyle.orangeDark),
           ),
           child: DropdownButton(
             iconSize: 24.sp,
             icon: const Icon(Icons.arrow_drop_down_outlined,
-                color: MyStyle.primary),
+                color: MyStyle.orangePrimary),
             isExpanded: true,
             value: chooseAddress,
             items: VariableData.locationTypes
@@ -110,13 +111,13 @@ class AddLocation {
           padding: EdgeInsets.symmetric(horizontal: 3.w),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: MyStyle.dark),
+            border: Border.all(color: MyStyle.orangeDark),
           ),
           child: DropdownButton(
             iconSize: 24.sp,
             icon: const Icon(
               Icons.arrow_drop_down_outlined,
-              color: MyStyle.primary,
+              color: MyStyle.orangePrimary,
             ),
             isExpanded: true,
             value: chooseNumber,
@@ -145,14 +146,14 @@ class AddLocation {
           labelText: 'ข้อมูลที่อยู่ :',
           prefixIcon: const Icon(
             Icons.description_rounded,
-            color: MyStyle.dark,
+            color: MyStyle.orangeDark,
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.dark),
+            borderSide: const BorderSide(color: MyStyle.orangeDark),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: MyStyle.light),
+            borderSide: const BorderSide(color: MyStyle.orangeLight),
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -192,14 +193,14 @@ class AddLocation {
 
   Future processInsert(BuildContext context) async {
     bool status = await AddressCRUD().createAddress(
-      AddressManage(
+      AddressRequest(
         userid: VariableGeneral.userTokenId!,
         type: VariableData.locationTypes.indexOf(chooseAddress!),
         detail:
             descController.text.isEmpty ? chooseNumber! : descController.text,
         lat: 0,
         lng: 0,
-        time: Timestamp.fromDate(DateTime.now()),
+        time: MyFunction().getTimeStamp(),
       ),
     );
 

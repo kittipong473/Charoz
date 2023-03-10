@@ -1,6 +1,6 @@
 import 'package:charoz/View/Modal/add_location.dart';
 import 'package:charoz/Model/Data/address_model.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
 import 'package:charoz/View/Function/my_function.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:charoz/View_Model/address_vm.dart';
@@ -48,7 +48,7 @@ class SelectAddress {
               ),
             ),
           ],
-          ScreenWidget().modalTitle('เลือกที่อยู่จัดส่งของคุณ'),
+          ScreenWidget().buildModalHeader('เลือกที่อยู่จัดส่งของคุณ'),
           ScreenWidget().backPage(context),
           Positioned(
             top: -1.h,
@@ -71,7 +71,7 @@ class SelectAddress {
       BuildContext context, AddressModel address, int index) {
     return InkWell(
       onTap: () {
-        addVM.selectAddressWhereId(address.id);
+        addVM.selectAddressWhereId(address.id!);
         MyFunction().toast('เปลี่ยนที่อยู่จัดส่งเรียบร้อย');
         Navigator.pop(context);
       },
@@ -98,14 +98,14 @@ class SelectAddress {
                       Text(
                           address.type.toString() == 'คอนโดถนอมมิตร'
                               ? 'ตึกหมายเลข ${address.detail}'
-                              : address.detail,
+                              : address.detail!,
                           style: MyStyle().normalBlack14()),
                     ],
                   ),
                 ],
               ),
               Icon(Icons.check_circle_rounded,
-                  size: 25.sp, color: MyStyle.primary),
+                  size: 25.sp, color: MyStyle.orangePrimary),
             ],
           ),
         ),

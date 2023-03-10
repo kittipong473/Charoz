@@ -2,9 +2,9 @@ import 'package:charoz/View/Modal/add_noti.dart';
 import 'package:charoz/View/Modal/edit_shop_admin.dart';
 import 'package:charoz/View/Modal/edit_shop_manager.dart';
 import 'package:charoz/Model/Data/shop_model.dart';
-import 'package:charoz/Util/Constant/my_image.dart';
-import 'package:charoz/Util/Constant/my_style.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Model/Util/Constant/my_image.dart';
+import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -12,7 +12,7 @@ class ScreenWidget {
   AppBar appBarTheme(String title) {
     return AppBar(
       title: Text(title, style: MyStyle().boldBlue18()),
-      backgroundColor: MyStyle.light,
+      backgroundColor: MyStyle.orangeLight,
       centerTitle: true,
       toolbarHeight: 5.h,
       elevation: 10,
@@ -36,7 +36,7 @@ class ScreenWidget {
         height: 7.h,
         padding: EdgeInsets.only(top: 3.h),
         decoration: const BoxDecoration(
-          color: MyStyle.primary,
+          color: MyStyle.orangePrimary,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(30),
             bottomRight: Radius.circular(30),
@@ -56,7 +56,7 @@ class ScreenWidget {
         height: 15.h,
         padding: EdgeInsets.only(top: 3.h),
         decoration: const BoxDecoration(
-          color: MyStyle.primary,
+          color: MyStyle.orangePrimary,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(30),
             bottomRight: Radius.circular(30),
@@ -68,22 +68,29 @@ class ScreenWidget {
     );
   }
 
-  Widget modalTitle(String title) {
-    return Positioned(
-      top: 0,
-      child: Container(
-        width: 100.w,
-        height: 4.h,
-        padding: EdgeInsets.only(top: 1.h),
-        decoration: const BoxDecoration(
-          color: MyStyle.primary,
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(30),
-            bottomRight: Radius.circular(30),
+  Widget buildModalHeader(String title) {
+    return Container(
+      width: 100.w,
+      height: 7.h,
+      padding: EdgeInsets.only(top: 1.h),
+      margin: EdgeInsets.only(bottom: 3.h),
+      color: MyStyle.orangeLight,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: MyStyle().borderRadius20(),
+            ),
+            width: 50,
+            height: 5,
           ),
-        ),
-        child: Text(title,
-            style: MyStyle().boldWhite16(), textAlign: TextAlign.center),
+          SizedBox(height: 1.h),
+          Text(title,
+              style: MyStyle().boldWhite18(), textAlign: TextAlign.center),
+        ],
       ),
     );
   }

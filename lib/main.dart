@@ -1,20 +1,21 @@
-import 'package:charoz/Model/Service/Route/route_page.dart';
-import 'package:charoz/Model/Service/Route/root_binding.dart';
-import 'package:charoz/Util/Variable/var_data.dart';
-import 'package:charoz/Util/Variable/var_general.dart';
+import 'package:charoz/Service/Initial/route_page.dart';
+import 'package:charoz/Service/Initial/root_binding.dart';
+import 'package:charoz/Model/Util/Variable/var_data.dart';
+import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Service/Library/notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:overlay_support/overlay_support.dart';
 import 'package:responsive_sizer/responsive_sizer.dart' as rs;
-
-String initialRoute = RoutePage.routeSplashPage;
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await NotificationService().initNotification();
+  await FirebaseMessaging.instance.getInitialMessage();
   // await VariableGeneral.auth.signOut();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const MyApp());
@@ -32,16 +33,14 @@ class MyApp extends StatelessWidget {
         } else {
           VariableGeneral.largeDevice = false;
         }
-        return OverlaySupport(
-          child: GetMaterialApp(
-            debugShowCheckedModeBanner: false,
-            builder: EasyLoading.init(),
-            title: VariableData.mainTitle,
-            getPages: RoutePage.getPages,
-            initialRoute: initialRoute,
-            initialBinding: RootBinding(),
-            theme: ThemeData(primarySwatch: Colors.orange),
-          ),
+        return GetMaterialApp(
+          debugShowCheckedModeBanner: false,
+          builder: EasyLoading.init(),
+          title: VariableData.mainTitle,
+          getPages: RoutePage.getPages,
+          initialRoute: RoutePage.routeSplashPage,
+          initialBinding: RootBinding(),
+          theme: ThemeData(primarySwatch: Colors.orange),
         );
       },
     );
