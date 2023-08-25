@@ -1,4 +1,4 @@
-import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:flutter/material.dart';
 
 class DropDownMenu {

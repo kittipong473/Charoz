@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:charoz/Service/Library/log_function.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:charoz/Model/Api/Response/confirm_otp.dart';
@@ -57,7 +58,7 @@ class ApiController extends GetxController {
     try {
       var response = await http.get(url);
       final decode = json.decode(response.body);
-      log(decode);
+      LogFunction().consoleLogGreen(text: decode);
       if (response.statusCode == 200 && decode["status"] == 'success') {
         _responseSendOTP = ResponseSendOTP.fromMap(decode);
         return true;

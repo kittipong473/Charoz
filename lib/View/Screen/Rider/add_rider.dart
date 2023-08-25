@@ -1,12 +1,6 @@
-import 'package:charoz/Model/Api/Request/user_request.dart';
-import 'package:charoz/Service/Firebase/user_crud.dart';
-import 'package:charoz/Model/Util/Constant/my_image.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
-import 'package:charoz/View/Function/dialog_alert.dart';
-import 'package:charoz/View/Function/my_function.dart';
+import 'package:charoz/Utility/Constant/my_image.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';

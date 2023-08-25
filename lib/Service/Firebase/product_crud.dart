@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:charoz/Model/Data/product_model.dart';
-import 'package:charoz/Model/Api/Request/product_request.dart';
+import 'package:charoz/Model/Api/FireStore/product_model.dart';
+import 'package:charoz/Model/Api/Modify/product_modify.dart';
 import 'package:charoz/Service/Restful/api_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -15,39 +15,17 @@ class ProductCRUD {
   Future<List<ProductModel>> readProductAllList() async {
     List<ProductModel> result = [];
     try {
-      capi.loadingPage(true);
       final snapshot = await product.orderBy('name', descending: true).get();
       for (var item in snapshot.docs) {
-        result.add(convertProduct(item, null));
+        result.add(ProductModel().convert(item: item));
       }
-      capi.loadingPage(false);
       return result;
     } catch (e) {
-      capi.loadingPage(false);
       return [];
     }
   }
 
-  Future<List<ProductModel>> readProductSuggestList() async {
-    List<ProductModel> result = [];
-    try {
-      capi.loadingPage(true);
-      final snapshot = await product
-          .where('suggest', isEqualTo: true)
-          .orderBy('name', descending: true)
-          .get();
-      for (var item in snapshot.docs) {
-        result.add(convertProduct(item, null));
-      }
-      capi.loadingPage(false);
-      return result;
-    } catch (e) {
-      capi.loadingPage(false);
-      return [];
-    }
-  }
-
-  Future<bool> createProduct(ProductRequest model) async {
+  Future<bool> createProduct({required ProductModify model}) async {
     try {
       capi.loadingPage(true);
       await product.doc().set(model.toMap());
@@ -59,7 +37,8 @@ class ProductCRUD {
     }
   }
 
-  Future<bool> updateProduct(String id, ProductRequest model) async {
+  Future<bool> updateProduct(
+      {required String id, required ProductModify model}) async {
     try {
       capi.loadingPage(true);
       await product.doc(id).update(model.toMap());
@@ -71,7 +50,8 @@ class ProductCRUD {
     }
   }
 
-  Future<bool> updateStatusProduct(String id, bool status) async {
+  Future<bool> updateStatusProduct(
+      {required String id, required bool status}) async {
     try {
       capi.loadingPage(true);
       await product.doc(id).update({'status': status});
@@ -83,7 +63,7 @@ class ProductCRUD {
     }
   }
 
-  Future<bool> deleteProduct(String id) async {
+  Future<bool> deleteProduct({required String id}) async {
     try {
       capi.loadingPage(true);
       await product.doc(id).delete();
@@ -95,7 +75,7 @@ class ProductCRUD {
     }
   }
 
-  Future<String?> uploadImageProduct(File file) async {
+  Future<String?> uploadImageProduct({required File file}) async {
     int name = Random().nextInt(100000);
     try {
       capi.loadingPage(true);

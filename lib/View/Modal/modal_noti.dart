@@ -1,6 +1,5 @@
-import 'package:charoz/Model/Data/noti_model.dart';
-import 'package:charoz/Model/Util/Constant/my_image.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Utility/Constant/my_image.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:charoz/View/Widget/show_progress.dart';
 import 'package:charoz/View_Model/noti_vm.dart';
@@ -24,7 +23,7 @@ class ModalNoti {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     ScreenWidget().buildModalHeader('รายละเอียดอาหาร'),
-                    Text(vm.noti.name ?? '', style: MyStyle().boldPrimary18()),
+                    Text(vm.noti!.name ?? '', style: MyStyle().boldPrimary18()),
                     SizedBox(height: 3.h),
                     SizedBox(
                       width: 50.w,
@@ -34,7 +33,7 @@ class ModalNoti {
                     SizedBox(height: 3.h),
                     SizedBox(
                       width: 60.w,
-                      child: Text(vm.noti.detail ?? '',
+                      child: Text(vm.noti!.detail ?? '',
                           style: MyStyle().normalBlack16()),
                     ),
                     SizedBox(height: 3.h),

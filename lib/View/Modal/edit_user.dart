@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:charoz/Model/Data/user_model.dart';
-import 'package:charoz/Model/Util/Constant/my_image.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Model/Api/FireStore/user_model.dart';
+import 'package:charoz/Utility/Constant/my_image.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
+import 'package:charoz/Utility/Variable/var_general.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -187,7 +187,8 @@ class EditUser {
           width: 80.w,
           height: 5.h,
           child: ElevatedButton(
-            style: ElevatedButton.styleFrom(primary: MyStyle.bluePrimary),
+            style:
+                ElevatedButton.styleFrom(backgroundColor: MyStyle.bluePrimary),
             onPressed: () {
               if (formKey.currentState!.validate()) {
                 processUpdate(context, id);

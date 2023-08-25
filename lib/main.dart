@@ -1,7 +1,7 @@
 import 'package:charoz/Service/Initial/route_page.dart';
 import 'package:charoz/Service/Initial/root_binding.dart';
-import 'package:charoz/Model/Util/Variable/var_data.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Utility/Variable/var_data.dart';
+import 'package:charoz/Utility/Variable/var_general.dart';
 import 'package:charoz/Service/Library/notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -28,11 +28,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return rs.ResponsiveSizer(
       builder: (_, __, screenType) {
-        if (rs.Device.screenType == rs.ScreenType.tablet) {
-          VariableGeneral.largeDevice = true;
-        } else {
-          VariableGeneral.largeDevice = false;
-        }
+        VariableGeneral.largeDevice =
+            rs.Device.screenType == rs.ScreenType.tablet;
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           builder: EasyLoading.init(),

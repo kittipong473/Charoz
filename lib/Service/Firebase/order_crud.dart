@@ -1,6 +1,6 @@
-import 'package:charoz/Model/Data/order_model.dart';
-import 'package:charoz/Model/Api/Request/order_request.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Model/Api/FireStore/order_model.dart';
+import 'package:charoz/Model/Api/Modify/order_modify.dart';
+import 'package:charoz/Utility/Variable/var_general.dart';
 import 'package:charoz/Service/Restful/api_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
@@ -16,7 +16,7 @@ class OrderCRUD {
           .where('customerid', isEqualTo: VariableGeneral.userTokenId)
           .snapshots();
       return reference.map((snapshot) => snapshot.docs
-          .map((doc) => convertOrder(doc.data(), doc.id))
+          .map((doc) => OrderModel().convert(item: doc.data(), id: doc.id))
           .toList());
     } catch (e) {
       rethrow;
@@ -30,7 +30,7 @@ class OrderCRUD {
           .where('shopid', isEqualTo: 'EbeQ5r39Cy6460XEWlYf')
           .snapshots();
       return reference.map((snapshot) => snapshot.docs
-          .map((doc) => convertOrder(doc.data(), doc.id))
+          .map((doc) => OrderModel().convert(item: doc.data(), id: doc.id))
           .toList());
     } catch (e) {
       rethrow;
@@ -45,7 +45,7 @@ class OrderCRUD {
           .where('status', isEqualTo: 1)
           .snapshots();
       return reference.map((snapshot) => snapshot.docs
-          .map((doc) => convertOrder(doc.data(), doc.id))
+          .map((doc) => OrderModel().convert(item: doc.data(), id: doc.id))
           .toList());
     } catch (e) {
       rethrow;
@@ -59,7 +59,7 @@ class OrderCRUD {
           .where('riderid', isEqualTo: VariableGeneral.userTokenId)
           .snapshots();
       return reference.map((snapshot) => snapshot.docs
-          .map((doc) => convertOrder(doc.data(), doc.id))
+          .map((doc) => OrderModel().convert(item: doc.data(), id: doc.id))
           .toList());
     } catch (e) {
       rethrow;
@@ -75,7 +75,7 @@ class OrderCRUD {
           .where('customerid', isEqualTo: VariableGeneral.userTokenId)
           .get();
       for (var item in snapshot.docs) {
-        result.add(convertOrder(item, null));
+        result.add(OrderModel().convert(item: item));
       }
       capi.loadingPage(false);
       return result;
@@ -94,7 +94,7 @@ class OrderCRUD {
           .where('shopid', isEqualTo: 'EbeQ5r39Cy6460XEWlYf')
           .get();
       for (var item in snapshot.docs) {
-        result.add(convertOrder(item, null));
+        result.add(OrderModel().convert(item: item));
       }
       capi.loadingPage(false);
       return result;
@@ -113,7 +113,7 @@ class OrderCRUD {
           .where('riderid', isEqualTo: VariableGeneral.userTokenId)
           .get();
       for (var item in snapshot.docs) {
-        result.add(convertOrder(item, null));
+        result.add(OrderModel().convert(item: item));
       }
       capi.loadingPage(false);
       return result;
@@ -130,7 +130,7 @@ class OrderCRUD {
       final snapshot =
           await orderlist.where('track', isGreaterThanOrEqualTo: 2).get();
       for (var item in snapshot.docs) {
-        result.add(convertOrder(item, null));
+        result.add(OrderModel().convert(item: item));
       }
       capi.loadingPage(false);
       return result;
@@ -140,7 +140,7 @@ class OrderCRUD {
     }
   }
 
-  Future<bool?> checkRiderIdById(String id) async {
+  Future<bool?> checkRiderIdById({required String id}) async {
     try {
       capi.loadingPage(true);
       final snapshot = await orderlist.doc(id).get();
@@ -157,7 +157,7 @@ class OrderCRUD {
     }
   }
 
-  Future<bool> createOrder(OrderRequest model) async {
+  Future<bool> createOrder({required OrderModify model}) async {
     try {
       capi.loadingPage(true);
       await orderlist.doc().set(model.toMap());
@@ -169,7 +169,8 @@ class OrderCRUD {
     }
   }
 
-  Future<bool> updateOrderStatus(String id, int status, int track) async {
+  Future<bool> updateOrderStatus(
+      {required String id, required int status, required int track}) async {
     try {
       capi.loadingPage(true);
       await orderlist.doc(id).update({'status': status, 'track': track});
@@ -181,7 +182,7 @@ class OrderCRUD {
     }
   }
 
-  Future<bool> updateOrderRiderId(String id) async {
+  Future<bool> updateOrderRiderId({required String id}) async {
     try {
       capi.loadingPage(true);
       await orderlist.doc(id).update({'riderid': VariableGeneral.userTokenId});

@@ -1,10 +1,8 @@
+import 'package:charoz/Model/Api/FireStore/user_model.dart';
 import 'package:charoz/View/Dialog/manage_user.dart';
-import 'package:charoz/Model/Data/user_model.dart';
 import 'package:charoz/Service/Initial/route_page.dart';
-import 'package:charoz/Model/Util/Constant/my_image.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
-import 'package:charoz/View/Widget/show_image.dart';
-import 'package:charoz/View/Widget/show_progress.dart';
+import 'package:charoz/Utility/Constant/my_image.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:charoz/View_Model/user_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

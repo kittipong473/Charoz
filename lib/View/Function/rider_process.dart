@@ -1,8 +1,8 @@
 import 'package:charoz/Service/Firebase/order_crud.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Utility/Variable/var_general.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -58,7 +58,7 @@ class RiderProcess {
   }
 
   Future checkDuplicateAcceptOrder() async {
-    bool? status = await OrderCRUD().checkRiderIdById(id);
+    bool? status = await OrderCRUD().checkRiderIdById(id: id);
     if (status != null && status) {
       processAcceptOrder();
     } else {
@@ -68,8 +68,9 @@ class RiderProcess {
   }
 
   Future processAcceptOrder() async {
-    bool api1 = await OrderCRUD().updateOrderStatus(id, 2, 1);
-    bool api2 = await OrderCRUD().updateOrderRiderId(id);
+    bool api1 =
+        await OrderCRUD().updateOrderStatus(id: id, status: 2, track: 1);
+    bool api2 = await OrderCRUD().updateOrderRiderId(id: id);
     if (api1 && api2) {
       EasyLoading.dismiss();
       Navigator.pop(context);
@@ -83,7 +84,7 @@ class RiderProcess {
   }
 
   Future processReceiveOrder() async {
-    bool api = await OrderCRUD().updateOrderStatus(id, 4, 1);
+    bool api = await OrderCRUD().updateOrderStatus(id: id, status: 4, track: 1);
     if (api) {
       EasyLoading.dismiss();
       Navigator.pop(context);
@@ -96,7 +97,7 @@ class RiderProcess {
   }
 
   Future processSendOrder() async {
-    bool api = await OrderCRUD().updateOrderStatus(id, 5, 3);
+    bool api = await OrderCRUD().updateOrderStatus(id: id, status: 5, track: 3);
     if (api) {
       EasyLoading.dismiss();
       Navigator.pop(context);

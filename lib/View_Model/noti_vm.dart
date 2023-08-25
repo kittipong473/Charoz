@@ -1,25 +1,25 @@
-import 'package:charoz/Model/Data/noti_model.dart';
+import 'package:charoz/Model/Api/FireStore/noti_model.dart';
 import 'package:charoz/Service/Firebase/noti_crud.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Utility/Variable/var_general.dart';
 import 'package:get/get.dart';
 
 class NotiViewModel extends GetxController {
+  NotiModel? _noti;
   final RxList<NotiModel> _notiList = <NotiModel>[].obs;
   final RxList<NotiModel> _notiTypeList = <NotiModel>[].obs;
-  NotiModel? _noti;
 
-  get noti => _noti;
-  get notiList => _notiList;
-  get notiTypeList => _notiTypeList;
+  NotiModel? get noti => _noti;
+  List<NotiModel> get notiList => _notiList;
+  List<NotiModel> get notiTypeList => _notiTypeList;
 
   Future readNotiList() async {
     if (VariableGeneral.role == null) {
-      _notiList.value = await NotiCRUD().readNotiListByRole(0);
+      _notiList.value = await NotiCRUD().readNotiListByRole(role: 0);
     } else if (VariableGeneral.role == 0) {
       _notiList.value = await NotiCRUD().readNotiListAll();
     } else {
       _notiList.value =
-          await NotiCRUD().readNotiListByRole(VariableGeneral.role!);
+          await NotiCRUD().readNotiListByRole(role: VariableGeneral.role!);
     }
     _notiList.sort((a, b) => b.time!.compareTo(a.time!));
     update();

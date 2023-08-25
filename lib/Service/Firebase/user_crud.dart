@@ -1,5 +1,5 @@
-import 'package:charoz/Model/Data/user_model.dart';
-import 'package:charoz/Model/Api/Request/user_request.dart';
+import 'package:charoz/Model/Api/FireStore/user_model.dart';
+import 'package:charoz/Model/Api/Modify/user_modify.dart';
 import 'package:charoz/Service/Restful/api_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -15,7 +15,7 @@ class UserCRUD {
       capi.loadingPage(true);
       final snapshot = await user.orderBy('time', descending: true).get();
       for (var item in snapshot.docs) {
-        result.add(convertUser(item, null));
+        result.add(UserModel().convert(item: item));
       }
       capi.loadingPage(false);
       return result;
@@ -25,14 +25,14 @@ class UserCRUD {
     }
   }
 
-  Future<UserModel?> readUserByPhone(String phone) async {
+  Future<UserModel?> readUserByPhone({required String phone}) async {
     UserModel? model;
     try {
       capi.loadingPage(true);
       final snapshot =
           await user.where('phone', isEqualTo: phone).limit(1).get();
       for (var item in snapshot.docs) {
-        model = convertUser(item, null);
+        model = UserModel().convert(item: item);
       }
       capi.loadingPage(false);
       return model;
@@ -42,24 +42,20 @@ class UserCRUD {
     }
   }
 
-  Future<UserModel?> readUserById(String id) async {
+  Future<UserModel?> readUserById({required String id}) async {
     try {
-      capi.loadingPage(true);
       final snapshot = await user.doc(id).get();
       if (snapshot.exists) {
-        capi.loadingPage(false);
-        return convertUser(snapshot.data(), snapshot.id);
+        return UserModel().convert(item: snapshot.data(), id: snapshot.id);
       } else {
-        capi.loadingPage(false);
         return null;
       }
     } catch (e) {
-      capi.loadingPage(false);
       return null;
     }
   }
 
-  Future<String?> readTokenById(String id) async {
+  Future<String?> readTokenById({required String id}) async {
     try {
       capi.loadingPage(true);
       final snapshot = await user.doc(id).get();
@@ -92,21 +88,25 @@ class UserCRUD {
     }
   }
 
-  // Future<bool?> checkDuplicatePhone(String phone) async {
-  //   try {
-  //     final snapshot =
-  //         await user.where('phone', isEqualTo: phone).limit(1).get();
-  //     if (snapshot.docs.isNotEmpty) {
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   } catch (e) {
-  //     return null;
-  //   }
-  // }
+  Future<bool?> checkDuplicatePhone({required String phone}) async {
+    try {
+      capi.loadingPage(true);
+      final snapshot =
+          await user.where('phone', isEqualTo: phone).limit(1).get();
+      if (snapshot.docs.isNotEmpty) {
+        capi.loadingPage(false);
+        return true;
+      } else {
+        capi.loadingPage(false);
+        return false;
+      }
+    } catch (e) {
+      capi.loadingPage(false);
+      return null;
+    }
+  }
 
-  Future<bool?> checkDuplicateEmail(String email) async {
+  Future<bool?> checkDuplicateEmail({required String email}) async {
     try {
       capi.loadingPage(true);
       final snapshot =
@@ -124,7 +124,7 @@ class UserCRUD {
     }
   }
 
-  Future<bool> createUser(UserRequest model) async {
+  Future<bool> createUser({required UserModify model}) async {
     try {
       capi.loadingPage(true);
       await user.doc().set(model.toMap());
@@ -136,7 +136,8 @@ class UserCRUD {
     }
   }
 
-  Future<bool> updateUserCode(String id, String code) async {
+  Future<bool> updateUserCode(
+      {required String id, required String code}) async {
     try {
       capi.loadingPage(true);
       await user.doc(id).update({'pincode': code});
@@ -148,7 +149,8 @@ class UserCRUD {
     }
   }
 
-  Future<bool> updateUserStatus(String id, bool status) async {
+  Future<bool> updateUserStatus(
+      {required String id, required bool status}) async {
     try {
       capi.loadingPage(true);
       await user.doc(id).update({'status': status});
@@ -160,7 +162,7 @@ class UserCRUD {
     }
   }
 
-  Future<bool> updateUserTokenDevice(String id) async {
+  Future<bool> updateUserTokenDevice({required String id}) async {
     FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
     capi.loadingPage(true);
     String? token = await firebaseMessaging.getToken();

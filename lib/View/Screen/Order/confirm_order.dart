@@ -1,14 +1,14 @@
+import 'package:charoz/Model/Api/FireStore/product_model.dart';
+import 'package:charoz/Model/Api/Modify/order_modify.dart';
 import 'package:charoz/View/Modal/select_address.dart';
-import 'package:charoz/Model/Data/product_model.dart';
-import 'package:charoz/Model/Api/Request/order_request.dart';
 import 'package:charoz/Service/Firebase/order_crud.dart';
 import 'package:charoz/Service/Firebase/user_crud.dart';
 import 'package:charoz/Service/Initial/route_page.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Function/my_function.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Utility/Variable/var_general.dart';
 import 'package:charoz/View_Model/address_vm.dart';
 import 'package:charoz/View_Model/order_vm.dart';
 import 'package:charoz/View_Model/product_vm.dart';
@@ -132,12 +132,12 @@ class ConfirmOrder extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(addVM.address.name, style: MyStyle().boldBlue16()),
-                    Text(
-                        addVM.address.name == 'คอนโดถนอมมิตร'
-                            ? 'ตึกหมายเลข ${addVM.address.detail}'
-                            : addVM.address.detail,
-                        style: MyStyle().normalBlack14()),
+                    // Text(addVM.address!.name, style: MyStyle().boldBlue16()),
+                    // Text(
+                    //     addVM.address.name == 'คอนโดถนอมมิตร'
+                    //         ? 'ตึกหมายเลข ${addVM.address.detail}'
+                    //         : addVM.address.detail,
+                    //     style: MyStyle().normalBlack14()),
                   ],
                 ),
               ),
@@ -299,11 +299,11 @@ class ConfirmOrder extends StatelessWidget {
     }
 
     bool status1 = await OrderCRUD().createOrder(
-      OrderRequest(
+      model: OrderModify(
         shopid: shopVM.shop.id,
         riderid: '',
         customerid: VariableGeneral.userTokenId!,
-        addressid: orderVM.type == 0 ? '' : addVM.address.id,
+        addressid: orderVM.type == 0 ? '' : addVM.address!.id,
         productid: idList.toString(),
         productamount: orderVM.amountList.toString(),
         total: orderVM.totalPay,
@@ -317,7 +317,7 @@ class ConfirmOrder extends StatelessWidget {
     );
 
     if (status1) {
-      String? token = await UserCRUD().readTokenById(shopVM.shop.managerid);
+      String? token = await UserCRUD().readTokenById(id: shopVM.shop.managerid);
       EasyLoading.dismiss();
       idList.clear();
       MyFunction().toast('เพิ่มรายการสั่งซื้อ สำเร็จ');

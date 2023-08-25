@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:charoz/Model/Api/Request/product_request.dart';
+import 'package:charoz/Model/Api/Modify/product_modify.dart';
 import 'package:charoz/Service/Firebase/product_crud.dart';
-import 'package:charoz/Model/Util/Constant/my_image.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Utility/Constant/my_image.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Model/Util/Variable/var_data.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Utility/Variable/var_data.dart';
+import 'package:charoz/Utility/Variable/var_general.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Widget/dropdown_menu.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
@@ -101,7 +101,7 @@ class AddProduct {
                 color: MyStyle.orangeDark),
             isExpanded: true,
             value: chooseType,
-            items: VariableData.productTypes
+            items: VariableData.datatypeProduct
                 .map(DropDownMenu().dropdownItem)
                 .toList(),
             onChanged: (value) => setState(() => chooseType = value as String),
@@ -274,10 +274,10 @@ class AddProduct {
 
   Future processInsert(BuildContext context) async {
     String? chooseImage =
-        file != null ? await ProductCRUD().uploadImageProduct(file!) : '';
+        file != null ? await ProductCRUD().uploadImageProduct(file: file!) : '';
 
     bool status = await ProductCRUD().createProduct(
-      ProductRequest(
+      model: ProductModify(
         name: nameController.text,
         type: chooseType!,
         price: int.parse(priceController.text),

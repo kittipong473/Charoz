@@ -1,13 +1,12 @@
+import 'package:charoz/Model/Api/FireStore/product_model.dart';
 import 'package:charoz/View/Function/manager_process.dart';
 import 'package:charoz/View/Function/rider_process.dart';
-import 'package:charoz/Model/Data/product_model.dart';
-import 'package:charoz/Model/Util/Constant/my_image.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Utility/Constant/my_image.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:charoz/View/Function/my_function.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:charoz/View/Widget/show_image.dart';
-import 'package:charoz/View/Widget/show_progress.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Utility/Variable/var_general.dart';
 import 'package:charoz/View_Model/address_vm.dart';
 import 'package:charoz/View_Model/order_vm.dart';
 import 'package:charoz/View_Model/product_vm.dart';
@@ -56,13 +55,13 @@ class OrderDetail extends StatelessWidget {
                       SizedBox(height: 1.h),
                       buildSuggest(),
                       ScreenWidget().buildSpacer(),
-                      if (VariableGeneral.role == 'manager') ...[
+                      if (VariableGeneral.role == 3) ...[
                         fragmentManagerDetail(context)
-                      ] else if (VariableGeneral.role == 'rider') ...[
+                      ] else if (VariableGeneral.role == 2) ...[
                         fragmentRiderDetail(context)
-                      ] else if (VariableGeneral.role == 'customer') ...[
+                      ] else if (VariableGeneral.role == 1) ...[
                         fragmentCustomerDetail(context)
-                      ] else if (VariableGeneral.role == 'admin') ...[
+                      ] else if (VariableGeneral.role == 4) ...[
                         fragmentAdminDetail(context)
                       ],
                     ],
@@ -291,17 +290,13 @@ class OrderDetail extends StatelessWidget {
       width: 80.w,
       height: 10.h,
       child: ListTile(
-        leading: riderid == ''
-            ? Image.asset(MyImage.person)
-            : userVM.rider.image == ''
-                ? Image.asset(MyImage.person)
-                : ShowImage().showCircleImage(userVM.rider.image),
+        leading: Image.asset(MyImage.person),
         title: Row(
           children: [
             Text('ชื่อคนขับ  :  ', style: MyStyle().boldPrimary16()),
             riderid == ''
                 ? Text('ยังไม่มีคนขับรับงาน', style: MyStyle().normalBlack16())
-                : Text('${userVM.rider.firstname} ${userVM.rider.lastname}',
+                : Text('${userVM.rider!.firstname} ${userVM.rider!.lastname}',
                     style: MyStyle().normalBlack16())
           ],
         ),
@@ -310,7 +305,7 @@ class OrderDetail extends StatelessWidget {
             Text('เบอร์โทร  :  ', style: MyStyle().boldPrimary16()),
             riderid == ''
                 ? Text('ยังไม่มีคนขับรับงาน', style: MyStyle().normalBlack16())
-                : Text(userVM.rider.phone, style: MyStyle().normalBlack16()),
+                : Text(userVM.rider!.phone!, style: MyStyle().normalBlack16()),
           ],
         ),
       ),
@@ -323,20 +318,18 @@ class OrderDetail extends StatelessWidget {
       width: 80.w,
       height: 10.h,
       child: ListTile(
-        leading: userVM.customer.image == ''
-            ? Image.asset(MyImage.person)
-            : ShowImage().showCircleImage(userVM.customer.image),
+        leading: Image.asset(MyImage.person),
         title: Row(
           children: [
             Text('ชื่อลูกค้า  :  ', style: MyStyle().boldPrimary16()),
-            Text('${userVM.customer.firstname} ${userVM.customer.lastname}',
+            Text('${userVM.customer!.firstname} ${userVM.customer!.lastname}',
                 style: MyStyle().normalBlack16()),
           ],
         ),
         subtitle: Row(
           children: [
             Text('เบอร์โทร  :  ', style: MyStyle().boldPrimary16()),
-            Text(userVM.customer.phone, style: MyStyle().normalBlack16()),
+            Text(userVM.customer!.phone!, style: MyStyle().normalBlack16()),
           ],
         ),
       ),
@@ -374,14 +367,14 @@ class OrderDetail extends StatelessWidget {
     addVM.readAddressById(addressid);
     return Column(
       children: [
-        Text(addVM.address.type.toString(), style: MyStyle().boldBlue18()),
-        Text(
-          addVM.address.type.toString() == 'คอนโดถนอมมิตร'
-              ? 'ตึกหมายเลข ${addVM.address.detail}'
-              : addVM.address.detail,
-          style: MyStyle().normalBlack16(),
-          textAlign: TextAlign.center,
-        ),
+        // Text(addVM.address!.type.toString(), style: MyStyle().boldBlue18()),
+        // Text(
+        //   addVM.address.type.toString() == 'คอนโดถนอมมิตร'
+        //       ? 'ตึกหมายเลข ${addVM.address.detail}'
+        //       : addVM.address.detail,
+        //   style: MyStyle().normalBlack16(),
+        //   textAlign: TextAlign.center,
+        // ),
       ],
     );
   }
@@ -394,7 +387,7 @@ class OrderDetail extends StatelessWidget {
           width: 80.w,
           height: 5.h,
           child: ElevatedButton(
-            style: ElevatedButton.styleFrom(primary: Colors.green),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
             onPressed: () =>
                 ManagerProcess(context, orderId).acceptConfirmYes(type),
             child: Text('ยืนยันออเดอร์', style: MyStyle().normalWhite16()),
@@ -405,7 +398,7 @@ class OrderDetail extends StatelessWidget {
           width: 80.w,
           height: 5.h,
           child: ElevatedButton(
-            style: ElevatedButton.styleFrom(primary: Colors.red),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () =>
                 ManagerProcess(context, orderId).acceptConfirmNo(type),
             child: Text('ยกเลิกออเดอร์', style: MyStyle().normalWhite16()),
@@ -420,7 +413,7 @@ class OrderDetail extends StatelessWidget {
       width: 80.w,
       height: 5.h,
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(primary: Colors.green),
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
         onPressed: () => ManagerProcess(context, orderId).processFinishOrder(),
         child: Text('ทำอาหารเสร็จสิ้น', style: MyStyle().normalWhite16()),
       ),
@@ -432,7 +425,7 @@ class OrderDetail extends StatelessWidget {
       width: 80.w,
       height: 5.h,
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(primary: Colors.green),
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
         onPressed: () =>
             ManagerProcess(context, orderId).processCompleteOrder(),
         child:
@@ -449,7 +442,7 @@ class OrderDetail extends StatelessWidget {
           width: 80.w,
           height: 5.h,
           child: ElevatedButton(
-            style: ElevatedButton.styleFrom(primary: Colors.green),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
             onPressed: () => RiderProcess(context, orderId).acceptConfirmYes(),
             child: Text('ยืนยันออเดอร์', style: MyStyle().normalWhite16()),
           ),
@@ -463,7 +456,7 @@ class OrderDetail extends StatelessWidget {
       width: 80.w,
       height: 5.h,
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(primary: Colors.green),
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
         onPressed: () => RiderProcess(context, orderId).processReceiveOrder(),
         child:
             Text('รับออเดอร์และเตรียมจัดส่ง', style: MyStyle().normalWhite16()),
@@ -476,7 +469,7 @@ class OrderDetail extends StatelessWidget {
       width: 80.w,
       height: 5.h,
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(primary: Colors.green),
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
         onPressed: () => RiderProcess(context, orderId).processSendOrder(),
         child: Text('จัดส่งและชำระเงินเสร็จสิ้น',
             style: MyStyle().normalWhite16()),
@@ -489,7 +482,7 @@ class OrderDetail extends StatelessWidget {
       width: 80.w,
       height: 5.h,
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(primary: Colors.green),
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
         onPressed: () {},
         child: Text('ให้คะแนนรายการนี้', style: MyStyle().normalWhite16()),
       ),

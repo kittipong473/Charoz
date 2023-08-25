@@ -1,11 +1,10 @@
-import 'package:animations/animations.dart';
+import 'package:charoz/Model/Api/FireStore/product_model.dart';
 import 'package:charoz/View/Modal/edit_product.dart';
-import 'package:charoz/Model/Data/product_model.dart';
 import 'package:charoz/Service/Firebase/product_crud.dart';
-import 'package:charoz/Model/Util/Constant/my_image.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Utility/Constant/my_image.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Utility/Variable/var_general.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:charoz/View/Widget/show_image.dart';
@@ -87,7 +86,7 @@ class ModalProduct {
         TextButton(
           onPressed: () async {
             bool status = await ProductCRUD()
-                .updateStatusProduct(product.id!, !product.status!);
+                .updateStatusProduct(id: product.id!, status: !product.status!);
             if (status) {
               prodVM.readProductAllList();
               MyFunction().toast('เปลี่ยนสถานะเรียบร้อย');
@@ -108,7 +107,7 @@ class ModalProduct {
         ),
         TextButton(
           onPressed: () async {
-            bool status = await ProductCRUD().deleteProduct(product.id!);
+            bool status = await ProductCRUD().deleteProduct(id: product.id!);
             if (status) {
               prodVM.readProductAllList();
               MyFunction().toast('ลบรายการอาหารเรียบร้อย');

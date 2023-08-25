@@ -1,15 +1,14 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:charoz/View/Modal/edit_shop_admin.dart';
-import 'package:charoz/View/Modal/edit_shop_manager.dart';
 import 'package:charoz/Service/Initial/route_page.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
-import 'package:charoz/Model/Util/Variable/var_data.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
+import 'package:charoz/Utility/Variable/var_data.dart';
 import 'package:charoz/View/Modal/modal_shop.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Utility/Variable/var_general.dart';
 import 'package:charoz/View/Function/my_function.dart';
+import 'package:charoz/View_Model/banner_vm.dart';
 import 'package:charoz/View_Model/shop_vm.dart';
-import 'package:charoz/View_Model/time_vm.dart';
 import 'package:charoz/View_Model/user_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,8 +22,9 @@ class ShopDetail extends StatefulWidget {
 }
 
 class _ShopDetailState extends State<ShopDetail> {
-  final ShopViewModel shopVM = Get.find<ShopViewModel>();
-  final UserViewModel userVM = Get.find<UserViewModel>();
+  final bannerVM = Get.find<BannerViewModel>();
+  final shopVM = Get.find<ShopViewModel>();
+  final userVM = Get.find<UserViewModel>();
 
   @override
   void initState() {
@@ -33,6 +33,7 @@ class _ShopDetailState extends State<ShopDetail> {
   }
 
   void getData() {
+    bannerVM.initCarouselList();
     userVM.readManagerById(shopVM.shop.managerid);
   }
 
@@ -69,15 +70,8 @@ class _ShopDetailState extends State<ShopDetail> {
         floatingActionButton:
             VariableGeneral.role == 3 || VariableGeneral.role == 0
                 ? FloatingActionButton(
-                    onPressed: () {
-                      if (VariableGeneral.role == 0) {
-                        EditShopAdmin()
-                            .openModalEditShopAdmin(context, shopVM.shop);
-                      } else if (VariableGeneral.role == 3) {
-                        EditShopManager()
-                            .openModalEditShopManager(context, shopVM.shop);
-                      }
-                    },
+                    onPressed: () => EditShopAdmin()
+                        .openModalEditShopAdmin(context, shopVM.shop),
                     backgroundColor: MyStyle.bluePrimary,
                     child: const Icon(Icons.edit_location_alt_rounded,
                         color: Colors.white),
@@ -95,9 +89,9 @@ class _ShopDetailState extends State<ShopDetail> {
   Widget buildShopImageList() {
     return CarouselSlider.builder(
       options: CarouselOptions(height: 30.h, autoPlay: true),
-      itemCount: VariableData.carouselShopImage.length,
-      itemBuilder: (context, index, realIndex) => buildShopImageItem(
-          context, VariableData.carouselShopImage[index], index),
+      itemCount: bannerVM.shopImageList.length,
+      itemBuilder: (context, index, realIndex) =>
+          buildShopImageItem(context, bannerVM.shopImageList[index], index),
     );
   }
 
@@ -117,19 +111,19 @@ class _ShopDetailState extends State<ShopDetail> {
   Widget buildTime() {
     return SizedBox(
       width: 80.w,
-      child: GetBuilder<TimeViewModel>(
+      child: GetBuilder<ShopViewModel>(
         builder: (vm) => Column(
           children: [
             Text('ตารางเวลาเปิด-ปิดของร้านค้า',
                 style: MyStyle().boldPrimary18()),
             SizedBox(height: 2.h),
-            fragmentShop('วันจันทร์', vm.time.mon),
-            fragmentShop('วันอังคาร', vm.time.tue),
-            fragmentShop('วันพุธ', vm.time.wed),
-            fragmentShop('วันพฤหัสบดี', vm.time.thu),
-            fragmentShop('วันศุกร์', vm.time.fri),
-            fragmentShop('วันเสาร์', vm.time.sat),
-            fragmentShop('วันอาทิตย์', vm.time.sun),
+            // fragmentShop('วันจันทร์', vm.time.mon),
+            // fragmentShop('วันอังคาร', vm.time.tue),
+            // fragmentShop('วันพุธ', vm.time.wed),
+            // fragmentShop('วันพฤหัสบดี', vm.time.thu),
+            // fragmentShop('วันศุกร์', vm.time.fri),
+            // fragmentShop('วันเสาร์', vm.time.sat),
+            // fragmentShop('วันอาทิตย์', vm.time.sun),
           ],
         ),
       ),

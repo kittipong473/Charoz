@@ -1,29 +1,18 @@
 import 'dart:convert';
 
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 class ResponseSendOTP {
-  final String status;
-  final String token;
-  final String refno;
+  String? status;
+  String? token;
+  String? refno;
   ResponseSendOTP({
-    required this.status,
-    required this.token,
-    required this.refno,
+    this.status,
+    this.token,
+    this.refno,
   });
 
-  ResponseSendOTP copyWith({
-    String? status,
-    String? token,
-    String? refno,
-  }) {
-    return ResponseSendOTP(
-      status: status ?? this.status,
-      token: token ?? this.token,
-      refno: refno ?? this.refno,
-    );
-  }
-
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'status': status,
       'token': token,
       'refno': refno,
@@ -32,29 +21,14 @@ class ResponseSendOTP {
 
   factory ResponseSendOTP.fromMap(Map<String, dynamic> map) {
     return ResponseSendOTP(
-      status: map['status'] ?? '',
-      token: map['token'] ?? '',
-      refno: map['refno'] ?? '',
+      status: map['status'] != null ? map['status'] as String : null,
+      token: map['token'] != null ? map['token'] as String : null,
+      refno: map['refno'] != null ? map['refno'] as String : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory ResponseSendOTP.fromJson(String source) => ResponseSendOTP.fromMap(json.decode(source));
-
-  @override
-  String toString() => 'RequestOTPModel(status: $status, token: $token, refno: $refno)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-  
-    return other is ResponseSendOTP &&
-      other.status == status &&
-      other.token == token &&
-      other.refno == refno;
-  }
-
-  @override
-  int get hashCode => status.hashCode ^ token.hashCode ^ refno.hashCode;
+  factory ResponseSendOTP.fromJson(String source) =>
+      ResponseSendOTP.fromMap(json.decode(source) as Map<String, dynamic>);
 }

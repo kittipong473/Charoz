@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:charoz/Model/Data/notification_request.dart';
+import 'package:charoz/Model/Api/Request/notification_request.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 
@@ -61,10 +61,7 @@ class NotificationService {
                   'body': model.body,
                   'android_channel_id': 'kbmnoti',
                 },
-                'data': {
-                  'id': model.id,
-                  'status': model.status,
-                },
+                'data': model.payload!.toJson(),
               },
             ),
           )

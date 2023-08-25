@@ -1,5 +1,5 @@
 import 'package:charoz/Service/Initial/route_page.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:charoz/View_Model/user_vm.dart';

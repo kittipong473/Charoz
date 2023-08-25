@@ -1,12 +1,11 @@
 import 'dart:io';
 
-import 'package:charoz/Model/Api/Request/noti_request.dart';
+import 'package:charoz/Model/Api/Modify/noti_modify.dart';
 import 'package:charoz/Service/Firebase/noti_crud.dart';
-import 'package:charoz/Model/Util/Constant/my_image.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Utility/Constant/my_image.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Model/Util/Variable/var_data.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Utility/Variable/var_data.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Widget/dropdown_menu.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
@@ -116,7 +115,7 @@ class AddNoti {
                 color: MyStyle.orangePrimary),
             isExpanded: true,
             value: chooseType,
-            items: VariableData.notiTypeList
+            items: VariableData.datatypeNotiType
                 .map(DropDownMenu().dropdownItem)
                 .toList(),
             onChanged: (value) => setState(() => chooseType = value as String),
@@ -369,7 +368,7 @@ class AddNoti {
 
   Future processInsert(BuildContext context) async {
     bool status = await NotiCRUD().createNoti(
-      NotiRequest(
+      model: NotiModify(
         type: VariableData.notiRoleTargetList.indexOf(chooseType!),
         name: nameController.text,
         detail: detailController.text,

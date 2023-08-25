@@ -1,16 +1,17 @@
+import 'package:charoz/View/Screen/Config/question_answer.dart';
 import 'package:charoz/View/Screen/Order/confirm_order.dart';
 import 'package:charoz/View/Screen/Order/order_detail.dart';
-import 'package:charoz/View/Screen/User/privacy_policy.dart';
+import 'package:charoz/View/Screen/Config/privacy_policy.dart';
 import 'package:charoz/View/Screen/Shop/shop_detail.dart';
 import 'package:charoz/View/Screen/Shop/shop_map.dart';
 import 'package:charoz/View/Screen/Rider/add_rider.dart';
 import 'package:charoz/View/Screen/User/login.dart';
 import 'package:charoz/View/Screen/User/register.dart';
 import 'package:charoz/View/Screen/User/verify_token.dart';
-import 'package:charoz/Model/Util/Spare/register_token.dart';
-import 'package:charoz/View/Config/maintenance.dart';
-import 'package:charoz/View/Config/page_navigation.dart';
-import 'package:charoz/View/Config/splash_page.dart';
+import 'package:charoz/Utility/Spare/register_token.dart';
+import 'package:charoz/View/Screen/Config/maintenance.dart';
+import 'package:charoz/View/Screen/Config/page_navigation.dart';
+import 'package:charoz/View/Screen/Config/splash_page.dart';
 import 'package:charoz/View/Screen/Order/order_cart.dart';
 import 'package:charoz/View/Screen/Address/location_list.dart';
 import 'package:get/get.dart';
@@ -27,6 +28,7 @@ class RoutePage {
   static String routeRegister = '/register';
   static String routeVerifyToken = '/verifytoken';
   static String routePrivacyPolicy = '/privacypolicy';
+  static String routeQuestionAnswer = '/questionanswer';
   static String routeOrderDetail = '/orderdetail';
   static String routeShopMap = '/shopmap';
   static String routeShopDetail = '/shopdetail';
@@ -44,6 +46,7 @@ class RoutePage {
     GetPage(name: routeRegister, page: () => const Register()),
     GetPage(name: routeVerifyToken, page: () => const VerifyToken()),
     GetPage(name: routePrivacyPolicy, page: () => const PrivacyPolicy()),
+    GetPage(name: routeQuestionAnswer, page: () => const QuestionAnswer()),
     GetPage(name: routeOrderDetail, page: () => const OrderDetail()),
     GetPage(name: routeShopMap, page: () => const ShopMap()),
     GetPage(name: routeShopDetail, page: () => const ShopDetail()),

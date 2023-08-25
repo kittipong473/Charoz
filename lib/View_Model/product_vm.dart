@@ -1,4 +1,4 @@
-import 'package:charoz/Model/Data/product_model.dart';
+import 'package:charoz/Model/Api/FireStore/product_model.dart';
 import 'package:charoz/Service/Firebase/product_crud.dart';
 import 'package:get/get.dart';
 
@@ -18,7 +18,6 @@ class ProductViewModel extends GetxController {
   }
 
   void getProductSuggestList() {
-    print(_productList.length);
     _productSuggestList.value =
         _productList.where((item) => item.suggest == true).toList();
   }

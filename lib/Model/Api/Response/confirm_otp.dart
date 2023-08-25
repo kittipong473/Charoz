@@ -1,25 +1,16 @@
 import 'dart:convert';
 
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 class ResponseConfirmOTP {
-  final String status;
-  final String message;
+  String? status;
+  String? message;
   ResponseConfirmOTP({
-    required this.status,
-    required this.message,
+    this.status,
+    this.message,
   });
 
-  ResponseConfirmOTP copyWith({
-    String? status,
-    String? message,
-  }) {
-    return ResponseConfirmOTP(
-      status: status ?? this.status,
-      message: message ?? this.message,
-    );
-  }
-
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'status': status,
       'message': message,
     };
@@ -27,27 +18,13 @@ class ResponseConfirmOTP {
 
   factory ResponseConfirmOTP.fromMap(Map<String, dynamic> map) {
     return ResponseConfirmOTP(
-      status: map['status'] ?? '',
-      message: map['message'] ?? '',
+      status: map['status'] != null ? map['status'] as String : null,
+      message: map['message'] != null ? map['message'] as String : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory ResponseConfirmOTP.fromJson(String source) => ResponseConfirmOTP.fromMap(json.decode(source));
-
-  @override
-  String toString() => 'ConfirmOTPModel(status: $status, message: $message)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-  
-    return other is ResponseConfirmOTP &&
-      other.status == status &&
-      other.message == message;
-  }
-
-  @override
-  int get hashCode => status.hashCode ^ message.hashCode;
+  factory ResponseConfirmOTP.fromJson(String source) =>
+      ResponseConfirmOTP.fromMap(json.decode(source) as Map<String, dynamic>);
 }

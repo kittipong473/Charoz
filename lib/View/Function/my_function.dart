@@ -81,6 +81,13 @@ class MyFunction {
     return encrypted.base16.toString();
   }
 
+  String decryption(encrypt.Encrypted code) {
+    final key = encrypt.Key.fromLength(32);
+    final iv = encrypt.IV.fromLength(16);
+    final encrypter = encrypt.Encrypter(encrypt.AES(key));
+    return encrypter.decrypt(code, iv: iv);
+  }
+
   String authenAlert(String code) {
     if (code == 'invalid-email') {
       return 'อีเมลล์ไม่ถูกต้อง';

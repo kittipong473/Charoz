@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:charoz/Model/Data/shop_model.dart';
-import 'package:charoz/Model/Api/Request/shop_admin_request.dart';
+import 'package:charoz/Model/Api/FireStore/shop_model.dart';
+import 'package:charoz/Model/Api/Modify/shop_modify.dart';
 import 'package:charoz/Service/Firebase/shop_crud.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:charoz/View/Function/my_function.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
@@ -46,7 +46,6 @@ class EditShopAdmin {
     latController.text = shop.lat.toString();
     lngController.text = shop.lng.toString();
     freightController.text = shop.freight.toString();
-    image = shop.image;
     return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -550,12 +549,9 @@ class EditShopAdmin {
   }
 
   Future processUpdate(BuildContext context, String shopid) async {
-    String? chooseImage =
-        file != null ? await ShopCRUD().uploadImageShop(file!) : image!;
-
-    bool status = await ShopCRUD().updateShopByAdmin(
-      shopid,
-      ShopAdminRequest(
+    bool status = await ShopCRUD().updateShop(
+      id: shopid,
+      model: ShopModify(
         name: nameController.text,
         announce: announceController.text,
         detail: detailController.text,
@@ -563,7 +559,6 @@ class EditShopAdmin {
         phone: phoneController.text,
         lat: double.parse(latController.text),
         lng: double.parse(lngController.text),
-        image: chooseImage,
         freight: int.parse(freightController.text),
         time: Timestamp.fromDate(DateTime.now()),
       ),

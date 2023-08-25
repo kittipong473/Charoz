@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:charoz/Model/Data/user_model.dart';
+import 'package:charoz/Model/Api/FireStore/user_model.dart';
+import 'package:charoz/Model/Data/privacy_model.dart';
 import 'package:charoz/Service/Library/preference.dart';
 import 'package:charoz/Service/Restful/api_controller.dart';
 import 'package:charoz/Service/Firebase/user_crud.dart';
 import 'package:charoz/Service/Initial/route_page.dart';
-import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Utility/Variable/var_general.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -20,35 +20,94 @@ class UserViewModel extends GetxController {
   final RxString _phoneNumber = ''.obs;
   final RxString _otpToken = ''.obs;
   final RxString _otpRefNo = ''.obs;
+  final RxList<PrivacyModel> _privacyList = <PrivacyModel>[].obs;
+  final RxList<PrivacyModel> _questionList = <PrivacyModel>[].obs;
   final RxList<UserModel> _userList = <UserModel>[].obs;
   UserModel? _user;
   UserModel? _customer;
   UserModel? _rider;
   UserModel? _manager;
 
-  get otpInTimeVerify => _otpInTimeVerify.value;
-  get delayResend => _delayResend.value;
-  get countResend => _countResend.value;
-  get minutes => _minutes.value;
-  get seconds => _seconds.value;
-  get phoneNumber => _phoneNumber.value;
-  get otpToken => _otpToken.value;
-  get otpRefNo => _otpRefNo.value;
-  get user => _user;
-  get customer => _customer;
-  get rider => _rider;
-  get manager => _manager;
-  get userList => _userList;
+  bool get otpInTimeVerify => _otpInTimeVerify.value;
+  bool get delayResend => _delayResend.value;
+  int get countResend => _countResend.value;
+  String get minutes => _minutes.value;
+  String get seconds => _seconds.value;
+  String get phoneNumber => _phoneNumber.value;
+  String get otpToken => _otpToken.value;
+  String get otpRefNo => _otpRefNo.value;
+  List<PrivacyModel> get privacyList => _privacyList;
+  List<PrivacyModel> get questionList => _questionList;
+  List<UserModel> get userList => _userList;
+  UserModel? get user => _user;
+  UserModel? get customer => _customer;
+  UserModel? get rider => _rider;
+  UserModel? get manager => _manager;
 
   Duration? otpDuration;
   Timer? otpTimer;
   List<String> roleUserList = [
-    'Administrator',
+    'Guest',
     'Customer',
     'Rider',
     'Shop Manager',
-    'Guest'
+    'Administrator',
   ];
+
+  void initPrivacyList() {
+    _privacyList.value = [
+      PrivacyModel(
+        number: 1,
+        name:
+            'ความยินยอมให้ แอพพลิเคชั่น เก็บรวบรวม ใช้ เปิดเผยข้อมูลส่วนบุคคลของท่าน ในขั้นตอนการสมัครใช้งาน หรือยืนยันตัวตนผู้ใช้งาน',
+        detail:
+            'ซึ่งมีข้อมูลชื่อ อีเมลล์ เบอร์โทรศัพท์ รวมทั้งยินยอมให้ผู้พัฒนาเก็บและเปิดเผย ข้อมูลดังกล่าวให้ผู้ประมวลผลที่เกี่ยวข้องเพื่อการ ดำเนินการตามวัตถุประสงค์ในการสมัครใช้งานและ ระบุหรือยืนยันตัวตนผู้ใช้งาน หากไม่ยินยอม แอพพลิเคชั่น ไม่อาจสามารถให้บริการและไม่สามารถทำข้อตกลงการใช้บริการกับท่านได้',
+      ),
+      PrivacyModel(
+        number: 2,
+        name:
+            'ความยินยอมให้ ผู้พัฒนา เก็บรวบรวม ใช้ เปิดเผยข้อมูล ส่วนบุคคลของท่านเพื่อปรับปรุงพัฒนาการให้บริการของ แอพพลิเคชั่น',
+        detail:
+            'เช่น การวิจัย วิเคราะห์ ทำสถิติ เพื่อพัฒนาหรือปรับปรุง โปรแกรมหรือซอฟท์แวร์หรือระบบของแอพพลิเคชั่น การเก็บรวบรวมข้อมูลเฉพาะของอุปกรณ์ของผู้ใช้งาน เพื่อนำมาปรับแต่งการให้บริการและพัฒนาการให้บริการที่เหมาะสมกับอุปกรณ์ของผู้ใช้งาน การวิจัยพัฒนาโปรแกรมหรือระบบผู้ให้บริการหรือผู้ควบคุมข้อมูลส่วนบุคคลอื่น การทำแบบสอบถามเพื่อสำรวจความพึงพอใจของผู้ใช้งาน และการวิเคราะห์ข้อมูลความพึงพอใจของผู้ใช้งาน หากไม่ยินยอม ผู้พัฒนาอาจไม่สามารถพัฒนาหรือปรับปรุงบริการให้เหมาะสมกับความต้องการของท่านได้',
+      ),
+      PrivacyModel(
+        number: 3,
+        name:
+            'ความยินยอมสำหรับการที่แอพพิลเคชั่น ใช้คุกกี้และเทคโนโลยี ที่คล้ายกัน (Cookies and Similar Technologies) เก็บรวบรวม และประมวลผลข้อมูลส่วนบุคคลของท่าน',
+        detail:
+            'เมื่อท่านใช้งานแอปพลิเคชั่น หรือเพื่อ รวบรวมและจัดเก็บข้อมูล เมื่อท่านมีการโต้ตอบกับ บริการที่แอพพิลเคชั่นให้ เพื่อนำมาใช้ประโยชน์ในทางการตลาด การประชาสัมพันธ์บริการต่างๆ ของแอพพลิเคชั่น การวิเคราะห์ข้อมูลของท่านเพื่อออกแบบบริการหรือนำเสนอเนื้อหาซึ่งได้รับการปรับแต่ง ให้เหมาะสมกับการใช้งานหรือประสบการณ์ของท่านโดยเฉพาะ เช่น แสดงผลการค้นหาที่เกี่ยวข้องกับท่าน การนำเสนอหรือแสดงข้อมูลสินค้าหรือบริการตามความสนใจของท่าน หากไม่ยินยอม บริษัทอาจไม่สามารถปรับปรุงหรือพัฒนาหรือออกแบบบริการให้สอดคล้องตามพฤติกรรม การใช้งานหรือความสนใจของท่านได้',
+      ),
+      PrivacyModel(
+        number: 4,
+        name: 'การจัดการข้อมูลส่วนบุคคล',
+        detail:
+            'ข้อมูลของคุณเป็นสิ่งสำคัญยิ่ง ทางผู้พัฒนาผลิตภัณฑ์ เราจะดำเนินการอย่างดีที่สุด ด้วยมาตรการที่เข้มงวด ในการรักษาความปลอดภัยคุณ สามารถดูรายละเอียดนโยบายความเป็นส่วนตัวของเรา ได้ที่เว็บไซต์ของเรา https://github.com/kittipong473/kittipong-privacy/blob/main/privacy-pilicy.md หรือติดต่อสอบถามเราได้ที่ kittipong_kc47@hotmail.com',
+      ),
+    ];
+  }
+
+  void initQuestionList() {
+    _questionList.value = [
+      PrivacyModel(
+        number: 1,
+        name: 'แอพพลิเคชั่นนี้ คืออะไร ใช้งานเกี่ยวกับอะไร ?',
+        detail:
+            'แอพพลิเคชั่น Charoz นี้ ถูกจัดทำขึ้นสำหรับร้านอาหาร Charoz Steak House เพื่อให้ลูกค้าหรือผู้เข้าชมทุกท่าน ได้เห็นข้อมูลเกี่ยวกับร้านค้า ประกอบด้วย เมนูอาหาร หมวดหมู่ อาหารแนะนำ รวมถึงช่วงเวลาเปิดปิด และโปรโมชั่นต่างที่จะมีในอนาคต',
+      ),
+      PrivacyModel(
+        number: 2,
+        name: 'ผู้เข้าชม สามารถทำอะไรในแอพนี้ ได้บ้าง',
+        detail:
+            '- ลูกค้าสามารถดูช่วงเวลาเปิด-ปิดของร้าน รายการอาหารแนะนำ และคำอธิบายของร้าน\n- ลูกค้าสามารถดูเมนูอาหารทั้งหมดที่ร้านนี้ขาย และหมวดหมู่ของอาหารต่างๆ\n- ลูกค้าสามารถดูข่าวสารจากทางร้านหรือโปรโมชั่นได้\n- ลูกค้าสามารถดูข้อมูลเกี่ยวกับร้านค้า ค้นหาตำแหน่งบนแผนที่ รวมถึงผู้ติดต่อได้',
+      ),
+      PrivacyModel(
+        number: 3,
+        name: 'มีแผนจะพัฒนาแอพ ในอนาคตอย่างไรบ้าง',
+        detail:
+            '- ลูกค้าสามารถสมัครเป็นสมาชิกได้ รวมถึงการเพิ่มที่อยู่ ตั้ง Book Mark เมนูอาหาร และมีโปรโมชั่นพิเศษสำหรับสมาชิก\n- ลูกค้าสามารถสั่งอาหารกับทางร้านค้าผ่านแอพนี้ได้ โดยมีคนขับไปส่งถึงที่อยู่ของท่าน\n- ลูกค้าสามารถให้คะแนน หรือ แนะนำเกี่ยวกับอาหารกับทางร้านได้',
+      ),
+    ];
+  }
 
   void initOTPTime() {
     otpDuration = const Duration(minutes: 3);
@@ -97,11 +156,11 @@ class UserViewModel extends GetxController {
 
   void setLoginVariable() async {
     await Preferences().init();
-    _user = await UserCRUD().readUserByPhone(_phoneNumber.value);
+    _user = await UserCRUD().readUserByPhone(phone: _phoneNumber.value);
     VariableGeneral.isLogin = true;
     VariableGeneral.role = _user!.role;
     VariableGeneral.userTokenId = _user!.id;
-    Preferences().setString('id', _user!.id!);
+    Preferences().setUserID(value: _user!.id!);
     VariableGeneral.indexProductChip = 0;
     VariableGeneral.indexNotiChip = 0;
     VariableGeneral.indexOrderChip = 0;
@@ -139,11 +198,19 @@ class UserViewModel extends GetxController {
     _manager = null;
   }
 
+  void clearPrivacyList() {
+    _privacyList.clear();
+  }
+
+  void clearQuestionList() {
+    _questionList.clear();
+  }
+
   Future<bool> getUserPreference(BuildContext context, String id) async {
-    _user = await UserCRUD().readUserById(id);
+    _user = await UserCRUD().readUserById(id: id);
     VariableGeneral.userTokenId = _user!.id;
     VariableGeneral.role = _user!.role;
-    bool status = await UserCRUD().updateUserTokenDevice(_user!.id!);
+    bool status = await UserCRUD().updateUserTokenDevice(id: _user!.id!);
     if (!status) {
       MyFunction()
           .toast('ไม่สามารถเก็บ token ได้\nปิดการใช้งาน notification ชั่วคราว');
@@ -156,7 +223,7 @@ class UserViewModel extends GetxController {
   }
 
   Future<bool> checkPhoneAndGetUser() async {
-    _user = await UserCRUD().readUserByPhone(_phoneNumber.value);
+    _user = await UserCRUD().readUserByPhone(phone: _phoneNumber.value);
     if (_user != null) {
       return true;
     } else {
@@ -165,11 +232,11 @@ class UserViewModel extends GetxController {
   }
 
   Future<void> getUserById(String id) async {
-    _user = await UserCRUD().readUserById(id);
+    _user = await UserCRUD().readUserById(id: id);
   }
 
   Future<void> getUserByPhone(String phone) async {
-    _user = await UserCRUD().readUserByPhone(phone);
+    _user = await UserCRUD().readUserByPhone(phone: phone);
   }
 
   // Future signOutFirebase(BuildContext context) async {
@@ -188,17 +255,17 @@ class UserViewModel extends GetxController {
   }
 
   Future<void> readCustomerById(String id) async {
-    _customer = await UserCRUD().readUserById(id);
+    _customer = await UserCRUD().readUserById(id: id);
     update();
   }
 
   Future<void> readRiderById(String id) async {
-    _rider = await UserCRUD().readUserById(id);
+    _rider = await UserCRUD().readUserById(id: id);
     update();
   }
 
   Future<void> readManagerById(String id) async {
-    _manager = await UserCRUD().readUserById(id);
+    _manager = await UserCRUD().readUserById(id: id);
     update();
   }
 

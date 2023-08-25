@@ -1,5 +1,5 @@
-import 'package:charoz/Model/Data/order_model.dart';
-import 'package:charoz/Model/Data/product_model.dart';
+import 'package:charoz/Model/Api/FireStore/order_model.dart';
+import 'package:charoz/Model/Api/FireStore/product_model.dart';
 import 'package:charoz/Service/Firebase/order_crud.dart';
 import 'package:get/get.dart';
 

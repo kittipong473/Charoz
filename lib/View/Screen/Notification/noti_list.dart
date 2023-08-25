@@ -1,11 +1,11 @@
+import 'package:charoz/Model/Api/FireStore/noti_model.dart';
 import 'package:charoz/View/Dialog/noti_delete.dart';
 import 'package:charoz/View/Modal/modal_noti.dart';
 import 'package:charoz/View/Modal/add_noti.dart';
-import 'package:charoz/Model/Data/noti_model.dart';
-import 'package:charoz/Model/Util/Constant/my_image.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
-import 'package:charoz/Model/Util/Variable/var_data.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Utility/Constant/my_image.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
+import 'package:charoz/Utility/Variable/var_data.dart';
+import 'package:charoz/Utility/Variable/var_general.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:charoz/View_Model/noti_vm.dart';
 import 'package:flutter/material.dart';
@@ -80,8 +80,8 @@ class _NotiListState extends State<NotiList> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          for (var i = 0; i < VariableData.notiTypeList.length; i++) ...[
-            chip(VariableData.notiTypeList[i], i),
+          for (var i = 0; i < VariableData.datatypeNotiType.length; i++) ...[
+            chip(VariableData.datatypeNotiType[i], i),
           ],
         ],
       ),
@@ -113,8 +113,8 @@ class _NotiListState extends State<NotiList> {
         height: 77.h,
         child: vm.notiTypeList.isEmpty
             ? ScreenWidget().showEmptyData(
-                'ยังไม่มี ${VariableData.notiTypeList[VariableGeneral.indexNotiChip]} ในขณะนี้',
-                'รอรายการ ${VariableData.notiTypeList[VariableGeneral.indexNotiChip]} ในภายหลัง')
+                'ยังไม่มี ${VariableData.datatypeNotiType[VariableGeneral.indexNotiChip]} ในขณะนี้',
+                'รอรายการ ${VariableData.datatypeNotiType[VariableGeneral.indexNotiChip]} ในภายหลัง')
             : ListView.builder(
                 shrinkWrap: true,
                 padding: EdgeInsets.only(top: 1.h),

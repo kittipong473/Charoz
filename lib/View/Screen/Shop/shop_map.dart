@@ -1,8 +1,7 @@
-import 'package:charoz/Model/Data/shop_model.dart';
-import 'package:charoz/Model/Util/Constant/my_image.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Model/Api/FireStore/shop_model.dart';
+import 'package:charoz/Utility/Constant/my_image.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
-import 'package:charoz/View/Widget/show_progress.dart';
 import 'package:charoz/View_Model/shop_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

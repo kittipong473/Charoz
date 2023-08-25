@@ -1,14 +1,14 @@
 import 'dart:async';
 
-import 'package:charoz/Model/Data/order_model.dart';
+import 'package:charoz/Model/Api/FireStore/order_model.dart';
 import 'package:charoz/Service/Firebase/order_crud.dart';
 import 'package:charoz/Service/Initial/route_page.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Model/Util/Variable/var_data.dart';
+import 'package:charoz/Utility/Variable/var_data.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:charoz/View/Widget/show_progress.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Utility/Variable/var_general.dart';
 import 'package:charoz/View_Model/address_vm.dart';
 import 'package:charoz/View_Model/order_vm.dart';
 import 'package:charoz/View_Model/shop_vm.dart';
@@ -26,11 +26,11 @@ class OrderList extends StatelessWidget {
   const OrderList({Key? key}) : super(key: key);
 
   void getData(BuildContext context) {
-    if (VariableGeneral.role == 'admin') {
+    if (VariableGeneral.role == 4) {
       orderVM.readOrderAdminListByFinish();
-    } else if (VariableGeneral.role == 'manager') {
+    } else if (VariableGeneral.role == 3) {
       orderVM.readOrderManagerListByFinish();
-    } else if (VariableGeneral.role == 'rider') {
+    } else if (VariableGeneral.role == 2) {
       orderVM.readOrderRiderListByFinish();
     } else {
       orderVM.readOrderCustomerListByFinish();
@@ -51,7 +51,7 @@ class OrderList extends StatelessWidget {
               child: StatefulBuilder(
                 builder: (_, setState) => Column(
                   children: [
-                    if (VariableGeneral.role == 'admin') ...[
+                    if (VariableGeneral.role == 4) ...[
                       buildHistoryList(),
                     ] else ...[
                       buildChip(context, setState),
@@ -59,11 +59,11 @@ class OrderList extends StatelessWidget {
                         SizedBox(
                           width: 100.w,
                           height: 77.h,
-                          child: VariableGeneral.role == 'manager'
+                          child: VariableGeneral.role == 3
                               ? managerOrder()
-                              : VariableGeneral.role == 'rider'
+                              : VariableGeneral.role == 2
                                   ? riderOrder()
-                                  : VariableGeneral.role == 'customer'
+                                  : VariableGeneral.role == 1
                                       ? customerOrder()
                                       : ScreenWidget().showEmptyData(
                                           'ยังไม่มี รายการอาหาร ที่สั่ง',
@@ -105,9 +105,7 @@ class OrderList extends StatelessWidget {
           ? MyStyle.orangePrimary
           : Colors.grey.shade100,
       label: Text(
-        VariableGeneral.role == 'rider' && index == 0
-            ? 'รายการจากลูกค้า'
-            : title,
+        VariableGeneral.role == 2 && index == 0 ? 'รายการจากลูกค้า' : title,
         style: VariableGeneral.indexOrderChip == index
             ? MyStyle().normalWhite16()
             : MyStyle().normalBlack16(),
@@ -209,19 +207,19 @@ class OrderList extends StatelessWidget {
   }
 
   Future getDetailOrderByRole(BuildContext context, OrderModel order) async {
-    if (VariableGeneral.role == 'manager') {
+    if (VariableGeneral.role == 3) {
       await userVM.readCustomerById(order.customerid!);
       if (order.riderid != '') {
         await userVM.readRiderById(order.riderid!);
       }
-    } else if (VariableGeneral.role == 'rider') {
+    } else if (VariableGeneral.role == 2) {
       await userVM.readCustomerById(order.customerid!);
       await addVM.readAddressById(order.addressid!);
-    } else if (VariableGeneral.role == 'customer') {
+    } else if (VariableGeneral.role == 1) {
       if (order.riderid != '') {
         await userVM.readRiderById(order.riderid!);
       }
-    } else if (VariableGeneral.role == 'admin') {
+    } else if (VariableGeneral.role == 4) {
       await userVM.readCustomerById(order.customerid!);
       if (order.delivery!) {
         await addVM.readAddressById(order.addressid!);
@@ -249,20 +247,20 @@ class OrderList extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(VariableData.orderStatusList[order.status!],
+                  Text(VariableData.datatypeOrderStatus[order.status!],
                       style: MyStyle().boldPrimary18()),
                   Text(MyFunction().convertToDateTime(order.time!),
                       style: MyStyle().normalBlack14()),
                 ],
               ),
               ScreenWidget().buildSpacer(),
-              if (VariableGeneral.role == 'manager') ...[
+              if (VariableGeneral.role == 3) ...[
                 fragmentManagerDetail(order)
-              ] else if (VariableGeneral.role == 'rider') ...[
+              ] else if (VariableGeneral.role == 2) ...[
                 fragmentRiderDetail(order)
-              ] else if (VariableGeneral.role == 'customer') ...[
+              ] else if (VariableGeneral.role == 1) ...[
                 fragmentCustomerDetail(order)
-              ] else if (VariableGeneral.role == 'admin') ...[
+              ] else if (VariableGeneral.role == 4) ...[
                 fragmentAdminDetail(order)
               ],
             ],
@@ -276,7 +274,7 @@ class OrderList extends StatelessWidget {
     return Column(
       children: [
         fragmentEachRowDetail(Icons.person_rounded, 'ชื่อลูกค้า',
-            '${userVM.customer.firstname} ${userVM.customer.lastname}'),
+            '${userVM.customer!.firstname} ${userVM.customer!.lastname}'),
         fragmentEachRowDetail(
             Icons.food_bank_rounded, 'ประเภท', order.delivery.toString()),
         fragmentEachRowDetail(Icons.money_rounded, 'ราคา', '${order.total} ฿'),
@@ -288,7 +286,7 @@ class OrderList extends StatelessWidget {
                 ? 'ยังไม่มีคนขับรับงาน'
                 : userVM.rider == null
                     ? ''
-                    : '${userVM.rider.firstname} ${userVM.rider.lastname}',
+                    : '${userVM.rider!.firstname} ${userVM.rider!.lastname}',
           ),
         ],
       ],
@@ -301,9 +299,9 @@ class OrderList extends StatelessWidget {
         fragmentEachRowDetail(
             Icons.store_mall_directory_rounded, 'ร้านอาหาร', shopVM.shop.name),
         fragmentEachRowDetail(Icons.person_rounded, 'ชื่อลูกค้า',
-            '${userVM.customer.firstname} ${userVM.customer.lastname}'),
-        fragmentEachRowDetail(
-            Icons.location_pin, 'สถานที่จัดส่ง', addVM.address.name),
+            '${userVM.customer!.firstname} ${userVM.customer!.lastname}'),
+        fragmentEachRowDetail(Icons.location_pin, 'สถานที่จัดส่ง',
+            addVM.address!.type!.toString()),
         fragmentEachRowDetail(
             Icons.money_rounded, 'ราคารวมส่ง', '${order.total} ฿'),
       ],
@@ -329,7 +327,7 @@ class OrderList extends StatelessWidget {
                 ? 'ยังไม่มีคนขับรับงาน'
                 : userVM.rider == null
                     ? ''
-                    : '${userVM.rider.firstname} ${userVM.rider.lastname}',
+                    : '${userVM.rider!.firstname} ${userVM.rider!.lastname}',
           ),
         ],
       ],
@@ -346,7 +344,7 @@ class OrderList extends StatelessWidget {
             'ชื่อลูกค้า',
             userVM.customer == null
                 ? ''
-                : '${userVM.customer.firstname} ${userVM.customer.lastname}'),
+                : '${userVM.customer!.firstname} ${userVM.customer!.lastname}'),
         if (order.delivery!) ...[
           fragmentEachRowDetail(
             Icons.delivery_dining_rounded,
@@ -355,10 +353,10 @@ class OrderList extends StatelessWidget {
                 ? 'ยังไม่มีคนขับรับงาน'
                 : userVM.rider == null
                     ? ''
-                    : '${userVM.rider.firstname} ${userVM.rider.lastname}',
+                    : '${userVM.rider!.firstname} ${userVM.rider!.lastname}',
           ),
           fragmentEachRowDetail(Icons.location_pin, 'สถานที่จัดส่ง',
-              addVM.address == null ? '' : addVM.address.type),
+              addVM.address == null ? '' : addVM.address!.type.toString()),
         ],
         fragmentEachRowDetail(Icons.money_rounded, 'ราคา', '${order.total} ฿'),
       ],

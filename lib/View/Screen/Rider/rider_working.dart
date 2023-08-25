@@ -1,9 +1,9 @@
-import 'package:charoz/Model/Data/order_model.dart';
+import 'package:charoz/Model/Api/FireStore/order_model.dart';
 import 'package:charoz/Service/Firebase/order_crud.dart';
 import 'package:charoz/Service/Initial/route_page.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Model/Util/Variable/var_data.dart';
+import 'package:charoz/Utility/Variable/var_data.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:charoz/View/Widget/show_progress.dart';
 import 'package:charoz/View_Model/address_vm.dart';
@@ -109,7 +109,7 @@ class RiderWorking extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(VariableData.orderStatusList[order.status!],
+                  Text(VariableData.datatypeOrderStatus[order.status!],
                       style: MyStyle().boldPrimary18()),
                   Text(MyFunction().convertToDateTime(order.time!),
                       style: MyStyle().normalBlack14()),
@@ -130,9 +130,9 @@ class RiderWorking extends StatelessWidget {
         fragmentEachRowDetail(
             Icons.store_mall_directory_rounded, 'ร้านอาหาร', shopVM.shop.name),
         fragmentEachRowDetail(Icons.person_rounded, 'ชื่อลูกค้า',
-            '${userVM.customer.firstname} ${userVM.customer.lastname}'),
-        fragmentEachRowDetail(
-            Icons.location_pin, 'สถานที่จัดส่ง', addVM.address.name),
+            '${userVM.customer!.firstname} ${userVM.customer!.lastname}'),
+        fragmentEachRowDetail(Icons.location_pin, 'สถานที่จัดส่ง',
+            addVM.address!.type.toString()),
         fragmentEachRowDetail(Icons.money_rounded, 'ค่าอาหารลูกค้า',
             '${order.total! - shopVM.shop.freight} ฿'),
         fragmentEachRowDetail(

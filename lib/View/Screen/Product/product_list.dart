@@ -1,11 +1,11 @@
+import 'package:charoz/Model/Api/FireStore/product_model.dart';
 import 'package:charoz/View/Modal/add_product.dart';
 import 'package:charoz/View/Modal/modal_product.dart';
-import 'package:charoz/Model/Data/product_model.dart';
 import 'package:charoz/Service/Initial/route_page.dart';
-import 'package:charoz/Model/Util/Constant/my_image.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
-import 'package:charoz/Model/Util/Variable/var_data.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Utility/Constant/my_image.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
+import 'package:charoz/Utility/Variable/var_data.dart';
+import 'package:charoz/Utility/Variable/var_general.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:charoz/View/Widget/search_product.dart';
 import 'package:charoz/View/Widget/show_image.dart';
@@ -92,8 +92,8 @@ class _ProductListState extends State<ProductList> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              for (var i = 0; i < VariableData.productTypes.length; i++) ...[
-                chip(VariableData.productTypes[i], i),
+              for (var i = 0; i < VariableData.datatypeProduct.length; i++) ...[
+                chip(VariableData.datatypeProduct[i], i),
               ],
             ],
           ),
@@ -155,7 +155,7 @@ class _ProductListState extends State<ProductList> {
         height: 65.h,
         child: vm.productTypeList == null
             ? ScreenWidget().showEmptyData(
-                'ไม่มีรายการ ${VariableData.productTypes[VariableGeneral.indexProductChip]} ในขณะนี้',
+                'ไม่มีรายการ ${VariableData.datatypeProduct[VariableGeneral.indexProductChip]} ในขณะนี้',
                 'กรุณารอรายการได้ในภายหลัง')
             : GridView.builder(
                 shrinkWrap: true,

@@ -1,17 +1,11 @@
-import 'package:charoz/Model/Api/Request/user_request.dart';
 import 'package:charoz/Service/Restful/api_controller.dart';
 import 'package:charoz/Service/Firebase/user_crud.dart';
 import 'package:charoz/Service/Initial/route_page.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
-import 'package:charoz/View/Function/my_function.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:charoz/View_Model/user_vm.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -250,7 +244,8 @@ class Register extends StatelessWidget {
 
   Future validateInformation(BuildContext context) async {
     bool status1 = allow;
-    bool? status2 = await UserCRUD().checkDuplicateEmail(emailController.text);
+    bool? status2 =
+        await UserCRUD().checkDuplicateEmail(email: emailController.text);
     if (!status1) {
       MyDialog(context)
           .singleDialog('กรุณายอมรับข้อกำหนด เมื่อทำการสมัครเป็นสมาชิก');

@@ -1,10 +1,8 @@
+import 'package:charoz/Model/Api/FireStore/shop_model.dart';
 import 'package:charoz/View/Modal/add_noti.dart';
 import 'package:charoz/View/Modal/edit_shop_admin.dart';
-import 'package:charoz/View/Modal/edit_shop_manager.dart';
-import 'package:charoz/Model/Data/shop_model.dart';
-import 'package:charoz/Model/Util/Constant/my_image.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Utility/Constant/my_image.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -82,7 +80,7 @@ class ScreenWidget {
           Container(
             decoration: BoxDecoration(
               color: Colors.grey,
-              borderRadius: MyStyle().borderRadius20(),
+              borderRadius: MyStyle().borderRadius(value: 20),
             ),
             width: 50,
             height: 5,
@@ -133,13 +131,7 @@ class ScreenWidget {
       top: 2.h,
       right: 3.w,
       child: IconButton(
-        onPressed: () {
-          if (VariableGeneral.role == "admin") {
-            EditShopAdmin().openModalEditShopAdmin(context, shop);
-          } else if (VariableGeneral.role == "manager") {
-            EditShopManager().openModalEditShopManager(context, shop);
-          }
-        },
+        onPressed: () => EditShopAdmin().openModalEditShopAdmin(context, shop),
         icon: Icon(
           Icons.edit_location_alt_rounded,
           color: Colors.white,

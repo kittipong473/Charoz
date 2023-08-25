@@ -1,10 +1,10 @@
 import 'package:charoz/Service/Firebase/noti_crud.dart';
-import 'package:charoz/Model/Util/Constant/my_image.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Utility/Constant/my_image.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Model/Util/Variable/var_data.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Utility/Variable/var_data.dart';
+import 'package:charoz/Utility/Variable/var_general.dart';
 import 'package:charoz/View_Model/noti_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -56,7 +56,7 @@ class NotiDelete {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green.shade100),
                   onPressed: () async {
-                    bool status = await NotiCRUD().deleteNoti(id);
+                    bool status = await NotiCRUD().deleteNoti(id: id);
                     if (status) {
                       notiVM.readNotiList();
                       MyFunction().toast('ลบรายการเรียบร้อยแล้ว');

@@ -1,6 +1,6 @@
+import 'package:charoz/Model/Api/FireStore/address_model.dart';
 import 'package:charoz/View/Modal/add_location.dart';
-import 'package:charoz/Model/Data/address_model.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:charoz/View/Function/my_function.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:charoz/View_Model/address_vm.dart';

@@ -1,10 +1,8 @@
 import 'package:charoz/View/Modal/edit_user.dart';
 import 'package:charoz/Service/Initial/route_page.dart';
-import 'package:charoz/Model/Util/Constant/my_image.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
+import 'package:charoz/Utility/Variable/var_general.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
-import 'package:charoz/View/Widget/show_image.dart';
 import 'package:charoz/View_Model/user_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -35,8 +33,6 @@ class UserProfile extends StatelessWidget {
                   child: Column(
                     children: [
                       SizedBox(height: 10.h),
-                      buildImage(),
-                      SizedBox(height: 3.h),
                       buildFirstName(),
                       SizedBox(height: 3.h),
                       buildLastName(),
@@ -48,7 +44,7 @@ class UserProfile extends StatelessWidget {
                       buildRole(),
                       SizedBox(height: 5.h),
                       buildButton(context),
-                      if (VariableGeneral.role == 'customer') ...[
+                      if (VariableGeneral.role == 1) ...[
                         SizedBox(height: 5.h),
                         buildUserLocation(context),
                       ],
@@ -64,18 +60,12 @@ class UserProfile extends StatelessWidget {
     );
   }
 
-  Widget buildImage() {
-    return userVM.user!.userImage == 'null'
-        ? Image.asset(MyImage.person, width: 30.w, height: 30.w)
-        : ShowImage().showImage(userVM.user!.userImage, BoxFit.cover);
-  }
-
   Widget buildFirstName() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text('ชื่อจริง : ', style: MyStyle().boldBlack18()),
-        Text(userVM.user!.userFirstName, style: MyStyle().normalPrimary18()),
+        Text(userVM.user!.firstname!, style: MyStyle().normalPrimary18()),
       ],
     );
   }
@@ -85,7 +75,7 @@ class UserProfile extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text('นามสกุล : ', style: MyStyle().boldBlack18()),
-        Text(userVM.user!.userLastName, style: MyStyle().normalPrimary18()),
+        Text(userVM.user!.lastname!, style: MyStyle().normalPrimary18()),
       ],
     );
   }
@@ -95,7 +85,7 @@ class UserProfile extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text('อีเมล : ', style: MyStyle().boldBlack18()),
-        Text(userVM.user!.userEmail, style: MyStyle().normalPrimary18()),
+        Text(userVM.user!.email!, style: MyStyle().normalPrimary18()),
       ],
     );
   }
@@ -105,7 +95,7 @@ class UserProfile extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text('เบอร์โทร : ', style: MyStyle().boldBlack18()),
-        Text(userVM.user!.userPhone, style: MyStyle().normalPrimary18()),
+        Text(userVM.user!.phone!, style: MyStyle().normalPrimary18()),
       ],
     );
   }
@@ -115,7 +105,7 @@ class UserProfile extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text('ตำแหน่ง : ', style: MyStyle().boldBlack18()),
-        Text(userVM.user!.userRole, style: MyStyle().normalPrimary18()),
+        Text(userVM.user!.role.toString(), style: MyStyle().normalPrimary18()),
       ],
     );
   }
@@ -129,7 +119,8 @@ class UserProfile extends StatelessWidget {
           height: 5.h,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-            onPressed: () => EditUser().openModalEditUser(context, userVM.user),
+            onPressed: () =>
+                EditUser().openModalEditUser(context, userVM.user!),
             child: Text('แก้ไขข้อมูล', style: MyStyle().normalWhite16()),
           ),
         ),

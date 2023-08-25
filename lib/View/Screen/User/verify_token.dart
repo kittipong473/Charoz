@@ -1,17 +1,14 @@
 import 'dart:developer';
 
 import 'package:charoz/Service/Restful/api_controller.dart';
-import 'package:charoz/Service/Firebase/user_crud.dart';
 import 'package:charoz/Service/Initial/route_page.dart';
-import 'package:charoz/Model/Util/Constant/my_image.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Utility/Constant/my_image.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Model/Util/Variable/var_general.dart';
 import 'package:charoz/View/Widget/screen_widget.dart';
 import 'package:charoz/View_Model/user_vm.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -106,7 +103,7 @@ class _VerifyTokenState extends State<VerifyToken> {
           ],
         ),
         SizedBox(height: 2.h),
-        Text('รหัสอ้างอิง : ${userVM.otpRefNo ?? 'xxx'}',
+        Text('รหัสอ้างอิง : ${userVM.otpRefNo}',
             style: MyStyle().normalGrey14()),
       ],
     );

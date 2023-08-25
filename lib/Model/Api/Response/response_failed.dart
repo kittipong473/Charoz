@@ -1,81 +1,50 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
-
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 class ResponseFailed {
-  final List<ErrorsModel> errors;
-  final int code;
+  List<ErrorsModel>? errors;
+  int? code;
   ResponseFailed({
-    required this.errors,
-    required this.code,
+    this.errors,
+    this.code,
   });
 
-  ResponseFailed copyWith({
-    List<ErrorsModel>? errors,
-    int? code,
-  }) {
-    return ResponseFailed(
-      errors: errors ?? this.errors,
-      code: code ?? this.code,
-    );
-  }
-
   Map<String, dynamic> toMap() {
-    return {
-      'errors': errors.map((x) => x.toMap()).toList(),
+    return <String, dynamic>{
+      'errors': errors!.map((x) => x.toMap()).toList(),
       'code': code,
     };
   }
 
   factory ResponseFailed.fromMap(Map<String, dynamic> map) {
     return ResponseFailed(
-      errors: List<ErrorsModel>.from(map['errors']?.map<ErrorsModel>(
-          (x) => ErrorsModel.fromMap(x as Map<String, dynamic>))),
-      code: map['code'] ?? 0,
+      errors: map['errors'] != null
+          ? List<ErrorsModel>.from(
+              (map['errors'] as List<int>).map<ErrorsModel?>(
+                (x) => ErrorsModel.fromMap(x as Map<String, dynamic>),
+              ),
+            )
+          : null,
+      code: map['code'] != null ? map['code'] as int : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
   factory ResponseFailed.fromJson(String source) =>
-      ResponseFailed.fromMap(json.decode(source));
-
-  @override
-  String toString() => 'ResponseFailed(errors: $errors, code: $code)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is ResponseFailed &&
-        listEquals(other.errors, errors) &&
-        other.code == code;
-  }
-
-  @override
-  int get hashCode => errors.hashCode ^ code.hashCode;
+      ResponseFailed.fromMap(json.decode(source) as Map<String, dynamic>);
 }
 
 class ErrorsModel {
-  final List<dynamic> detail;
-  final String message;
+  List<dynamic>? detail;
+  String? message;
   ErrorsModel({
-    required this.detail,
-    required this.message,
+    this.detail,
+    this.message,
   });
 
-  ErrorsModel copyWith({
-    List<dynamic>? detail,
-    String? message,
-  }) {
-    return ErrorsModel(
-      detail: detail ?? this.detail,
-      message: message ?? this.message,
-    );
-  }
-
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'detail': detail,
       'message': message,
     };
@@ -83,27 +52,15 @@ class ErrorsModel {
 
   factory ErrorsModel.fromMap(Map<String, dynamic> map) {
     return ErrorsModel(
-      detail: map['detail'] ?? [],
-      message: map['message'] ?? '',
+      detail: map['detail'] != null
+          ? List<dynamic>.from((map['detail'] as List<dynamic>))
+          : null,
+      message: map['message'] != null ? map['message'] as String : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory ErrorsModel.fromJson(String source) => ErrorsModel.fromMap(json.decode(source));
-
-  @override
-  String toString() => 'ErrorsModel(detail: $detail, message: $message)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-  
-    return other is ErrorsModel &&
-      listEquals(other.detail, detail) &&
-      other.message == message;
-  }
-
-  @override
-  int get hashCode => detail.hashCode ^ message.hashCode;
+  factory ErrorsModel.fromJson(String source) =>
+      ErrorsModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }

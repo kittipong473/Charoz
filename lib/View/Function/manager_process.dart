@@ -1,5 +1,5 @@
 import 'package:charoz/Service/Firebase/order_crud.dart';
-import 'package:charoz/Model/Util/Constant/my_style.dart';
+import 'package:charoz/Utility/Constant/my_style.dart';
 import 'package:charoz/View/Function/dialog_alert.dart';
 import 'package:charoz/View/Function/my_function.dart';
 import 'package:flutter/material.dart';
@@ -104,7 +104,8 @@ class ManagerProcess {
   }
 
   Future processAcceptOrder(int status, int track) async {
-    bool api = await OrderCRUD().updateOrderStatus(id, status, track);
+    bool api = await OrderCRUD()
+        .updateOrderStatus(id: id, status: status, track: track);
     if (api) {
       EasyLoading.dismiss();
       Navigator.pop(context);
@@ -122,7 +123,7 @@ class ManagerProcess {
   }
 
   Future processFinishOrder() async {
-    bool api = await OrderCRUD().updateOrderStatus(id, 3, 1);
+    bool api = await OrderCRUD().updateOrderStatus(id: id, status: 3, track: 1);
     if (api) {
       EasyLoading.dismiss();
       Navigator.pop(context);
@@ -135,7 +136,7 @@ class ManagerProcess {
   }
 
   Future processCompleteOrder() async {
-    bool api = await OrderCRUD().updateOrderStatus(id, 5, 3);
+    bool api = await OrderCRUD().updateOrderStatus(id: id, status: 5, track: 3);
     if (api) {
       EasyLoading.dismiss();
       Navigator.pop(context);
