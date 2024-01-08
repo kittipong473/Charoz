@@ -1,15 +1,13 @@
 import 'dart:io';
 
 import 'package:charoz/Model/Api/Modify/product_modify.dart';
+import 'package:charoz/Model/Utility/my_image.dart';
+import 'package:charoz/Model/Utility/my_style.dart';
 import 'package:charoz/Service/Firebase/product_crud.dart';
-import 'package:charoz/Utility/Constant/my_image.dart';
-import 'package:charoz/Utility/Constant/my_style.dart';
+import 'package:charoz/Service/Library/console_log.dart';
+import 'package:charoz/View/Dialog/dialog_alert.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Utility/Variable/var_data.dart';
-import 'package:charoz/Utility/Variable/var_general.dart';
-import 'package:charoz/View/Function/dialog_alert.dart';
-import 'package:charoz/View/Widget/dropdown_menu.dart';
-import 'package:charoz/View/Widget/screen_widget.dart';
+import 'package:charoz/View/Widget/my_widget.dart';
 import 'package:charoz/View_Model/product_vm.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -75,7 +73,7 @@ class AddProduct {
                   ),
                 ),
               ),
-              ScreenWidget().buildModalHeader('เพิ่มรายการอาหาร'),
+              MyWidget().buildModalHeader(title: 'เพิ่มรายการอาหาร'),
             ],
           ),
         ),
@@ -87,7 +85,8 @@ class AddProduct {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('ประเภท : ', style: MyStyle().normalBlack16()),
+        Text('ประเภท : ',
+            style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary)),
         Container(
           width: 40.w,
           padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -101,9 +100,7 @@ class AddProduct {
                 color: MyStyle.orangeDark),
             isExpanded: true,
             value: chooseType,
-            items: VariableData.datatypeProduct
-                .map(DropDownMenu().dropdownItem)
-                .toList(),
+            items: prodVM.datatypeProduct.map(MyWidget().dropdownItem).toList(),
             onChanged: (value) => setState(() => chooseType = value as String),
           ),
         ),
@@ -116,7 +113,7 @@ class AddProduct {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       width: 80.w,
       child: TextFormField(
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         controller: nameController,
         validator: (value) {
           if (value!.isEmpty) {
@@ -126,7 +123,7 @@ class AddProduct {
           }
         },
         decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'ชื่ออาหาร :',
           prefixIcon: const Icon(
             Icons.description_rounded,
@@ -150,7 +147,7 @@ class AddProduct {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       width: 80.w,
       child: TextFormField(
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         keyboardType: TextInputType.number,
         controller: priceController,
         validator: (value) {
@@ -161,7 +158,7 @@ class AddProduct {
           }
         },
         decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'ราคา :',
           prefixIcon: const Icon(
             Icons.attach_money_rounded,
@@ -185,11 +182,11 @@ class AddProduct {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       width: 80.w,
       child: TextFormField(
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         maxLines: 3,
         controller: detailController,
         decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'รายละเอียด : ',
           prefixIcon: const Icon(
             Icons.details_rounded,
@@ -215,7 +212,7 @@ class AddProduct {
       children: [
         IconButton(
           onPressed: () async {
-            file = await MyFunction().chooseImage(ImageSource.camera);
+            file = await MyFunction().chooseImage(source: ImageSource.camera);
             setState(() {});
           },
           icon: Icon(Icons.add_a_photo, size: 24.sp, color: MyStyle.orangeDark),
@@ -229,7 +226,7 @@ class AddProduct {
         ),
         IconButton(
           onPressed: () async {
-            file = await MyFunction().chooseImage(ImageSource.gallery);
+            file = await MyFunction().chooseImage(source: ImageSource.gallery);
             setState(() {});
           },
           icon: Icon(Icons.add_photo_alternate,
@@ -248,7 +245,8 @@ class AddProduct {
           activeColor: MyStyle.orangePrimary,
           onChanged: (check) => setState(() => suggest = check!),
         ),
-        Text('แนะนำรายการอาหารที่หน้าหลัก', style: MyStyle().normalBlack16())
+        Text('แนะนำรายการอาหารที่หน้าหลัก',
+            style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary))
       ],
     );
   }
@@ -264,10 +262,12 @@ class AddProduct {
             EasyLoading.show(status: 'loading...');
             processInsert(context);
           } else if (chooseType == null) {
-            MyDialog(context).singleDialog('กรุณาเลือก ประเภท');
+            DialogAlert(context)
+                .dialogStatus(type: 1, title: 'กรุณาเลือก ประเภท');
           }
         },
-        child: Text('เพิ่มรายการอาหาร', style: MyStyle().normalWhite16()),
+        child: Text('เพิ่มรายการอาหาร',
+            style: MyStyle.textStyle(size: 16, color: MyStyle.whitePrimary)),
       ),
     );
   }
@@ -292,11 +292,11 @@ class AddProduct {
     if (status) {
       prodVM.readProductAllList();
       EasyLoading.dismiss();
-      MyFunction().toast('เพิ่มรายการอาหารเรียบร้อยแล้ว');
-      Navigator.pop(context);
+      ConsoleLog.toast(text: 'เพิ่มรายการอาหารเรียบร้อยแล้ว');
+      Get.back();
     } else {
       EasyLoading.dismiss();
-      MyDialog(context).addFailedDialog();
+      DialogAlert(context).dialogApi();
     }
   }
 }

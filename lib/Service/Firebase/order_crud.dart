@@ -1,19 +1,17 @@
 import 'package:charoz/Model/Api/FireStore/order_model.dart';
 import 'package:charoz/Model/Api/Modify/order_modify.dart';
-import 'package:charoz/Utility/Variable/var_general.dart';
-import 'package:charoz/Service/Restful/api_controller.dart';
+import 'package:charoz/Model/Utility/my_variable.dart';
+import 'package:charoz/Service/Restful/api_crud.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get/get.dart';
 
 class OrderCRUD {
-  final ApiController capi = Get.find<ApiController>();
   final orderlist = FirebaseFirestore.instance.collection('orderlist');
 
   Stream<List<OrderModel>> readOrderCustomerListByProcess() {
     try {
       final reference = orderlist
           .where('track', isLessThanOrEqualTo: 1)
-          .where('customerid', isEqualTo: VariableGeneral.userTokenId)
+          .where('customerid', isEqualTo: MyVariable.userTokenID)
           .snapshots();
       return reference.map((snapshot) => snapshot.docs
           .map((doc) => OrderModel().convert(item: doc.data(), id: doc.id))
@@ -56,7 +54,7 @@ class OrderCRUD {
     try {
       final reference = orderlist
           .where('track', isEqualTo: 1)
-          .where('riderid', isEqualTo: VariableGeneral.userTokenId)
+          .where('riderid', isEqualTo: MyVariable.userTokenID)
           .snapshots();
       return reference.map((snapshot) => snapshot.docs
           .map((doc) => OrderModel().convert(item: doc.data(), id: doc.id))
@@ -69,18 +67,18 @@ class OrderCRUD {
   Future<List<OrderModel>> readOrderCustomerListByFinish() async {
     List<OrderModel> result = [];
     try {
-      capi.loadingPage(true);
+      ApiCRUD.loadingPage(true);
       final snapshot = await orderlist
           .where('track', isGreaterThanOrEqualTo: 2)
-          .where('customerid', isEqualTo: VariableGeneral.userTokenId)
+          .where('customerid', isEqualTo: MyVariable.userTokenID)
           .get();
       for (var item in snapshot.docs) {
         result.add(OrderModel().convert(item: item));
       }
-      capi.loadingPage(false);
+      ApiCRUD.loadingPage(false);
       return result;
     } catch (e) {
-      capi.loadingPage(false);
+      ApiCRUD.loadingPage(false);
       return [];
     }
   }
@@ -88,7 +86,7 @@ class OrderCRUD {
   Future<List<OrderModel>> readOrderManagerListByFinish() async {
     List<OrderModel> result = [];
     try {
-      capi.loadingPage(true);
+      ApiCRUD.loadingPage(true);
       final snapshot = await orderlist
           .where('track', isGreaterThanOrEqualTo: 2)
           .where('shopid', isEqualTo: 'EbeQ5r39Cy6460XEWlYf')
@@ -96,10 +94,10 @@ class OrderCRUD {
       for (var item in snapshot.docs) {
         result.add(OrderModel().convert(item: item));
       }
-      capi.loadingPage(false);
+      ApiCRUD.loadingPage(false);
       return result;
     } catch (e) {
-      capi.loadingPage(false);
+      ApiCRUD.loadingPage(false);
       return [];
     }
   }
@@ -107,18 +105,18 @@ class OrderCRUD {
   Future<List<OrderModel>> readOrderRiderListByFinish() async {
     List<OrderModel> result = [];
     try {
-      capi.loadingPage(true);
+      ApiCRUD.loadingPage(true);
       final snapshot = await orderlist
           .where('track', isGreaterThanOrEqualTo: 2)
-          .where('riderid', isEqualTo: VariableGeneral.userTokenId)
+          .where('riderid', isEqualTo: MyVariable.userTokenID)
           .get();
       for (var item in snapshot.docs) {
         result.add(OrderModel().convert(item: item));
       }
-      capi.loadingPage(false);
+      ApiCRUD.loadingPage(false);
       return result;
     } catch (e) {
-      capi.loadingPage(false);
+      ApiCRUD.loadingPage(false);
       return [];
     }
   }
@@ -126,45 +124,45 @@ class OrderCRUD {
   Future<List<OrderModel>> readOrderAdminListByFinish() async {
     List<OrderModel> result = [];
     try {
-      capi.loadingPage(true);
+      ApiCRUD.loadingPage(true);
       final snapshot =
           await orderlist.where('track', isGreaterThanOrEqualTo: 2).get();
       for (var item in snapshot.docs) {
         result.add(OrderModel().convert(item: item));
       }
-      capi.loadingPage(false);
+      ApiCRUD.loadingPage(false);
       return result;
     } catch (e) {
-      capi.loadingPage(false);
+      ApiCRUD.loadingPage(false);
       return [];
     }
   }
 
   Future<bool?> checkRiderIdById({required String id}) async {
     try {
-      capi.loadingPage(true);
+      ApiCRUD.loadingPage(true);
       final snapshot = await orderlist.doc(id).get();
       if (snapshot.exists && snapshot.data()!['riderid'] == "") {
-        capi.loadingPage(false);
+        ApiCRUD.loadingPage(false);
         return true;
       } else {
-        capi.loadingPage(false);
+        ApiCRUD.loadingPage(false);
         return false;
       }
     } catch (e) {
-      capi.loadingPage(false);
+      ApiCRUD.loadingPage(false);
       return null;
     }
   }
 
   Future<bool> createOrder({required OrderModify model}) async {
     try {
-      capi.loadingPage(true);
+      ApiCRUD.loadingPage(true);
       await orderlist.doc().set(model.toMap());
-      capi.loadingPage(false);
+      ApiCRUD.loadingPage(false);
       return true;
     } catch (e) {
-      capi.loadingPage(false);
+      ApiCRUD.loadingPage(false);
       return false;
     }
   }
@@ -172,24 +170,24 @@ class OrderCRUD {
   Future<bool> updateOrderStatus(
       {required String id, required int status, required int track}) async {
     try {
-      capi.loadingPage(true);
+      ApiCRUD.loadingPage(true);
       await orderlist.doc(id).update({'status': status, 'track': track});
-      capi.loadingPage(false);
+      ApiCRUD.loadingPage(false);
       return true;
     } catch (e) {
-      capi.loadingPage(false);
+      ApiCRUD.loadingPage(false);
       return false;
     }
   }
 
   Future<bool> updateOrderRiderId({required String id}) async {
     try {
-      capi.loadingPage(true);
-      await orderlist.doc(id).update({'riderid': VariableGeneral.userTokenId});
-      capi.loadingPage(false);
+      ApiCRUD.loadingPage(true);
+      await orderlist.doc(id).update({'riderid': MyVariable.userTokenID});
+      ApiCRUD.loadingPage(false);
       return true;
     } catch (e) {
-      capi.loadingPage(false);
+      ApiCRUD.loadingPage(false);
       return false;
     }
   }

@@ -1,7 +1,6 @@
-import 'package:charoz/Utility/Constant/my_image.dart';
-import 'package:charoz/Utility/Constant/my_style.dart';
-import 'package:charoz/View/Widget/screen_widget.dart';
-import 'package:charoz/View/Widget/show_progress.dart';
+import 'package:charoz/Model/Utility/my_image.dart';
+import 'package:charoz/Model/Utility/my_style.dart';
+import 'package:charoz/View/Widget/my_widget.dart';
 import 'package:charoz/View_Model/noti_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,23 +17,30 @@ class ModalNoti {
         height: 85.h,
         child: GetBuilder<NotiViewModel>(
           builder: (vm) => vm.noti == null
-              ? const ShowProgress()
+              ? MyWidget().showProgress()
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ScreenWidget().buildModalHeader('รายละเอียดอาหาร'),
-                    Text(vm.noti!.name ?? '', style: MyStyle().boldPrimary18()),
+                    MyWidget().buildModalHeader(title: 'รายละเอียดอาหาร'),
+                    Text(
+                      vm.noti!.name ?? '',
+                      style: MyStyle.textStyle(
+                          size: 18, color: MyStyle.orangePrimary),
+                    ),
                     SizedBox(height: 3.h),
                     SizedBox(
                       width: 50.w,
                       height: 50.w,
-                      child: Image.asset(MyImage.welcome),
+                      child: MyWidget().showImage(path: MyImage.imgWelcome),
                     ),
                     SizedBox(height: 3.h),
                     SizedBox(
                       width: 60.w,
-                      child: Text(vm.noti!.detail ?? '',
-                          style: MyStyle().normalBlack16()),
+                      child: Text(
+                        vm.noti!.detail ?? '',
+                        style: MyStyle.textStyle(
+                            size: 16, color: MyStyle.blackPrimary),
+                      ),
                     ),
                     SizedBox(height: 3.h),
                     // Text(

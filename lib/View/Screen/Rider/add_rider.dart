@@ -1,6 +1,6 @@
-import 'package:charoz/Utility/Constant/my_image.dart';
-import 'package:charoz/Utility/Constant/my_style.dart';
-import 'package:charoz/View/Widget/screen_widget.dart';
+import 'package:charoz/Model/Utility/my_image.dart';
+import 'package:charoz/Model/Utility/my_style.dart';
+import 'package:charoz/View/Widget/my_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -22,7 +22,7 @@ class AddRider extends StatelessWidget {
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.backgroundColor,
-        appBar: ScreenWidget().appBarTheme('เพิ่มผู้ใช้งาน คนขับ'),
+        appBar: MyWidget().appBarTheme(title: 'เพิ่มผู้ใช้งาน คนขับ'),
         body: GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
           behavior: HitTestBehavior.opaque,
@@ -60,7 +60,8 @@ class AddRider extends StatelessWidget {
     );
   }
 
-  Widget buildImage() => Image.asset(MyImage.logo3, width: 40.w, height: 40.w);
+  Widget buildImage() =>
+      Image.asset(MyImage.imgLogo3, width: 40.w, height: 40.w);
 
   Widget buildPhone() {
     return Container(
@@ -68,7 +69,7 @@ class AddRider extends StatelessWidget {
       width: 80.w,
       child: TextFormField(
         inputFormatters: [phoneFormat],
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         keyboardType: TextInputType.phone,
         controller: phoneController,
         validator: (value) {
@@ -81,9 +82,9 @@ class AddRider extends StatelessWidget {
           }
         },
         decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'เบอร์โทรศัพท์ :',
-          errorStyle: MyStyle().normalRed14(),
+          errorStyle: MyStyle.textStyle(size: 14, color: MyStyle.redPrimary),
           prefixIcon:
               const Icon(Icons.phone_rounded, color: MyStyle.orangeDark),
           enabledBorder: OutlineInputBorder(
@@ -104,7 +105,7 @@ class AddRider extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 3.w),
       width: 80.w,
       child: TextFormField(
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         controller: firstnameController,
         validator: (value) {
           if (value!.isEmpty) {
@@ -114,9 +115,9 @@ class AddRider extends StatelessWidget {
           }
         },
         decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'ชื่อจริง :',
-          errorStyle: MyStyle().normalRed14(),
+          errorStyle: MyStyle.textStyle(size: 14, color: MyStyle.redPrimary),
           prefixIcon:
               const Icon(Icons.description_rounded, color: MyStyle.orangeDark),
           enabledBorder: OutlineInputBorder(
@@ -137,7 +138,7 @@ class AddRider extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 3.w),
       width: 80.w,
       child: TextFormField(
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         controller: lastnameController,
         validator: (value) {
           if (value!.isEmpty) {
@@ -147,9 +148,9 @@ class AddRider extends StatelessWidget {
           }
         },
         decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'นามสกุล :',
-          errorStyle: MyStyle().normalRed14(),
+          errorStyle: MyStyle.textStyle(size: 16, color: MyStyle.redPrimary),
           prefixIcon:
               const Icon(Icons.description_rounded, color: MyStyle.orangeDark),
           enabledBorder: OutlineInputBorder(
@@ -177,7 +178,10 @@ class AddRider extends StatelessWidget {
             // processInsert(context);
           }
         },
-        child: Text('สร้างบัญชีสำหรับคนขับ', style: MyStyle().normalWhite16()),
+        child: Text(
+          'สร้างบัญชีสำหรับคนขับ',
+          style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
+        ),
       ),
     );
   }

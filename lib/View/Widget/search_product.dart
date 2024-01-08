@@ -1,7 +1,7 @@
 import 'package:charoz/Model/Api/FireStore/product_model.dart';
+import 'package:charoz/Model/Utility/my_style.dart';
 import 'package:charoz/View/Modal/modal_product.dart';
-import 'package:charoz/Utility/Constant/my_style.dart';
-import 'package:charoz/View/Widget/show_image.dart';
+import 'package:charoz/View/Widget/my_widget.dart';
 import 'package:charoz/View_Model/product_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -33,7 +33,7 @@ class SearchProduct extends SearchDelegate {
   @override
   Widget buildSuggestions(BuildContext context) {
     List<ProductModel> suggestions = prodVM.productList.where((item) {
-      final name = item.name.toLowerCase();
+      final name = item.name!.toLowerCase();
       final input = query.toLowerCase();
       return name.contains(input) ? true : false;
     }).toList();
@@ -43,7 +43,7 @@ class SearchProduct extends SearchDelegate {
           SizedBox(height: 2.h),
           Text(
             'รายการทั้งหมด : ${suggestions.length} menu',
-            style: MyStyle().normalGrey16(),
+            style: MyStyle.textStyle(size: 16, color: MyStyle.greyPrimary),
           ),
           SizedBox(
             width: 100.w,
@@ -68,12 +68,20 @@ class SearchProduct extends SearchDelegate {
         leading: SizedBox(
           width: 15.w,
           height: 15.w,
-          child: ShowImage().showImage(product.image, BoxFit.cover),
+          child: MyWidget().showImage(path: product.image!),
         ),
-        title: Text(product.name ?? '', style: MyStyle().normalPrimary16()),
-        subtitle: Text('${product.price} ฿', style: MyStyle().normalBlue16()),
-        trailing: Text(product.status! ? 'ขาย' : 'หมด',
-            style: MyStyle().normalGreen14()),
+        title: Text(
+          product.name ?? '',
+          style: MyStyle.textStyle(size: 16, color: MyStyle.orangePrimary),
+        ),
+        subtitle: Text(
+          '${product.price} ฿',
+          style: MyStyle.textStyle(size: 16, color: MyStyle.bluePrimary),
+        ),
+        trailing: Text(
+          product.status! ? 'ขาย' : 'หมด',
+          style: MyStyle.textStyle(size: 14, color: MyStyle.greenPrimary),
+        ),
         onTap: () {
           query = '';
           Get.back();

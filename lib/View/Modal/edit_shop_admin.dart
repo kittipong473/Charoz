@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:charoz/Model/Api/FireStore/shop_model.dart';
 import 'package:charoz/Model/Api/Modify/shop_modify.dart';
+import 'package:charoz/Model/Utility/my_style.dart';
 import 'package:charoz/Service/Firebase/shop_crud.dart';
-import 'package:charoz/Utility/Constant/my_style.dart';
+import 'package:charoz/Service/Library/console_log.dart';
+import 'package:charoz/View/Dialog/dialog_alert.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/View/Function/dialog_alert.dart';
-import 'package:charoz/View/Widget/screen_widget.dart';
-import 'package:charoz/View/Widget/show_image.dart';
+import 'package:charoz/View/Widget/my_widget.dart';
 import 'package:charoz/View_Model/shop_vm.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -102,8 +102,7 @@ class EditShopAdmin {
                   ),
                 ),
               ),
-              ScreenWidget().buildModalHeader('แก้ไขข้อมูลร้านค้า'),
-              ScreenWidget().backPage(context),
+              MyWidget().buildModalHeader(title: 'แก้ไขข้อมูลร้านค้า'),
             ],
           ),
         ),
@@ -116,7 +115,7 @@ class EditShopAdmin {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       width: 80.w,
       child: TextFormField(
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         controller: nameController,
         validator: (value) {
           if (value!.isEmpty) {
@@ -126,7 +125,7 @@ class EditShopAdmin {
           }
         },
         decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'ชื่อร้านค้า :',
           prefixIcon: const Icon(
             Icons.table_restaurant_rounded,
@@ -151,7 +150,7 @@ class EditShopAdmin {
       width: 80.w,
       child: TextFormField(
         keyboardType: TextInputType.phone,
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         controller: phoneController,
         validator: (value) {
           if (value!.isEmpty) {
@@ -161,7 +160,7 @@ class EditShopAdmin {
           }
         },
         decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'เบอร์โทรร้าน :',
           prefixIcon:
               const Icon(Icons.phone_rounded, color: MyStyle.orangeDark),
@@ -184,7 +183,7 @@ class EditShopAdmin {
       width: 80.w,
       child: TextFormField(
         maxLines: 5,
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         controller: announceController,
         validator: (value) {
           if (value!.isEmpty) {
@@ -194,7 +193,7 @@ class EditShopAdmin {
           }
         },
         decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'ประกาศร้านค้า :',
           prefixIcon: const Icon(
             Icons.campaign_rounded,
@@ -219,7 +218,7 @@ class EditShopAdmin {
       width: 80.w,
       child: TextFormField(
         maxLines: 5,
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         controller: detailController,
         validator: (value) {
           if (value!.isEmpty) {
@@ -229,7 +228,7 @@ class EditShopAdmin {
           }
         },
         decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'รายละเอียดร้านค้า :',
           prefixIcon: const Icon(
             Icons.description_rounded,
@@ -254,7 +253,7 @@ class EditShopAdmin {
       width: 80.w,
       child: TextFormField(
         maxLines: 3,
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         controller: addressController,
         validator: (value) {
           if (value!.isEmpty) {
@@ -264,7 +263,7 @@ class EditShopAdmin {
           }
         },
         decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'ที่อยู่ร้านค้า :',
           prefixIcon: const Icon(
             Icons.location_city_rounded,
@@ -290,7 +289,7 @@ class EditShopAdmin {
       child: TextFormField(
         keyboardType: TextInputType.number,
         inputFormatters: [latFormat],
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         controller: latController,
         validator: (value) {
           if (value!.isEmpty) {
@@ -300,7 +299,7 @@ class EditShopAdmin {
           }
         },
         decoration: InputDecoration(
-          labelStyle: MyStyle().boldBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'ละติจูด :',
           prefixIcon: const Icon(
             Icons.location_searching_rounded,
@@ -326,7 +325,7 @@ class EditShopAdmin {
       child: TextFormField(
         keyboardType: TextInputType.number,
         inputFormatters: [lngFormat],
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         controller: lngController,
         validator: (value) {
           if (value!.isEmpty) {
@@ -336,7 +335,7 @@ class EditShopAdmin {
           }
         },
         decoration: InputDecoration(
-          labelStyle: MyStyle().boldBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'ลองติจูด :',
           prefixIcon: const Icon(
             Icons.location_searching_rounded,
@@ -443,7 +442,7 @@ class EditShopAdmin {
       width: 60.w,
       child: TextFormField(
         keyboardType: TextInputType.number,
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         controller: freightController,
         validator: (value) {
           if (value!.isEmpty) {
@@ -453,7 +452,7 @@ class EditShopAdmin {
           }
         },
         decoration: InputDecoration(
-          labelStyle: MyStyle().boldBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'ค่าส่งอาหาร(บาท) :',
           prefixIcon: const Icon(Icons.delivery_dining_rounded,
               color: MyStyle.orangeDark),
@@ -477,7 +476,7 @@ class EditShopAdmin {
       children: [
         IconButton(
           onPressed: () async {
-            file = await MyFunction().chooseImage(ImageSource.camera);
+            file = await MyFunction().chooseImage(source: ImageSource.camera);
             setState(() {});
           },
           icon: const Icon(Icons.add_a_photo,
@@ -487,12 +486,12 @@ class EditShopAdmin {
           width: 50.w,
           height: 50.w,
           child: file == null
-              ? ShowImage().showImage(image!, BoxFit.cover)
+              ? MyWidget().showImage(path: image!, fit: BoxFit.cover)
               : Image.file(file!),
         ),
         IconButton(
           onPressed: () async {
-            file = await MyFunction().chooseImage(ImageSource.gallery);
+            file = await MyFunction().chooseImage(source: ImageSource.gallery);
             setState(() {});
           },
           icon: const Icon(Icons.add_photo_alternate,
@@ -523,9 +522,12 @@ class EditShopAdmin {
           onPressed: () {
             final ans = DateFormat('HH:mm:ss').format(time);
             controller.text = ans;
-            Navigator.pop(context);
+            Get.back();
           },
-          child: Text('ยืนยัน', style: MyStyle().normalPrimary16()),
+          child: Text(
+            'ยืนยัน',
+            style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
+          ),
         ),
       ),
     );
@@ -543,7 +545,10 @@ class EditShopAdmin {
             processUpdate(context, shopid);
           }
         },
-        child: Text('แก้ไขข้อมูลร้านค้า', style: MyStyle().normalWhite16()),
+        child: Text(
+          'แก้ไขข้อมูลร้านค้า',
+          style: MyStyle.textStyle(size: 16, color: MyStyle.whitePrimary),
+        ),
       ),
     );
   }
@@ -567,11 +572,11 @@ class EditShopAdmin {
     if (status) {
       shopVM.readShopModel();
       EasyLoading.dismiss();
-      MyFunction().toast('แก้ไขร้านค้าเรียบร้อยแล้ว');
-      Navigator.pop(context);
+      ConsoleLog.toast(text: 'แก้ไขร้านค้าเรียบร้อยแล้ว');
+      Get.back();
     } else {
       EasyLoading.dismiss();
-      MyDialog(context).editFailedDialog();
+      DialogAlert(context).dialogApi();
     }
   }
 }

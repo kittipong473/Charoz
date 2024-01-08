@@ -1,9 +1,11 @@
 import 'package:charoz/Model/Api/FireStore/banner_model.dart';
+import 'package:charoz/Model/Utility/my_image.dart';
 import 'package:charoz/Service/Firebase/banner_crud.dart';
-import 'package:charoz/Utility/Constant/my_image.dart';
 import 'package:get/get.dart';
 
 class BannerViewModel extends GetxController {
+  List<String> datatypeBanner = ['profile', 'carousel', 'icon', 'video'];
+
   BannerModel? _shopProfile;
   final RxList<BannerModel> _bannerList = <BannerModel>[].obs;
   final RxList<String> _shopImageList = <String>[].obs;
@@ -14,9 +16,9 @@ class BannerViewModel extends GetxController {
 
   void initCarouselList() {
     _shopImageList.value = [
-      MyImage.showshop2,
-      MyImage.showshop3,
-      MyImage.showshop4
+      MyImage.imgShop2,
+      MyImage.imgShop3,
+      MyImage.imgShop4
     ];
   }
 

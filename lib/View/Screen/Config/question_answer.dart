@@ -1,6 +1,5 @@
-import 'package:charoz/Utility/Constant/my_style.dart';
-import 'package:charoz/View/Widget/screen_widget.dart';
-import 'package:charoz/View/Widget/show_progress.dart';
+import 'package:charoz/Model/Utility/my_style.dart';
+import 'package:charoz/View/Widget/my_widget.dart';
 import 'package:charoz/View_Model/user_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -34,42 +33,39 @@ class _QuestionAnswerState extends State<QuestionAnswer> {
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.backgroundColor,
-        appBar: ScreenWidget().appBarTheme('คำถามเกี่ยวกับแอพพลิเคชั่น'),
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.all(5.w),
-                  child: GetBuilder<UserViewModel>(
-                    builder: (vm) => vm.questionList.isEmpty
-                        ? const ShowProgress()
-                        : Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              for (var item in vm.questionList) ...[
-                                buildName(item.number!, item.name!),
-                                SizedBox(height: 2.h),
-                                buildDetail(item.detail!),
-                                SizedBox(height: 2.h),
-                              ],
-                            ],
+        appBar: MyWidget().appBarTheme(title: 'คำถามเกี่ยวกับแอพพลิเคชั่น'),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(5.w),
+            child: GetBuilder<UserViewModel>(
+              builder: (vm) => vm.questionList.isEmpty
+                  ? MyWidget().showProgress()
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (var item in vm.questionList) ...[
+                          SizedBox(height: 2.h),
+                          Text(
+                            '${item.number}. ${item.name}',
+                            style: MyStyle.textStyle(
+                                size: 18,
+                                color: MyStyle.orangePrimary,
+                                bold: true),
                           ),
-                  ),
-                ),
-              ),
+                          SizedBox(height: 1.h),
+                          Text(
+                            item.detail ?? '-',
+                            style: MyStyle.textStyle(
+                                size: 16, color: MyStyle.blackPrimary),
+                          ),
+                          SizedBox(height: 2.h),
+                        ],
+                      ],
+                    ),
             ),
-          ],
+          ),
         ),
       ),
     );
-  }
-
-  Text buildName(int id, String name) {
-    return Text('$id. $name', style: MyStyle().boldPrimary18());
-  }
-
-  Text buildDetail(String detail) {
-    return Text(detail, style: MyStyle().normalBlack16());
   }
 }

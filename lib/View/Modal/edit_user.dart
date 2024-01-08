@@ -1,10 +1,9 @@
 import 'dart:io';
 
 import 'package:charoz/Model/Api/FireStore/user_model.dart';
-import 'package:charoz/Utility/Constant/my_image.dart';
-import 'package:charoz/Utility/Constant/my_style.dart';
-import 'package:charoz/Utility/Variable/var_general.dart';
-import 'package:charoz/View/Widget/screen_widget.dart';
+import 'package:charoz/Model/Utility/my_image.dart';
+import 'package:charoz/Model/Utility/my_style.dart';
+import 'package:charoz/View/Widget/my_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -41,9 +40,7 @@ class EditUser {
               Positioned.fill(
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: VariableGeneral.largeDevice
-                        ? EdgeInsets.symmetric(horizontal: 10.w)
-                        : EdgeInsets.symmetric(horizontal: 5.w),
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
                     child: Form(
                       key: formKey,
                       child: Column(
@@ -64,8 +61,7 @@ class EditUser {
                   ),
                 ),
               ),
-              ScreenWidget().buildModalHeader('แก้ไขข้อมูลผู้ใช้งาน'),
-              ScreenWidget().backPage(context),
+              MyWidget().buildModalHeader(title: 'แก้ไขข้อมูลผู้ใช้งาน'),
             ],
           ),
         ),
@@ -77,7 +73,7 @@ class EditUser {
     return SizedBox(
       width: 30.w,
       height: 30.w,
-      child: Image.asset(MyImage.person),
+      child: Image.asset(MyImage.imgPerson),
     );
     // return Row(
     //   crossAxisAlignment: CrossAxisAlignment.center,
@@ -116,7 +112,7 @@ class EditUser {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       width: 80.w,
       child: TextFormField(
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         controller: firstnameController,
         validator: (value) {
           if (value!.isEmpty) {
@@ -126,7 +122,7 @@ class EditUser {
           }
         },
         decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'ชื่อ :',
           prefixIcon: const Icon(
             Icons.description_rounded,
@@ -150,7 +146,7 @@ class EditUser {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       width: 80.w,
       child: TextFormField(
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         controller: lastnameController,
         validator: (value) {
           if (value!.isEmpty) {
@@ -160,7 +156,7 @@ class EditUser {
           }
         },
         decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'นามสกุล :',
           prefixIcon: const Icon(
             Icons.description_rounded,
@@ -194,7 +190,10 @@ class EditUser {
                 processUpdate(context, id);
               }
             },
-            child: Text('แก้ไขข้อมูล', style: MyStyle().normalWhite16()),
+            child: Text(
+              'แก้ไขข้อมูล',
+              style: MyStyle.textStyle(size: 16, color: MyStyle.whitePrimary),
+            ),
           ),
         ),
       ],

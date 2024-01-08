@@ -1,9 +1,7 @@
-import 'package:charoz/Utility/Constant/my_image.dart';
-import 'package:charoz/Utility/Constant/my_style.dart';
-import 'package:charoz/View/Widget/screen_widget.dart';
-import 'package:charoz/View/Widget/show_image.dart';
+import 'package:charoz/Model/Utility/my_image.dart';
+import 'package:charoz/Model/Utility/my_style.dart';
+import 'package:charoz/View/Widget/my_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ModalCarousel {
@@ -22,7 +20,7 @@ class ModalCarousel {
         height: 85.h,
         child: Column(
           children: [
-            ScreenWidget().buildModalHeader('รายละเอียดรูปภาพ'),
+            MyWidget().buildModalHeader(title: 'รายละเอียดรูปภาพ'),
             SizedBox(
               width: 80.w,
               height: 40.h,
@@ -33,16 +31,14 @@ class ModalCarousel {
                 minScale: 1,
                 maxScale: 4,
                 onInteractionEnd: (details) => resetAnimation(),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: ShowImage().showImage(path, BoxFit.contain),
-                ),
+                child: MyWidget()
+                    .showImage(path: path, fit: BoxFit.contain, radius: 20),
               ),
             ),
             SizedBox(height: 3.h),
             Text(
               'เลื่อนนิ้วเพื่อ zoom เข้า zoom ออก',
-              style: MyStyle().normalBlack16(),
+              style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
             ),
             SizedBox(height: 3.h),
             Container(
@@ -52,7 +48,7 @@ class ModalCarousel {
               ),
               width: 20.w,
               height: 20.w,
-              child: Lottie.asset(MyImage.gifZoom),
+              child: MyWidget().showImage(path: MyImage.lotZoom),
             ),
             SizedBox(height: 3.h),
           ],

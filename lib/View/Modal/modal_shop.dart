@@ -1,8 +1,7 @@
-import 'package:charoz/Utility/Constant/my_image.dart';
-import 'package:charoz/Utility/Constant/my_style.dart';
-import 'package:charoz/View/Widget/screen_widget.dart';
+import 'package:charoz/Model/Utility/my_image.dart';
+import 'package:charoz/Model/Utility/my_style.dart';
+import 'package:charoz/View/Widget/my_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ModalShop {
@@ -21,7 +20,7 @@ class ModalShop {
         height: 85.h,
         child: Column(
           children: [
-            ScreenWidget().buildModalHeader('รายละเอียดรูปภาพ'),
+            MyWidget().buildModalHeader(title: 'รายละเอียดรูปภาพ'),
             SizedBox(
               height: 25.h,
               child: InteractiveViewer(
@@ -40,7 +39,7 @@ class ModalShop {
             SizedBox(height: 1.h),
             Text(
               'เลื่อนนิ้วเพื่อ zoom เข้า zoom ออก',
-              style: MyStyle().normalBlack16(),
+              style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
             ),
             SizedBox(height: 3.h),
             Container(
@@ -50,7 +49,7 @@ class ModalShop {
               ),
               width: 20.w,
               height: 20.w,
-              child: Lottie.asset(MyImage.gifZoom),
+              child: MyWidget().showImage(path: MyImage.lotZoom),
             ),
             SizedBox(height: 3.h),
           ],

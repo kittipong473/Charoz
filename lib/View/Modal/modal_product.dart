@@ -1,24 +1,22 @@
 import 'package:charoz/Model/Api/FireStore/product_model.dart';
+import 'package:charoz/Model/Utility/my_image.dart';
+import 'package:charoz/Model/Utility/my_style.dart';
+import 'package:charoz/Service/Library/console_log.dart';
+import 'package:charoz/View/Dialog/dialog_alert.dart';
 import 'package:charoz/View/Modal/edit_product.dart';
 import 'package:charoz/Service/Firebase/product_crud.dart';
-import 'package:charoz/Utility/Constant/my_image.dart';
-import 'package:charoz/Utility/Constant/my_style.dart';
-import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Utility/Variable/var_general.dart';
-import 'package:charoz/View/Function/dialog_alert.dart';
-import 'package:charoz/View/Widget/screen_widget.dart';
-import 'package:charoz/View/Widget/show_image.dart';
-import 'package:charoz/View/Widget/show_progress.dart';
+import 'package:charoz/View/Widget/my_widget.dart';
 import 'package:charoz/View_Model/order_vm.dart';
 import 'package:charoz/View_Model/product_vm.dart';
+import 'package:charoz/View_Model/user_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ModalProduct {
-  final ProductViewModel prodVM = Get.find<ProductViewModel>();
-  final OrderViewModel orderVM = Get.find<OrderViewModel>();
+  final prodVM = Get.find<ProductViewModel>();
+  final orderVM = Get.find<OrderViewModel>();
+  final userVM = Get.find<UserViewModel>();
   int count = 1;
 
   Future<void> showModal(BuildContext context) {
@@ -31,45 +29,55 @@ class ModalProduct {
         height: 85.h,
         child: GetBuilder<ProductViewModel>(
           builder: (vm) => vm.product == null
-              ? const ShowProgress()
+              ? MyWidget().showProgress()
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ScreenWidget().buildModalHeader('รายละเอียดอาหาร'),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Lottie.asset(getImageFoodName(vm.product.type ?? 0),
-                            width: 10.w, height: 10.w),
-                        Text(vm.product.name ?? '',
-                            style: MyStyle().boldPrimary18()),
-                        Lottie.asset(getImageFoodName(vm.product.type ?? 0),
-                            width: 10.w, height: 10.w),
-                      ],
-                    ),
+                    MyWidget().buildModalHeader(title: 'รายละเอียดอาหาร'),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     MyWidget().showImage(
+                    //         path: getImageFoodName(vm.product.type ?? 0),
+                    //         width: 10.w,
+                    //         height: 10.w),
+                    //     Text(
+                    //       vm.product.name ?? '',
+                    //       style: MyStyle.textStyle(
+                    //           size: 18, color: MyStyle.orangePrimary),
+                    //     ),
+                    //     MyWidget().showImage(
+                    //         path: getImageFoodName(vm.product.type ?? 0),
+                    //         width: 10.w,
+                    //         height: 10.w),
+                    //   ],
+                    // ),
                     SizedBox(height: 1.h),
-                    Text(
-                        'ราคา : ${vm.product.price?.toStringAsFixed(0) ?? 0.00} บาท',
-                        style: MyStyle().normalBlue18()),
+                    // Text(
+                    //   'ราคา : ${vm.product.price?.toStringAsFixed(0) ?? 0.00} บาท',
+                    //   style: MyStyle.textStyle(
+                    //       size: 18, color: MyStyle.bluePrimary),
+                    // ),
                     SizedBox(height: 3.h),
-                    SizedBox(
-                      width: 60.w,
-                      height: 60.w,
-                      child: ShowImage()
-                          .showImage(prodVM.product.image, BoxFit.cover),
-                    ),
+                    // SizedBox(
+                    //   width: 60.w,
+                    //   height: 60.w,
+                    //   child: MyWidget().showImage(
+                    //       path: prodVM.product.image, fit: BoxFit.cover),
+                    // ),
                     SizedBox(height: 5.h),
-                    SizedBox(
-                      width: 60.w,
-                      child: Text(
-                        vm.product.detail ?? '',
-                        style: MyStyle().normalBlack16(),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    if (VariableGeneral.role == 3) ...[
+                    // SizedBox(
+                    //   width: 60.w,
+                    //   child: Text(
+                    //     vm.product.detail ?? '',
+                    //     style: MyStyle.textStyle(
+                    //         size: 16, color: MyStyle.blackPrimary),
+                    //     textAlign: TextAlign.center,
+                    //   ),
+                    // ),
+                    if (userVM.role == 3) ...[
                       // buttonManager(dialogContext, product)
-                    ] else if (VariableGeneral.role == 1) ...[
+                    ] else if (userVM.role == 1) ...[
                       // buttonCustomer(dialogContext, product)
                     ],
                   ],
@@ -89,34 +97,46 @@ class ModalProduct {
                 .updateStatusProduct(id: product.id!, status: !product.status!);
             if (status) {
               prodVM.readProductAllList();
-              MyFunction().toast('เปลี่ยนสถานะเรียบร้อย');
+              ConsoleLog.toast(text: 'เปลี่ยนสถานะเรียบร้อย');
               Get.back();
             } else {
-              MyDialog(context).doubleDialog(
-                  'เปลี่ยนสถานะล้มเหลว', 'กรุณาลองใหม่อีกครั้งในภายหลัง');
+              DialogAlert(context).dialogStatus(
+                  type: 2,
+                  title: 'เปลี่ยนสถานะล้มเหลว',
+                  body: 'กรุณาลองใหม่อีกครั้งในภายหลัง');
             }
           },
-          child: Text('เปลี่ยนสถานะ', style: MyStyle().boldBlue16()),
+          child: Text(
+            'เปลี่ยนสถานะ',
+            style: MyStyle.textStyle(size: 16, color: MyStyle.bluePrimary),
+          ),
         ),
         TextButton(
           onPressed: () {
-            Navigator.pop(context);
+            Get.back();
             EditProduct().openModalEditProduct(context, product);
           },
-          child: Text('แก้ไข', style: MyStyle().boldGreen16()),
+          child: Text(
+            'แก้ไข',
+            style: MyStyle.textStyle(size: 16, color: MyStyle.greenPrimary),
+          ),
         ),
         TextButton(
           onPressed: () async {
             bool status = await ProductCRUD().deleteProduct(id: product.id!);
             if (status) {
               prodVM.readProductAllList();
-              MyFunction().toast('ลบรายการอาหารเรียบร้อย');
+              ConsoleLog.toast(text: 'ลบรายการอาหารเรียบร้อย');
               Get.back();
             } else {
-              MyDialog(context).deleteFailedDialog();
+              DialogAlert(context).dialogApi();
             }
           },
-          child: Text('ลบ', style: MyStyle().boldRed16()),
+          child: Text(
+            'ลบ',
+            style: MyStyle.textStyle(
+                size: 16, color: MyStyle.redPrimary, bold: true),
+          ),
         ),
       ],
     );
@@ -140,7 +160,10 @@ class ModalProduct {
                   color: Colors.red,
                 ),
               ),
-              Text('จำนวน : $count', style: MyStyle().boldBlack18()),
+              Text(
+                'จำนวน : $count',
+                style: MyStyle.textStyle(size: 18, color: MyStyle.blackPrimary),
+              ),
               IconButton(
                 onPressed: () => setState(() {
                   if (count < 10) count++;
@@ -159,27 +182,36 @@ class ModalProduct {
             ? TextButton(
                 onPressed: () {
                   orderVM.addProductToCart(product, count);
-                  MyFunction().toast('เพิ่มรายการ ${product.name} เรียบร้อย');
+                  ConsoleLog.toast(
+                      text: 'เพิ่มรายการ ${product.name} เรียบร้อย');
                   Get.back();
                 },
-                child: Text('เพิ่มลงในตะกร้า', style: MyStyle().boldBlue16()),
+                child: Text(
+                  'เพิ่มลงในตะกร้า',
+                  style: MyStyle.textStyle(
+                      size: 16, color: MyStyle.bluePrimary, bold: true),
+                ),
               )
-            : Text('ขออภัย อาหารหมดสต็อก', style: MyStyle().boldRed16()),
+            : Text(
+                'ขออภัย อาหารหมดสต็อก',
+                style: MyStyle.textStyle(
+                    size: 16, color: MyStyle.redPrimary, bold: true),
+              ),
       ],
     );
   }
 
   String getImageFoodName(int type) {
     if (type == 0) {
-      return MyImage.gifFood;
+      return MyImage.lotFood;
     } else if (type == 1) {
-      return MyImage.gifSnack;
+      return MyImage.lotSnack;
     } else if (type == 2) {
-      return MyImage.gifDrink;
+      return MyImage.lotDrink;
     } else if (type == 3) {
-      return MyImage.gifSweet;
+      return MyImage.lotSweet;
     } else {
-      return MyImage.error;
+      return MyImage.imgError;
     }
   }
 }

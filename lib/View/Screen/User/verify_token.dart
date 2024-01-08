@@ -1,16 +1,17 @@
-import 'dart:developer';
+import 'dart:math';
 
-import 'package:charoz/Service/Restful/api_controller.dart';
-import 'package:charoz/Service/Initial/route_page.dart';
-import 'package:charoz/Utility/Constant/my_image.dart';
-import 'package:charoz/Utility/Constant/my_style.dart';
-import 'package:charoz/View/Function/dialog_alert.dart';
+import 'package:charoz/Model/Utility/my_image.dart';
+import 'package:charoz/Model/Utility/my_style.dart';
+import 'package:charoz/Service/Firebase/user_crud.dart';
+import 'package:charoz/Service/Library/console_log.dart';
+import 'package:charoz/Service/Library/notification_service.dart';
+import 'package:charoz/Service/Routes/route_page.dart';
+import 'package:charoz/View/Dialog/dialog_alert.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/View/Widget/screen_widget.dart';
+import 'package:charoz/View/Widget/my_widget.dart';
 import 'package:charoz/View_Model/user_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -22,10 +23,10 @@ class VerifyToken extends StatefulWidget {
 }
 
 class _VerifyTokenState extends State<VerifyToken> {
-  TextEditingController otpController = TextEditingController();
+  final userVM = Get.find<UserViewModel>();
+  int otpNumber = 0;
 
-  final ApiController capi = Get.find<ApiController>();
-  final UserViewModel userVM = Get.find<UserViewModel>();
+  TextEditingController otpController = TextEditingController();
 
   @override
   void initState() {
@@ -33,6 +34,14 @@ class _VerifyTokenState extends State<VerifyToken> {
     userVM.initOTPTime();
     userVM.startOTPTime();
     // userVM.requestOTP();
+    sendNoti();
+  }
+
+  void sendNoti() {
+    otpNumber = Random().nextInt(9000) + 1000; // 1000 - 9999
+    ConsoleLog.printGreen(text: otpNumber.toString());
+    NotificationService().showNotification(
+        title: 'OTP Verification', body: 'Your number is $otpNumber');
   }
 
   @override
@@ -47,37 +56,44 @@ class _VerifyTokenState extends State<VerifyToken> {
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.backgroundColor,
-        appBar: ScreenWidget().appBarTheme('ยืนยันรหัส OTP'),
+        appBar: MyWidget().appBarTheme(title: 'ยืนยันรหัส OTP'),
         body: GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
           behavior: HitTestBehavior.opaque,
-          child: Stack(
-            children: [
-              Positioned.fill(
-                top: 5.h,
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 5.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        ScreenWidget().buildLogoImage(),
-                        SizedBox(height: 5.h),
-                        buildTitle(),
-                        SizedBox(height: 5.h),
-                        buildOTPField(),
-                        SizedBox(height: 2.h),
-                        buildTimeCount(),
-                        SizedBox(height: 1.h),
-                        buildResend(context),
-                        SizedBox(height: 5.h),
-                        buildButton(context),
-                      ],
-                    ),
-                  ),
-                ),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 3.h),
+                  MyWidget().buildLogoImage(),
+                  SizedBox(height: 5.h),
+                  buildTitle(),
+                  SizedBox(height: 5.h),
+                  buildOTPField(),
+                  SizedBox(height: 2.h),
+                  buildTimeCount(),
+                  SizedBox(height: 1.h),
+                  buildResend(context),
+                  SizedBox(height: 5.h),
+                  MyWidget().buttonWidget(
+                    title: 'ยืนยันรหัส OTP',
+                    onTap: () {
+                      if (otpController.text.length != 4) {
+                        DialogAlert(context).dialogStatus(
+                            type: 1, title: 'กรุณากรอกรหัส OTP ให้ครบถ้วน');
+                      } else if (userVM.otpInTimeVerify == false) {
+                        DialogAlert(context).dialogStatus(
+                            type: 1, title: 'รหัส OTP หมดอายุการใช้งานแล้ว');
+                      } else {
+                        confirmOTP(context);
+                      }
+                    },
+                  )
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -90,45 +106,49 @@ class _VerifyTokenState extends State<VerifyToken> {
       children: [
         Text(
           'ทางเราได้ส่งรหัส OTP ไปยังเบอร์โทรศัพท์ของท่านแล้ว',
-          style: MyStyle().normalBlack16(),
+          style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           textAlign: TextAlign.center,
         ),
         SizedBox(height: 2.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Lottie.asset(MyImage.gifPhone, width: 8.w, height: 8.w),
+            MyWidget()
+                .showImage(path: MyImage.lotPhone, width: 8.w, height: 8.w),
             SizedBox(width: 1.w),
-            Text(userVM.phoneNumber, style: MyStyle().boldBlue18()),
+            Text(
+              userVM.phoneNumber,
+              style: MyStyle.textStyle(size: 18, color: MyStyle.bluePrimary),
+            ),
           ],
         ),
         SizedBox(height: 2.h),
         Text('รหัสอ้างอิง : ${userVM.otpRefNo}',
-            style: MyStyle().normalGrey14()),
+            style: MyStyle.textStyle(size: 14, color: Colors.black38)),
       ],
     );
   }
 
   Widget buildOTPField() {
     return SizedBox(
-      width: 80.w,
+      width: 70.w,
       child: PinCodeTextField(
         appContext: context,
-        length: 6,
+        length: 4,
         obscureText: false,
         animationType: AnimationType.fade,
         keyboardType: TextInputType.number,
         pinTheme: PinTheme(
           shape: PinCodeFieldShape.box,
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(10),
           fieldHeight: 7.h,
-          fieldWidth: 11.w,
+          fieldWidth: 12.w,
           activeFillColor: Colors.white,
           inactiveFillColor: Colors.white,
           selectedFillColor: Colors.white,
-          activeColor: MyStyle.orangePrimary,
-          inactiveColor: MyStyle.orangeLight,
-          selectedColor: MyStyle.orangeDark,
+          activeColor: MyStyle.bluePrimary,
+          inactiveColor: Colors.transparent,
+          selectedColor: MyStyle.bluePrimary,
         ),
         animationDuration: const Duration(milliseconds: 300),
         enableActiveFill: true,
@@ -151,7 +171,7 @@ class _VerifyTokenState extends State<VerifyToken> {
         Obx(
           () => Text(
             'รหัสหมดอายุใน : ${userVM.minutes}:${userVM.seconds}',
-            style: MyStyle().normalBlack14(),
+            style: MyStyle.textStyle(size: 14, color: MyStyle.blackPrimary),
             textAlign: TextAlign.center,
           ),
         ),
@@ -167,52 +187,37 @@ class _VerifyTokenState extends State<VerifyToken> {
           onPressed: () async {
             if (userVM.delayResend) {
               // await userVM.requestOTP();
+              sendNoti();
               otpController.clear();
               userVM.initOTPTime();
               userVM.setDelayResend(false);
               if (userVM.otpInTimeVerify == false) {
                 userVM.startOTPTime();
               }
-              MyFunction().toast('ส่งรหัสใหม่ สำเร็จ');
+              ConsoleLog.toast(text: 'ส่งรหัสใหม่ สำเร็จ');
             } else {
-              MyFunction()
-                  .toast('คุณขอรหัสถี่เกินไป\nรอเวลาเพื่อขอรหัสใหม่อีกครั้ง');
+              ConsoleLog.toast(
+                  text: 'คุณขอรหัสบ่อยเกินไป\nรอเวลาเพื่อขอรหัสใหม่อีกครั้ง');
             }
           },
-          child: Text('ส่งรหัสอีกครั้ง', style: MyStyle().boldPrimary16()),
+          child: Text('ส่งรหัสอีกครั้ง',
+              style: MyStyle.textStyle(size: 16, color: MyStyle.orangePrimary)),
         ),
       ],
     );
   }
 
-  Widget buildButton(BuildContext context) {
-    return SizedBox(
-      width: 80.w,
-      height: 5.h,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: MyStyle.bluePrimary),
-        onPressed: () {
-          if (otpController.text.length != 6) {
-            MyDialog(context).singleDialog('กรุณากรอกรหัส OTP ให้ครบถ้วน');
-          } else if (userVM.otpInTimeVerify == false) {
-            MyDialog(context).singleDialog('รหัส OTP หมดอายุการใช้งานแล้ว');
-          } else {
-            // confirmOTP(context);
-            processVerify();
-          }
-        },
-        child: Text('ยืนยันรหัส OTP', style: MyStyle().normalWhite16()),
-      ),
-    );
-  }
-
   Future confirmOTP(BuildContext context) async {
-    bool status = await capi.confirmOTP(userVM.otpToken, otpController.text);
+    // bool status = await capi.confirmOTP(userVM.otpToken, otpController.text);
+    bool status = otpController.text == otpNumber.toString();
     if (status) {
       processVerify();
     } else {
-      MyDialog(context)
-          .doubleDialog('รหัส OTP ของคุณไม่ถูกต้อง', 'กรุณาลองใหม่อีกครั้ง');
+      DialogAlert(context).dialogStatus(
+        type: 2,
+        title: 'รหัส OTP ของคุณไม่ถูกต้อง',
+        body: 'กรุณาลองใหม่อีกครั้ง',
+      );
     }
   }
 
@@ -226,7 +231,16 @@ class _VerifyTokenState extends State<VerifyToken> {
   }
 
   Future processAuthen(BuildContext context) async {
-    log('login success');
+    if (userVM.user!.status!) {
+      await UserCRUD().updateUserTokenDevice(id: userVM.user!.id!);
+      userVM.setLoginVariable();
+    } else {
+      DialogAlert(context).dialogStatus(
+        type: 2,
+        title: 'คุณถูกระงับการใช้งาน',
+        body: 'โปรดติดต่อสอบถามผู้ดูแลระบบเมื่อมีข้อสงสัย',
+      );
+    }
   }
 
   // Future processAuthen(BuildContext context) async {
@@ -265,7 +279,7 @@ class _VerifyTokenState extends State<VerifyToken> {
     } else if (phone == '0123456789') {
       return 'CharozCustomer';
     } else {
-      return MyFunction().encryption(phone);
+      return MyFunction().encryption(text: phone);
     }
   }
 }

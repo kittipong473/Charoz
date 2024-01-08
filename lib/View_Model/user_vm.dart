@@ -2,16 +2,39 @@ import 'dart:async';
 
 import 'package:charoz/Model/Api/FireStore/user_model.dart';
 import 'package:charoz/Model/Data/privacy_model.dart';
+import 'package:charoz/Model/Utility/my_variable.dart';
+import 'package:charoz/Service/Library/console_log.dart';
 import 'package:charoz/Service/Library/preference.dart';
-import 'package:charoz/Service/Restful/api_controller.dart';
 import 'package:charoz/Service/Firebase/user_crud.dart';
-import 'package:charoz/Service/Initial/route_page.dart';
-import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Utility/Variable/var_general.dart';
+import 'package:charoz/Service/Routes/route_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class UserViewModel extends GetxController {
+  List<String> userRoleList = [
+    'guest',
+    'customer',
+    'rider',
+    'manager',
+    'admin'
+  ];
+  List<String> roleUserList = [
+    'Guest',
+    'Customer',
+    'Rider',
+    'Shop Manager',
+    'Administrator',
+  ];
+  List<String> roleUserListTH = [
+    'ผู้เยี่ยมชม',
+    'ลูกค้า',
+    'ไรเดอร์',
+    'ผู้จัดการ',
+    'ADMIN'
+  ];
+
+  final RxBool _isLogin = false.obs;
+  final RxInt _role = 0.obs;
   final RxBool _otpInTimeVerify = false.obs;
   final RxBool _delayResend = false.obs;
   final RxInt _countResend = 0.obs;
@@ -28,6 +51,8 @@ class UserViewModel extends GetxController {
   UserModel? _rider;
   UserModel? _manager;
 
+  bool get isLogin => _isLogin.value;
+  int get role => _role.value;
   bool get otpInTimeVerify => _otpInTimeVerify.value;
   bool get delayResend => _delayResend.value;
   int get countResend => _countResend.value;
@@ -46,13 +71,11 @@ class UserViewModel extends GetxController {
 
   Duration? otpDuration;
   Timer? otpTimer;
-  List<String> roleUserList = [
-    'Guest',
-    'Customer',
-    'Rider',
-    'Shop Manager',
-    'Administrator',
-  ];
+
+  void setIsLogin(bool value) {
+    _isLogin.value = value;
+    update();
+  }
 
   void initPrivacyList() {
     _privacyList.value = [
@@ -134,16 +157,18 @@ class UserViewModel extends GetxController {
     _otpInTimeVerify.value = false;
     _minutes.value = '00';
     _seconds.value = '00';
-    otpTimer!.cancel();
+    otpTimer?.cancel();
     update();
   }
 
   void setPhoneVerify(String phone) {
     _phoneNumber.value = phone;
+    update();
   }
 
   void setDelayResend(bool status) {
     _delayResend.value = status;
+    update();
   }
 
   // void sendNotiToAllRider(String token) {
@@ -157,30 +182,24 @@ class UserViewModel extends GetxController {
   void setLoginVariable() async {
     await Preferences().init();
     _user = await UserCRUD().readUserByPhone(phone: _phoneNumber.value);
-    VariableGeneral.isLogin = true;
-    VariableGeneral.role = _user!.role;
-    VariableGeneral.userTokenId = _user!.id;
+    _isLogin.value = true;
+    _role.value = _user!.role ?? 0;
+    MyVariable.userTokenID = _user!.id;
     Preferences().setUserID(value: _user!.id!);
-    VariableGeneral.indexProductChip = 0;
-    VariableGeneral.indexNotiChip = 0;
-    VariableGeneral.indexOrderChip = 0;
     clearUserData();
     Get.offAllNamed(RoutePage.routePageNavigation);
-    MyFunction().toast('ยินดีต้อนรับสู่ Application');
+    ConsoleLog.toast(text: 'ยินดีต้อนรับสู่ Application');
   }
 
   void setLogoutVariable() async {
     await Preferences().init();
     _user = null;
-    VariableGeneral.isLogin = false;
-    VariableGeneral.role = null;
-    VariableGeneral.userTokenId = null;
+    _isLogin.value = false;
+    _role.value = 0;
+    MyVariable.userTokenID = null;
     Preferences().clearAll();
-    VariableGeneral.indexProductChip = 0;
-    VariableGeneral.indexNotiChip = 0;
-    VariableGeneral.indexOrderChip = 0;
     Get.offAllNamed(RoutePage.routePageNavigation);
-    MyFunction().toast('ลงชื่อออกจากระบบ สำเร็จ');
+    ConsoleLog.toast(text: 'ลงชื่อออกจากระบบ สำเร็จ');
   }
 
   void clearUserData() {
@@ -208,13 +227,9 @@ class UserViewModel extends GetxController {
 
   Future<bool> getUserPreference(BuildContext context, String id) async {
     _user = await UserCRUD().readUserById(id: id);
-    VariableGeneral.userTokenId = _user!.id;
-    VariableGeneral.role = _user!.role;
-    bool status = await UserCRUD().updateUserTokenDevice(id: _user!.id!);
-    if (!status) {
-      MyFunction()
-          .toast('ไม่สามารถเก็บ token ได้\nปิดการใช้งาน notification ชั่วคราว');
-    }
+    MyVariable.userTokenID = _user!.id;
+    _role.value = _user!.role ?? 0;
+    await UserCRUD().updateUserTokenDevice(id: _user!.id!);
     if (_user!.status != null && _user!.status == true) {
       return true;
     } else {
@@ -269,15 +284,14 @@ class UserViewModel extends GetxController {
     update();
   }
 
-  Future<void> requestOTP() async {
-    final ApiController capi = Get.find<ApiController>();
-    bool status = await capi.requestOTP(_phoneNumber.value);
-    if (status) {
-      _otpToken.value = capi.responseSendOTP.token;
-      _otpRefNo.value = capi.responseSendOTP.refno;
-      update();
-    }
-  }
+  // Future<void> requestOTP() async {
+  //   bool status = await capi.requestOTP(_phoneNumber.value);
+  //   if (status) {
+  //     _otpToken.value = capi.responseSendOTP.token;
+  //     _otpRefNo.value = capi.responseSendOTP.refno;
+  //     update();
+  //   }
+  // }
 
   // Future readRiderTokenList() async {
   //   _riderTokenList = await UserCRUD().readTokenRiderList();

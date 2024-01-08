@@ -1,9 +1,34 @@
 import 'package:charoz/Model/Api/FireStore/address_model.dart';
+import 'package:charoz/Model/Utility/my_variable.dart';
 import 'package:charoz/Service/Firebase/address_crud.dart';
-import 'package:charoz/Utility/Variable/var_general.dart';
 import 'package:get/get.dart';
 
 class AddressViewModel extends GetxController {
+  List<String> datatypeAddress = [
+    'คอนโดถนอมมิตร',
+    'บ้านพัก',
+    'ที่ทำงาน',
+    'อื่นๆ'
+  ];
+  List<String> buildingNumbers = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11',
+    '12',
+    '13',
+    '14',
+    '15',
+    '16'
+  ];
+
   AddressModel? _address;
   final RxList<AddressModel> _addressList = <AddressModel>[].obs;
 
@@ -23,7 +48,7 @@ class AddressViewModel extends GetxController {
 
   void getAddress() {
     _address = _addressList
-        .firstWhere((element) => element.userid == VariableGeneral.userTokenId);
+        .firstWhere((element) => element.userid == MyVariable.userTokenID);
   }
 
   void selectAddressWhereId(String id) {

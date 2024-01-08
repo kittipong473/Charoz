@@ -8,10 +8,9 @@ class UserModify {
   String? phone;
   int? role;
   bool? status;
-  String? tokenE;
-  String? tokenP;
-  String? tokenDevice;
-  Timestamp? time;
+  String? token;
+  Timestamp? create;
+  Timestamp? update;
   UserModify({
     this.firstname,
     this.lastname,
@@ -19,10 +18,9 @@ class UserModify {
     this.phone,
     this.role,
     this.status,
-    this.tokenE,
-    this.tokenP,
-    this.tokenDevice,
-    this.time,
+    this.token,
+    this.create,
+    this.update,
   });
 
   Map<String, dynamic> toMap() {
@@ -33,10 +31,9 @@ class UserModify {
       'phone': phone,
       'role': role,
       'status': status,
-      'tokenE': tokenE,
-      'tokenP': tokenP,
-      'tokenDevice': tokenDevice,
-      'time': time,
+      'token': token,
+      'create': create,
+      'update': update,
     };
   }
 }

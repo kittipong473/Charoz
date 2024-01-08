@@ -3,15 +3,17 @@ import 'package:charoz/Service/Firebase/product_crud.dart';
 import 'package:get/get.dart';
 
 class ProductViewModel extends GetxController {
+  List<String> datatypeProduct = ['อาหาร', 'ทานเล่น', 'เครื่องดื่ม', 'ของหวาน'];
+
   final RxList<ProductModel> _productList = <ProductModel>[].obs;
   final RxList<ProductModel> _productTypeList = <ProductModel>[].obs;
   final RxList<ProductModel> _productSuggestList = <ProductModel>[].obs;
   ProductModel? _product;
 
-  get product => _product;
-  get productList => _productList;
-  get productTypeList => _productTypeList;
-  get productSuggestList => _productSuggestList;
+  ProductModel? get product => _product;
+  List<ProductModel> get productList => _productList;
+  List<ProductModel> get productTypeList => _productTypeList;
+  List<ProductModel> get productSuggestList => _productSuggestList;
 
   Future readProductAllList() async {
     _productList.value = await ProductCRUD().readProductAllList();

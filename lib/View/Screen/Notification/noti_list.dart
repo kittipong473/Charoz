@@ -1,16 +1,13 @@
 import 'package:charoz/Model/Api/FireStore/noti_model.dart';
-import 'package:charoz/View/Dialog/noti_delete.dart';
-import 'package:charoz/View/Modal/modal_noti.dart';
+import 'package:charoz/Model/Utility/my_image.dart';
+import 'package:charoz/Model/Utility/my_style.dart';
 import 'package:charoz/View/Modal/add_noti.dart';
-import 'package:charoz/Utility/Constant/my_image.dart';
-import 'package:charoz/Utility/Constant/my_style.dart';
-import 'package:charoz/Utility/Variable/var_data.dart';
-import 'package:charoz/Utility/Variable/var_general.dart';
-import 'package:charoz/View/Widget/screen_widget.dart';
+import 'package:charoz/View/Screen/Notification/Dialog/noti_detail.dart';
+import 'package:charoz/View/Widget/my_widget.dart';
 import 'package:charoz/View_Model/noti_vm.dart';
+import 'package:charoz/View_Model/user_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class NotiList extends StatefulWidget {
@@ -21,7 +18,10 @@ class NotiList extends StatefulWidget {
 }
 
 class _NotiListState extends State<NotiList> {
-  final NotiViewModel notiVM = Get.find<NotiViewModel>();
+  final notiVM = Get.find<NotiViewModel>();
+  final userVM = Get.find<UserViewModel>();
+
+  int indexChip = 0;
 
   @override
   void initState() {
@@ -32,6 +32,7 @@ class _NotiListState extends State<NotiList> {
   void getData() async {
     await notiVM.readNotiList();
     notiVM.getNotiTypeList(0);
+    // initializeDateFormatting('th', '');
   }
 
   @override
@@ -46,42 +47,35 @@ class _NotiListState extends State<NotiList> {
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.backgroundColor,
-        body: Stack(
-          children: [
-            Positioned.fill(
-              top: 2.h,
-              child: StatefulBuilder(
-                builder: (_, setState) => Column(
-                  children: [
-                    buildChip(),
-                    buildNotiList(),
-                  ],
-                ),
-              ),
-            ),
-          ],
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 5.w),
+          child: Column(
+            children: [
+              buildChip(),
+              buildNotiList(),
+            ],
+          ),
         ),
-        floatingActionButton:
-            VariableGeneral.role == 0 || VariableGeneral.role == 3
-                ? FloatingActionButton(
-                    onPressed: () => AddNoti().openModalAdNoti(context),
-                    backgroundColor: MyStyle.bluePrimary,
-                    child: Icon(Icons.add_alert_rounded,
-                        size: 20.sp, color: Colors.white),
-                  )
-                : null,
+        floatingActionButton: userVM.role == 4 || userVM.role == 3
+            ? FloatingActionButton(
+                onPressed: () => AddNoti().openModalAdNoti(context),
+                backgroundColor: MyStyle.bluePrimary,
+                child: Icon(Icons.add_alert_rounded,
+                    size: 20.sp, color: Colors.white),
+              )
+            : null,
       ),
     );
   }
 
   Widget buildChip() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(vertical: 2.h),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          for (var i = 0; i < VariableData.datatypeNotiType.length; i++) ...[
-            chip(VariableData.datatypeNotiType[i], i),
+          for (var i = 0; i < notiVM.datatypeNotiType.length; i++) ...[
+            chip(notiVM.datatypeNotiType[i], i),
           ],
         ],
       ),
@@ -90,17 +84,17 @@ class _NotiListState extends State<NotiList> {
 
   Widget chip(String title, int index) {
     return ActionChip(
-      backgroundColor: VariableGeneral.indexNotiChip == index
-          ? MyStyle.orangePrimary
-          : Colors.grey.shade100,
+      elevation: 3,
+      backgroundColor:
+          indexChip == index ? MyStyle.orangePrimary : Colors.grey.shade100,
       label: Text(
         title,
-        style: VariableGeneral.indexNotiChip == index
-            ? MyStyle().normalWhite16()
-            : MyStyle().normalBlack16(),
+        style: indexChip == index
+            ? MyStyle.textStyle(size: 16, color: MyStyle.whitePrimary)
+            : MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
       ),
       onPressed: () {
-        setState(() => VariableGeneral.indexNotiChip = index);
+        setState(() => indexChip = index);
         notiVM.getNotiTypeList(index);
       },
     );
@@ -108,13 +102,13 @@ class _NotiListState extends State<NotiList> {
 
   Widget buildNotiList() {
     return GetBuilder<NotiViewModel>(
-      builder: (vm) => SizedBox(
-        width: 100.w,
-        height: 77.h,
+      builder: (vm) => Expanded(
         child: vm.notiTypeList.isEmpty
-            ? ScreenWidget().showEmptyData(
-                'ยังไม่มี ${VariableData.datatypeNotiType[VariableGeneral.indexNotiChip]} ในขณะนี้',
-                'รอรายการ ${VariableData.datatypeNotiType[VariableGeneral.indexNotiChip]} ในภายหลัง')
+            ? MyWidget().showEmptyData(
+                title:
+                    'ยังไม่มี ${notiVM.datatypeNotiType[indexChip]} ในขณะนี้',
+                body:
+                    'รอรายการ ${notiVM.datatypeNotiType[indexChip]} ในภายหลัง')
             : ListView.builder(
                 shrinkWrap: true,
                 padding: EdgeInsets.only(top: 1.h),
@@ -127,22 +121,28 @@ class _NotiListState extends State<NotiList> {
   }
 
   Widget buildNotiItem(NotiModel noti) {
-    return Card(
-      margin: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
-      elevation: 5.0,
+    return Container(
+      margin: EdgeInsets.only(bottom: 3.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(5),
+        boxShadow: [MyStyle.boxShadow()],
+      ),
       child: InkWell(
         onTap: () {
           notiVM.setNotiModel(noti);
-          ModalNoti().dialogNoti(context);
+          NotiDetail(context).dialogNoti();
         },
-        onLongPress: () => NotiDelete(context, noti.id!).confirmDelete(),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Lottie.asset(MyImage.gifShopAnnounce, width: 15.w, height: 15.w),
-              Text(noti.name ?? '', style: MyStyle().normalBlack16()),
+              MyWidget().showImage(
+                  path: MyImage.lotShopAnnounce, width: 15.w, height: 15.w),
+              Text(noti.name ?? '',
+                  style:
+                      MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary)),
               Icon(Icons.arrow_forward_ios_rounded,
                   color: MyStyle.orangePrimary, size: 20.sp),
             ],

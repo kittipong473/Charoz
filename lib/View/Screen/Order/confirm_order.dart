@@ -1,14 +1,14 @@
 import 'package:charoz/Model/Api/FireStore/product_model.dart';
 import 'package:charoz/Model/Api/Modify/order_modify.dart';
+import 'package:charoz/Model/Utility/my_style.dart';
+import 'package:charoz/Model/Utility/my_variable.dart';
+import 'package:charoz/Service/Library/console_log.dart';
+import 'package:charoz/View/Dialog/dialog_alert.dart';
 import 'package:charoz/View/Modal/select_address.dart';
 import 'package:charoz/Service/Firebase/order_crud.dart';
 import 'package:charoz/Service/Firebase/user_crud.dart';
-import 'package:charoz/Service/Initial/route_page.dart';
-import 'package:charoz/Utility/Constant/my_style.dart';
-import 'package:charoz/View/Function/dialog_alert.dart';
-import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/View/Widget/screen_widget.dart';
-import 'package:charoz/Utility/Variable/var_general.dart';
+import 'package:charoz/Service/Routes/route_page.dart';
+import 'package:charoz/View/Widget/my_widget.dart';
 import 'package:charoz/View_Model/address_vm.dart';
 import 'package:charoz/View_Model/order_vm.dart';
 import 'package:charoz/View_Model/product_vm.dart';
@@ -19,66 +19,67 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-final AddressViewModel addVM = Get.find<AddressViewModel>();
-final OrderViewModel orderVM = Get.find<OrderViewModel>();
-final ProductViewModel prodVM = Get.find<ProductViewModel>();
-final ShopViewModel shopVM = Get.find<ShopViewModel>();
+class ConfirmOrder extends StatefulWidget {
+  const ConfirmOrder({super.key});
 
-class ConfirmOrder extends StatelessWidget {
-  const ConfirmOrder({Key? key}) : super(key: key);
+  @override
+  State<ConfirmOrder> createState() => _ConfirmOrderState();
+}
 
-  Future getData() async {
+class _ConfirmOrderState extends State<ConfirmOrder> {
+  final addVM = Get.find<AddressViewModel>();
+  final orderVM = Get.find<OrderViewModel>();
+  final prodVM = Get.find<ProductViewModel>();
+  final shopVM = Get.find<ShopViewModel>();
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  void getData() async {
     await addVM.readAddressList();
     addVM.getAddress();
   }
 
   @override
   Widget build(BuildContext context) {
-    getData();
-    EasyLoading.dismiss();
     return SafeArea(
       top: false,
       child: Scaffold(
         backgroundColor: MyStyle.backgroundColor,
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(height: 8.h),
-                      if (orderVM.type == 0) ...[
-                        ScreenWidget().buildTitle('ที่อยู่ของร้านค้า'),
-                        SizedBox(height: 1.h),
-                        buildShopAddress(),
-                      ] else if (orderVM.type == 1) ...[
-                        ScreenWidget().buildTitle('ที่อยู่สำหรับจัดส่ง'),
-                        SizedBox(height: 1.h),
-                        buildUserAddress(context),
-                      ],
-                      ScreenWidget().buildSpacer(),
-                      ScreenWidget().buildTitle('รายการอาหาร'),
-                      SizedBox(height: 1.h),
-                      buildOrderList(),
-                      ScreenWidget().buildSpacer(),
-                      buildTotal(),
-                      ScreenWidget().buildSpacer(),
-                      ScreenWidget().buildTitle('หมายเหตุ'),
-                      SizedBox(height: 1.h),
-                      buildSuggest(),
-                      SizedBox(height: 3.h),
-                      buildButton(context),
-                    ],
-                  ),
-                ),
-              ),
+        appBar: MyWidget().appBarTheme(title: 'ยืนยันออเดอร์'),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (orderVM.type == 0) ...[
+                  MyWidget().buildTitle(title: 'ที่อยู่ของร้านค้า'),
+                  SizedBox(height: 1.h),
+                  buildShopAddress(),
+                ] else if (orderVM.type == 1) ...[
+                  MyWidget().buildTitle(title: 'ที่อยู่สำหรับจัดส่ง'),
+                  SizedBox(height: 1.h),
+                  buildUserAddress(context),
+                ],
+                MyWidget().buildSpacer(),
+                MyWidget().buildTitle(title: 'รายการอาหาร'),
+                SizedBox(height: 1.h),
+                buildOrderList(),
+                MyWidget().buildSpacer(),
+                buildTotal(),
+                MyWidget().buildSpacer(),
+                MyWidget().buildTitle(title: 'หมายเหตุ'),
+                SizedBox(height: 1.h),
+                buildSuggest(),
+                SizedBox(height: 3.h),
+                buildButton(context),
+              ],
             ),
-            ScreenWidget().appBarTitle('ยืนยันออเดอร์'),
-            ScreenWidget().backPage(context),
-          ],
+          ),
         ),
       ),
     );
@@ -102,8 +103,12 @@ class ConfirmOrder extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(shopVM.shop.name, style: MyStyle().boldBlue16()),
-                    Text(shopVM.shop.address, style: MyStyle().normalBlack14()),
+                    Text(shopVM.shop.name,
+                        style: MyStyle.textStyle(
+                            size: 16, color: MyStyle.bluePrimary, bold: true)),
+                    Text(shopVM.shop.address,
+                        style: MyStyle.textStyle(
+                            size: 14, color: MyStyle.blackPrimary)),
                   ],
                 ),
               ),
@@ -154,9 +159,9 @@ class ConfirmOrder extends StatelessWidget {
       separatorBuilder: (context, index) => const Divider(),
       shrinkWrap: true,
       padding: const EdgeInsets.only(top: 0),
-      itemCount: orderVM.productList.length,
+      itemCount: orderVM.basketList.length,
       itemBuilder: (context, index) => buildOrderItem(
-          orderVM.productList[index], orderVM.amountList[index], index),
+          orderVM.basketList[index], orderVM.amountList[index], index),
     );
   }
 
@@ -167,10 +172,11 @@ class ConfirmOrder extends StatelessWidget {
         SizedBox(
           width: 50.w,
           child: Text('${index + 1}. ${product.name} x$amount',
-              style: MyStyle().normalBlack16()),
+              style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary)),
         ),
         Text('${(product.price! * amount).toStringAsFixed(0)} ฿',
-            style: MyStyle().boldPrimary18()),
+            style: MyStyle.textStyle(
+                size: 18, color: MyStyle.orangePrimary, bold: true)),
       ],
     );
   }
@@ -185,11 +191,14 @@ class ConfirmOrder extends StatelessWidget {
               children: [
                 Icon(Icons.delivery_dining_rounded, size: 20.sp),
                 SizedBox(width: 2.w),
-                Text('ค่าขนส่ง : ', style: MyStyle().boldBlack16()),
+                Text('ค่าขนส่ง : ',
+                    style: MyStyle.textStyle(
+                        size: 16, color: MyStyle.blackPrimary)),
               ],
             ),
             Text(orderVM.type == 0 ? '0 ฿' : '${shopVM.shop.freight} ฿',
-                style: MyStyle().boldPrimary18()),
+                style: MyStyle.textStyle(
+                    size: 18, color: MyStyle.orangePrimary, bold: true)),
           ],
         ),
         SizedBox(height: 1.h),
@@ -200,10 +209,14 @@ class ConfirmOrder extends StatelessWidget {
               children: [
                 Icon(Icons.money_rounded, size: 20.sp),
                 SizedBox(width: 2.w),
-                Text('ค่าใช้จ่ายทั้งหมด : ', style: MyStyle().boldBlack16()),
+                Text('ค่าใช้จ่ายทั้งหมด : ',
+                    style: MyStyle.textStyle(
+                        size: 16, color: MyStyle.blackPrimary)),
               ],
             ),
-            Text('${orderVM.totalPay} ฿', style: MyStyle().boldPrimary18()),
+            Text('${orderVM.totalPay} ฿',
+                style: MyStyle.textStyle(
+                    size: 18, color: MyStyle.orangePrimary, bold: true)),
           ],
         ),
       ],
@@ -216,19 +229,25 @@ class ConfirmOrder extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('ถึงร้านค้า : ', style: MyStyle().boldBlack16()),
+            Text('ถึงร้านค้า : ',
+                style: MyStyle.textStyle(
+                    size: 16, color: MyStyle.blackPrimary, bold: true)),
             Text(orderVM.commentshop == 'null' ? 'ไม่มี' : orderVM.commentshop,
-                style: MyStyle().normalPrimary16()),
+                style:
+                    MyStyle.textStyle(size: 16, color: MyStyle.orangePrimary)),
           ],
         ),
         SizedBox(height: 1.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('ถึงคนขับ : ', style: MyStyle().boldBlack16()),
+            Text('ถึงคนขับ : ',
+                style: MyStyle.textStyle(
+                    size: 16, color: MyStyle.blackPrimary, bold: true)),
             Text(
                 orderVM.commentrider == 'null' ? 'ไม่มี' : orderVM.commentrider,
-                style: MyStyle().normalPrimary16()),
+                style:
+                    MyStyle.textStyle(size: 16, color: MyStyle.orangePrimary)),
           ],
         ),
       ],
@@ -242,7 +261,8 @@ class ConfirmOrder extends StatelessWidget {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(backgroundColor: MyStyle.bluePrimary),
         onPressed: () => confirmDialog(context),
-        child: Text('ยืนยันการสั่งอาหาร', style: MyStyle().normalWhite16()),
+        child: Text('ยืนยันการสั่งอาหาร',
+            style: MyStyle.textStyle(size: 16, color: MyStyle.whitePrimary)),
       ),
     );
   }
@@ -263,7 +283,8 @@ class ConfirmOrder extends StatelessWidget {
               width: 45.w,
               child: Text(
                 'ยืนยันการสั่งอาหารหรือไม่ ?',
-                style: MyStyle().boldPrimary18(),
+                style: MyStyle.textStyle(
+                    size: 18, color: MyStyle.orangePrimary, bold: true),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -275,15 +296,19 @@ class ConfirmOrder extends StatelessWidget {
             children: [
               TextButton(
                 onPressed: () {
-                  Navigator.pop(dialogContext);
+                  Get.back();
                   EasyLoading.show(status: 'loading...');
                   processOrder(context);
                 },
-                child: Text('ยืนยัน', style: MyStyle().boldGreen18()),
+                child: Text('ยืนยัน',
+                    style: MyStyle.textStyle(
+                        size: 18, color: MyStyle.greenPrimary, bold: true)),
               ),
               TextButton(
-                onPressed: () => Navigator.pop(dialogContext),
-                child: Text('ยกเลิก', style: MyStyle().boldRed18()),
+                onPressed: () => Get.back(),
+                child: Text('ยกเลิก',
+                    style: MyStyle.textStyle(
+                        size: 18, color: MyStyle.redPrimary, bold: true)),
               ),
             ],
           ),
@@ -294,20 +319,20 @@ class ConfirmOrder extends StatelessWidget {
 
   Future processOrder(BuildContext context) async {
     List<String> idList = [];
-    for (var item in orderVM.productList) {
-      idList.add(item.id);
+    for (var item in orderVM.basketList) {
+      idList.add(item.id!);
     }
 
     bool status1 = await OrderCRUD().createOrder(
       model: OrderModify(
         shopid: shopVM.shop.id,
         riderid: '',
-        customerid: VariableGeneral.userTokenId!,
+        customerid: MyVariable.userTokenID,
         addressid: orderVM.type == 0 ? '' : addVM.address!.id,
         productid: idList.toString(),
         productamount: orderVM.amountList.toString(),
         total: orderVM.totalPay,
-        delivery: orderVM.type,
+        delivery: false,
         commentshop: orderVM.commentshop,
         commentrider: orderVM.commentrider,
         status: 0,
@@ -320,10 +345,10 @@ class ConfirmOrder extends StatelessWidget {
       String? token = await UserCRUD().readTokenById(id: shopVM.shop.managerid);
       EasyLoading.dismiss();
       idList.clear();
-      MyFunction().toast('เพิ่มรายการสั่งซื้อ สำเร็จ');
+      ConsoleLog.toast(text: 'เพิ่มรายการสั่งซื้อ สำเร็จ');
       Get.back();
       Get.back();
-      VariableGeneral.tabController!.animateTo(3);
+      MyVariable.tabController!.animateTo(3);
       if (token != null) {
         // capi.pushNotification(
         //   token,
@@ -334,7 +359,7 @@ class ConfirmOrder extends StatelessWidget {
       orderVM.clearOrderData();
     } else {
       EasyLoading.dismiss();
-      MyDialog(context).addFailedDialog();
+      DialogAlert(context).dialogApi();
     }
   }
 }

@@ -1,14 +1,13 @@
 import 'dart:io';
 
 import 'package:charoz/Model/Api/Modify/noti_modify.dart';
+import 'package:charoz/Model/Utility/my_image.dart';
+import 'package:charoz/Model/Utility/my_style.dart';
 import 'package:charoz/Service/Firebase/noti_crud.dart';
-import 'package:charoz/Utility/Constant/my_image.dart';
-import 'package:charoz/Utility/Constant/my_style.dart';
+import 'package:charoz/Service/Library/console_log.dart';
+import 'package:charoz/View/Dialog/dialog_alert.dart';
 import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/Utility/Variable/var_data.dart';
-import 'package:charoz/View/Function/dialog_alert.dart';
-import 'package:charoz/View/Widget/dropdown_menu.dart';
-import 'package:charoz/View/Widget/screen_widget.dart';
+import 'package:charoz/View/Widget/my_widget.dart';
 import 'package:charoz/View_Model/noti_vm.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -88,8 +87,7 @@ class AddNoti {
                   ),
                 ),
               ),
-              ScreenWidget().buildModalHeader('เพิ่มการแจ้งเตือน'),
-              ScreenWidget().backPage(context),
+              MyWidget().buildModalHeader(title: 'เพิ่มการแจ้งเตือน'),
             ],
           ),
         ),
@@ -101,7 +99,8 @@ class AddNoti {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('ประเภท : ', style: MyStyle().normalBlack16()),
+        Text('ประเภท : ',
+            style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary)),
         Container(
           width: 50.w,
           padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -115,9 +114,8 @@ class AddNoti {
                 color: MyStyle.orangePrimary),
             isExpanded: true,
             value: chooseType,
-            items: VariableData.datatypeNotiType
-                .map(DropDownMenu().dropdownItem)
-                .toList(),
+            items:
+                notiVM.datatypeNotiType.map(MyWidget().dropdownItem).toList(),
             onChanged: (value) => setState(() => chooseType = value as String),
           ),
         ),
@@ -130,7 +128,7 @@ class AddNoti {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       width: 80.w,
       child: TextFormField(
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         controller: nameController,
         validator: (value) {
           if (value!.isEmpty) {
@@ -140,7 +138,7 @@ class AddNoti {
           }
         },
         decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'หัวข้อ :',
           prefixIcon: const Icon(
             Icons.description_rounded,
@@ -165,7 +163,7 @@ class AddNoti {
       width: 80.w,
       child: TextFormField(
         maxLines: 5,
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         controller: detailController,
         validator: (value) {
           if (value!.isEmpty) {
@@ -175,7 +173,7 @@ class AddNoti {
           }
         },
         decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'รายละเอียด :',
           prefixIcon: const Icon(
             Icons.details_rounded,
@@ -201,7 +199,7 @@ class AddNoti {
       child: TextFormField(
         keyboardType: TextInputType.number,
         inputFormatters: [dateFormat],
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         controller: startController,
         validator: (value) {
           if (value!.isEmpty) {
@@ -211,7 +209,7 @@ class AddNoti {
           }
         },
         decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'เวลาเริ่ม :',
           prefixIcon: const Icon(
             Icons.calendar_today_rounded,
@@ -237,7 +235,7 @@ class AddNoti {
       child: TextFormField(
         keyboardType: TextInputType.number,
         inputFormatters: [dateFormat],
-        style: MyStyle().normalBlack16(),
+        style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
         controller: endController,
         validator: (value) {
           if (value!.isEmpty) {
@@ -247,7 +245,7 @@ class AddNoti {
           }
         },
         decoration: InputDecoration(
-          labelStyle: MyStyle().normalBlack16(),
+          labelStyle: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary),
           labelText: 'เวลาสิ้นสุด :',
           prefixIcon: const Icon(
             Icons.calendar_today_rounded,
@@ -290,7 +288,8 @@ class AddNoti {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('กลุ่มเป้าหมาย : ', style: MyStyle().normalBlack16()),
+        Text('กลุ่มเป้าหมาย : ',
+            style: MyStyle.textStyle(size: 16, color: MyStyle.blackPrimary)),
         Container(
           width: 50.w,
           padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -304,9 +303,8 @@ class AddNoti {
                 color: MyStyle.orangePrimary),
             isExpanded: true,
             value: chooseRole,
-            items: VariableData.notiRoleTargetList
-                .map(DropDownMenu().dropdownItem)
-                .toList(),
+            items:
+                notiVM.notiRoleTargetList.map(MyWidget().dropdownItem).toList(),
             onChanged: (value) => setState(() => chooseRole = value as String),
           ),
         ),
@@ -321,7 +319,7 @@ class AddNoti {
       children: [
         IconButton(
           onPressed: () async {
-            file = await MyFunction().chooseImage(ImageSource.camera);
+            file = await MyFunction().chooseImage(source: ImageSource.camera);
             setState(() {});
           },
           icon: Icon(Icons.add_a_photo, size: 24.sp, color: MyStyle.orangeDark),
@@ -335,7 +333,7 @@ class AddNoti {
         ),
         IconButton(
           onPressed: () async {
-            file = await MyFunction().chooseImage(ImageSource.gallery);
+            file = await MyFunction().chooseImage(source: ImageSource.gallery);
             setState(() {});
           },
           icon: Icon(Icons.add_photo_alternate,
@@ -356,12 +354,15 @@ class AddNoti {
             EasyLoading.show(status: 'loading...');
             processInsert(context);
           } else if (chooseType == null) {
-            MyDialog(context).singleDialog('กรุณาเลือก หัวข้อ');
+            DialogAlert(context)
+                .dialogStatus(type: 1, title: 'กรุณาเลือก หัวข้อ');
           } else if (chooseRole == null) {
-            MyDialog(context).singleDialog('กรุณาเลือก กลุ่มเป้าหมาย');
+            DialogAlert(context)
+                .dialogStatus(type: 1, title: 'กรุณาเลือก กลุ่มเป้าหมาย');
           }
         },
-        child: Text('เพิ่มการแจ้งเตือน', style: MyStyle().normalWhite16()),
+        child: Text('เพิ่มการแจ้งเตือน',
+            style: MyStyle.textStyle(size: 16, color: MyStyle.whitePrimary)),
       ),
     );
   }
@@ -369,10 +370,10 @@ class AddNoti {
   Future processInsert(BuildContext context) async {
     bool status = await NotiCRUD().createNoti(
       model: NotiModify(
-        type: VariableData.notiRoleTargetList.indexOf(chooseType!),
+        type: notiVM.notiRoleTargetList.indexOf(chooseType!),
         name: nameController.text,
         detail: detailController.text,
-        receive: VariableData.notiRoleTargetList.indexOf(chooseRole!),
+        receive: notiVM.notiRoleTargetList.indexOf(chooseRole!),
         status: true,
         time: Timestamp.fromDate(DateTime.now()),
       ),
@@ -381,11 +382,11 @@ class AddNoti {
     if (status) {
       notiVM.readNotiList();
       EasyLoading.dismiss();
-      MyFunction().toast('เพิ่มการแจ้งเตือนเรียบร้อย');
-      Navigator.pop(context);
+      ConsoleLog.toast(text: 'เพิ่มการแจ้งเตือนเรียบร้อย');
+      Get.back();
     } else {
       EasyLoading.dismiss();
-      MyDialog(context).addFailedDialog();
+      DialogAlert(context).dialogApi();
     }
   }
 }

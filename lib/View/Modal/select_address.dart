@@ -1,8 +1,8 @@
 import 'package:charoz/Model/Api/FireStore/address_model.dart';
-import 'package:charoz/View/Modal/add_location.dart';
-import 'package:charoz/Utility/Constant/my_style.dart';
-import 'package:charoz/View/Function/my_function.dart';
-import 'package:charoz/View/Widget/screen_widget.dart';
+import 'package:charoz/Model/Utility/my_style.dart';
+import 'package:charoz/Service/Library/console_log.dart';
+import 'package:charoz/View/Screen/Address/Modal/address_manage.dart';
+import 'package:charoz/View/Widget/my_widget.dart';
 import 'package:charoz/View_Model/address_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,9 +22,9 @@ class SelectAddress {
       height: 50.h,
       child: Stack(
         children: [
-          if (addVM.addressList == null) ...[
-            ScreenWidget().showEmptyData(
-                'ยังไม่มีข้อมูลที่อยู่', 'กรุณาเพิ่มข้อมูลที่อยู่')
+          if (addVM.addressList.isEmpty) ...[
+            MyWidget().showEmptyData(
+                title: 'ยังไม่มีข้อมูลที่อยู่', body: 'กรุณาเพิ่มข้อมูลที่อยู่')
           ] else ...[
             Positioned.fill(
               top: 5.h,
@@ -48,13 +48,12 @@ class SelectAddress {
               ),
             ),
           ],
-          ScreenWidget().buildModalHeader('เลือกที่อยู่จัดส่งของคุณ'),
-          ScreenWidget().backPage(context),
+          MyWidget().buildModalHeader(title: 'เลือกที่อยู่จัดส่งของคุณ'),
           Positioned(
             top: -1.h,
             right: 3.w,
             child: IconButton(
-              onPressed: () => AddLocation().openModalAddAddress(context),
+              onPressed: () => AddressManage(context).modalAddAddress(),
               icon: Icon(
                 Icons.add_circle_rounded,
                 size: 20.sp,
@@ -72,8 +71,8 @@ class SelectAddress {
     return InkWell(
       onTap: () {
         addVM.selectAddressWhereId(address.id!);
-        MyFunction().toast('เปลี่ยนที่อยู่จัดส่งเรียบร้อย');
-        Navigator.pop(context);
+        ConsoleLog.toast(text: 'เปลี่ยนที่อยู่จัดส่งเรียบร้อย');
+        Get.back();
       },
       child: Card(
         margin: EdgeInsets.symmetric(vertical: 1.h),
@@ -90,16 +89,21 @@ class SelectAddress {
               ),
               Column(
                 children: [
-                  Text(address.type.toString(),
-                      style: MyStyle().normalBlue16()),
+                  Text(
+                    address.type.toString(),
+                    style:
+                        MyStyle.textStyle(size: 16, color: MyStyle.bluePrimary),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                          address.type.toString() == 'คอนโดถนอมมิตร'
-                              ? 'ตึกหมายเลข ${address.detail}'
-                              : address.detail!,
-                          style: MyStyle().normalBlack14()),
+                        address.type.toString() == 'คอนโดถนอมมิตร'
+                            ? 'ตึกหมายเลข ${address.detail}'
+                            : address.detail!,
+                        style: MyStyle.textStyle(
+                            size: 14, color: MyStyle.blackPrimary),
+                      ),
                     ],
                   ),
                 ],

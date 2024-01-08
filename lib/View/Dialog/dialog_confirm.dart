@@ -1,5 +1,6 @@
-import 'package:charoz/Utility/Constant/my_image.dart';
-import 'package:charoz/Utility/Constant/my_style.dart';
+import 'package:charoz/Model/Utility/my_image.dart';
+import 'package:charoz/Model/Utility/my_style.dart';
+import 'package:charoz/View/Widget/my_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -9,7 +10,8 @@ class DialogConfirm {
   final BuildContext context;
   DialogConfirm(this.context);
 
-  void dialogInputConfirm(String title, String? body, Function submit) {
+  void dialogInputConfirm(
+      {required String title, String? body, required Function() submit}) {
     showDialog(
       context: context,
       builder: (dialogContext) => SimpleDialog(
@@ -20,39 +22,38 @@ class DialogConfirm {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Lottie.asset(MyImage.gifWarning, width: 15.w, height: 15.w),
+              Lottie.asset(MyImage.lotWarning, width: 15.w, height: 15.w),
               SizedBox(height: 2.h),
-              Text(title, style: MyStyle().normalPrimary16()),
+              Text(
+                title,
+                style: MyStyle.textStyle(size: 18, color: MyStyle.bluePrimary),
+                textAlign: TextAlign.center,
+              ),
               if (body != null) ...[
                 SizedBox(height: 1.h),
                 Text(body,
-                    style: MyStyle().normalGrey16(),
+                    style:
+                        MyStyle.textStyle(size: 16, color: MyStyle.greyPrimary),
                     textAlign: TextAlign.center),
               ],
               SizedBox(height: 3.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  SizedBox(
+                  MyWidget().buttonWidget(
+                    title: 'ยืนยัน',
                     width: 20.w,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: MyStyle.greenLight),
-                      onPressed: () {
-                        Get.back();
-                        submit();
-                      },
-                      child: Text('ยืนยัน', style: MyStyle().normalGreen16()),
-                    ),
+                    color: MyStyle.bluePrimary,
+                    onTap: () {
+                      Get.back();
+                      submit();
+                    },
                   ),
-                  SizedBox(
+                  MyWidget().buttonWidget(
+                    title: 'ยกเลิก',
                     width: 20.w,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: MyStyle.greyLight),
-                      onPressed: () => Get.back(),
-                      child: Text('ยกเลิก', style: MyStyle().normalGrey16()),
-                    ),
+                    color: MyStyle.greyPrimary,
+                    onTap: () => Get.back(),
                   ),
                 ],
               ),
@@ -63,7 +64,17 @@ class DialogConfirm {
     );
   }
 
-  void dialogCRUDConfirm(int type, Function submit) {
+  void dialogCRUDConfirm({required int type, required Function() submit}) {
+    List<String> statusList = [
+      'ยืนยันการ เพิ่มข้อมูล \nหรือไม่ ?',
+      'ยืนยันการ แก้ไขข้อมูล \nหรือไม่ ?',
+      'ยืนยันการ ลบข้อมูล \nหรือไม่ ?'
+    ];
+    List<Color> colorList = [
+      MyStyle.greenPrimary,
+      MyStyle.orangePrimary,
+      MyStyle.redPrimary
+    ];
     showDialog(
       context: context,
       builder: (dialogContext) => SimpleDialog(
@@ -89,49 +100,28 @@ class DialogConfirm {
               ),
               SizedBox(height: 3.h),
               Text(
-                type == 0
-                    ? 'ยืนยันการ เพิ่มข้อมูล \nหรือไม่ ?'
-                    : type == 1
-                        ? 'ยืนยันการ แก้ไขข้อมูล \nหรือไม่ ?'
-                        : 'ยืนยันการ ลบข้อมูล \nหรือไม่ ?',
-                style: MyStyle().normalBlack18(),
+                statusList[type],
+                style: MyStyle.textStyle(size: 18, color: MyStyle.blackPrimary),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 3.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  SizedBox(
+                  MyWidget().buttonWidget(
+                    title: 'ยืนยัน',
                     width: 20.w,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: type == 0
-                              ? MyStyle.greenLight
-                              : type == 1
-                                  ? MyStyle.yellowLight
-                                  : MyStyle.redLight),
-                      onPressed: () {
-                        Get.back();
-                        submit();
-                      },
-                      child: Text(
-                        'ยืนยัน',
-                        style: type == 0
-                            ? MyStyle().normalGreen16()
-                            : type == 1
-                                ? MyStyle().normalPrimary16()
-                                : MyStyle().normalRed16(),
-                      ),
-                    ),
+                    color: colorList[type],
+                    onTap: () {
+                      Get.back();
+                      submit();
+                    },
                   ),
-                  SizedBox(
+                  MyWidget().buttonWidget(
+                    title: 'ยกเลิก',
                     width: 20.w,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: MyStyle.greyLight),
-                      onPressed: () => Get.back(),
-                      child: Text('ยกเลิก', style: MyStyle().normalGrey16()),
-                    ),
+                    color: MyStyle.greyPrimary,
+                    onTap: () => Get.back(),
                   ),
                 ],
               ),
